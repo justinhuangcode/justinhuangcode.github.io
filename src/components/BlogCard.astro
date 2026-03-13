@@ -1,0 +1,26 @@
+---
+import { formatDate } from '@/lib/formatter';
+interface Props {
+  slug: string;
+  title: string;
+  date: Date;
+  locale?: string;
+  basePath?: string;
+  pinned?: boolean;
+}
+
+const { slug, title, date, locale = 'en-US', basePath = '', pinned = false } = Astro.props;
+---
+
+<li class="px-5 py-[15px] border-b border-border last:border-b-0 cursor-pointer hover:bg-[var(--color-bg-hover)]">
+  <div class="inline-flex items-center gap-2 text-[80%] font-semibold text-muted-foreground mb-1">
+    {pinned && <span>📌</span>}
+    <span>{formatDate(date)}</span>
+  </div>
+  <a
+    class="block text-[18px] font-semibold text-[var(--color-link)] hover:text-[var(--color-link-hover)]"
+    href={`${basePath}/posts/${slug}`}
+  >
+    {title}
+  </a>
+</li>

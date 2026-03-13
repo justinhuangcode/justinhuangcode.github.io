@@ -1,0 +1,147 @@
+---
+import Tag from '@/components/Tag.astro';
+import CategoryPill from '@/components/CategoryPill.astro';
+import Giscus from '@/components/Giscus.astro';
+import ArrowLeft from '@/components/icons/ArrowLeft.astro';
+import ArrowRight from '@/components/icons/ArrowRight.astro';
+import Layout from '@/layouts/Layout.astro';
+import Container from '@/components/Container.astro';
+import Prose from '@/components/Prose.astro';
+import TableOfContents from '@/components/TableOfContents.astro';
+import { render } from 'astro:content';
+import { formatDate, wordCount, readingTime } from '@/lib/formatter';
+import { siteConfig } from '@/config/site';
+import { getMessages } from '@/i18n';
+import { getPostsByLocale, getSlug } from '@/lib/posts';
+import BlogCoverImage from '@/components/BlogCoverImage.astro';
+
+export async function getStaticPaths() {
+  const posts = await getPostsByLocale('ko');
+  return posts.map((post, i) => ({
+    params: { slug: getSlug(post.id) },
+    props: {
+      post,
+      prevPost: i < posts.length - 1 ? posts[i + 1] : null,
+      nextPost: i > 0 ? posts[i - 1] : null,
+    },
+  }));
+}
+
+const { post, prevPost, nextPost } = Astro.props;
+const { Content, headings } = await render(post);
+const m = getMessages('ko');
+const postUrl = `${siteConfig.url}/ko/posts/${getSlug(post.id)}/`;
+const articleJsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: post.data.title,
+    description: post.data.description,
+    datePublished: post.data.date.toISOString(),
+    author: { '@type': 'Person', name: siteConfig.author.name },
+    publisher: { '@type': 'Organization', name: siteConfig.name },
+    url: postUrl,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: siteConfig.name, item: `${siteConfig.url}/ko` },
+      { '@type': 'ListItem', position: 2, name: m.nav.blog, item: `${siteConfig.url}/ko` },
+      { '@type': 'ListItem', position: 3, name: post.data.title, item: postUrl },
+    ],
+  },
+];
+const slug = getSlug(post.id);
+const alternateFormats = [
+  { type: 'text/markdown', href: `/ko/posts/${slug}.md`, title: `${post.data.title} (Markdown)` },
+];
+---
+
+<Layout
+  title={`${post.data.title} | ${siteConfig.name}`}
+  description={post.data.description}
+  image={post.data.image ?? `/og/ko/${getSlug(post.id)}.png`}
+  jsonLd={articleJsonLd}
+  article={{
+    publishedTime: post.data.date.toISOString(),
+    author: siteConfig.author.name,
+    tags: post.data.tags,
+  }}
+  alternateFormats={alternateFormats}
+>
+  <Container class="py-16 px-4">
+    <div class="xl:grid xl:grid-cols-[1fr_220px] xl:gap-8">
+      <article>
+        <div class="mb-4 flex flex-wrap items-center gap-2">
+          <CategoryPill category={post.data.category} locale="ko" />
+          {post.data.tags && post.data.tags.map((tag: string) => <Tag tag={tag} locale="ko" />)}
+        </div>
+
+        <h1 class="text-[31px] font-semibold mb-4 leading-[1.4] max-md:text-xl text-[var(--color-link)]">{post.data.title}</h1>
+
+        <div class="mb-8 flex items-center gap-3 text-muted-foreground/60 text-xs font-mono" title={m.blog.readingTimeTooltip.replace('{words}', String(wordCount(post.body ?? ''))).replace('{minutes}', String(readingTime(post.body ?? '')))}>
+          <span>{formatDate(post.data.date)}</span>
+          <span>·</span>
+          <span>{wordCount(post.body ?? '')}{m.blog.wordCount}</span>
+          <span>·</span>
+          <span>{readingTime(post.body ?? '')}{m.blog.minRead}</span>
+        </div>
+
+        {
+          post.data.description && (
+            <p class="mt-4 text-muted-foreground text-lg leading-relaxed">{post.data.description}</p>
+          )
+        }
+
+        {post.data.image && (
+          <div class="mt-6">
+            <BlogCoverImage image={post.data.image} alt={post.data.title} />
+          </div>
+        )}
+
+        <div class="mt-6 pt-10 border-t border-border">
+          <Prose>
+            <Content />
+          </Prose>
+        </div>
+
+        <div class="mt-10 flex items-center gap-4">
+          <span class="flex-1 border-t border-border"></span>
+          <span class="text-sm text-muted-foreground">{m.blog.endOfPost}{m.blog.thanksForReading}</span>
+          <span class="flex-1 border-t border-border"></span>
+        </div>
+
+        <nav class="mt-6 flex items-stretch justify-between gap-4">
+          {prevPost ? (
+            <a
+              href={`/ko/posts/${getSlug(prevPost.id)}/`}
+              class="group flex flex-col items-start text-sm hover:text-foreground max-w-[45%]"
+            >
+              <span class="inline-flex items-center gap-1 text-muted-foreground group-hover:text-foreground">
+                <ArrowLeft class="size-3.5" />
+                {m.blog.prevPost}
+              </span>
+              <span class="mt-1 text-[var(--color-link)] group-hover:text-[var(--color-link-hover)]">{prevPost.data.title}</span>
+            </a>
+          ) : <span />}
+          {nextPost ? (
+            <a
+              href={`/ko/posts/${getSlug(nextPost.id)}/`}
+              class="group flex flex-col items-end text-sm hover:text-foreground max-w-[45%] ml-auto"
+            >
+              <span class="inline-flex items-center gap-1 text-muted-foreground group-hover:text-foreground">
+                {m.blog.nextPost}
+                <ArrowRight class="size-3.5" />
+              </span>
+              <span class="mt-1 text-[var(--color-link)] group-hover:text-[var(--color-link-hover)]">{nextPost.data.title}</span>
+            </a>
+          ) : <span />}
+        </nav>
+
+        <Giscus locale="ko" />
+      </article>
+      <TableOfContents headings={headings} label={m.blog.onThisPage} />
+    </div>
+  </Container>
+</Layout>

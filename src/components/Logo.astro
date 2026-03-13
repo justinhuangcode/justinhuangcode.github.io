@@ -1,0 +1,28 @@
+---
+import { siteConfig } from '@/config/site';
+
+interface Props {
+  class?: string;
+  size?: number;
+}
+
+const { class: className, size = 32 } = Astro.props;
+const name = siteConfig.name;
+const logoLight = siteConfig.images.logoLight;
+const logoDark = siteConfig.images.logoDark;
+---
+
+<img
+  src={logoLight}
+  alt={`${name} logo`}
+  class:list={[`size-8 rounded-md dark:hidden`, className]}
+  width={size}
+  height={size}
+/>
+<img
+  src={logoDark}
+  alt={`${name} logo`}
+  class:list={[`size-8 rounded-md hidden dark:block`, className]}
+  width={size}
+  height={size}
+/>
