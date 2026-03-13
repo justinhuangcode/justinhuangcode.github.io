@@ -3,8 +3,8 @@ title: 👋 你好，世界
 date: 2026-01-01
 category: Tutorial
 description: 歡迎來到 Astro-Theme-Aither——一個相信文字本身就很美的 AI 原生 Astro 主題。
-tags: [Hello, Astro]
-pinned: true
+tags: [hello, astro]
+pinned: false
 ---
 
 歡迎來到 Astro-Theme-Aither。
@@ -55,14 +55,14 @@ title: 我的第一篇文章
 date: 2026-01-15
 category: General
 description: SEO 和社群預覽的簡短摘要
-tags: [話題, 標籤]
+tags: [topic, another]
 pinned: false
 ---
 
 正文從這裡開始。
 ```
 
-`title`、`date`、`category` 是必填項。`description` 強烈建議填寫。設定 `pinned: true` 可將文章置頂。
+`title`、`date`、`category` 是必填項。`description` 強烈建議填寫。設定 `pinned: false` 可將文章置頂。
 
 多語系內容只需在對應語言目錄（`en/`、`ko/`、`fr/` 等）建立同名檔案。
 

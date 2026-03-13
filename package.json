@@ -30,7 +30,7 @@
     "tw-animate-css": "^1.3.4"
   },
   "pnpm": {
-    "onlyBuiltDependencies": ["@resvg/resvg-js"]
+    "onlyBuiltDependencies": ["@resvg/resvg-js", "esbuild", "sharp", "workerd"]
   },
   "devDependencies": {
     "@types/react": "^19.1.6",
