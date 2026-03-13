@@ -3,8 +3,8 @@ title: 👋 Hello World
 date: 2026-01-01
 category: Tutorial
 description: Welcome to Astro-Theme-Aither — an AI-native Astro theme that believes text itself is beautiful.
-tags: [Hello, Astro]
-pinned: true
+tags: [hello, astro]
+pinned: false
 ---
 
 Welcome to Astro-Theme-Aither.
@@ -57,14 +57,14 @@ title: Your Post Title
 date: 2026-01-15
 category: General
 description: A brief summary for SEO and social previews
-tags: [Topic, Another]
+tags: [topic, another]
 pinned: false
 ---
 
 Your content starts here.
 ```
 
-The `title`, `date`, and `category` fields are required. The `description` field is strongly recommended because it populates the meta description tag and Open Graph previews. Tags are optional. Set `pinned: true` to pin a post to the top of the list.
+The `title`, `date`, and `category` fields are required. The `description` field is strongly recommended because it populates the meta description tag and Open Graph previews. Tags are optional. Set `pinned: false` to pin a post to the top of the list.
 
 For multilingual content, create the same file in each locale directory (`zh-hans/`, `ko/`, `fr/`, etc.) with translated content.
 

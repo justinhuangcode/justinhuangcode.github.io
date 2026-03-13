@@ -18,16 +18,16 @@ export interface FooterSection {
 }
 
 export const siteConfig = {
-  name: 'Aither',
-  title: 'An AI-native Astro theme that believes text itself is beautiful.',
+  name: 'Justin Huang',
+  title: 'Justin Huang blog',
   description:
-    'An AI-native Astro theme that believes text itself is beautiful.',
+    'Justin Huang blog',
   author: {
-    name: 'Aither',
+    name: 'Justin Huang',
     avatar: '' as ImageMetadata | string, // Import from src/assets/ for optimization, or use URL string
   },
-  url: 'https://astro-theme-aither.pages.dev',
-  ogImage: '/og/index.png',
+  url: 'https://justinhuangcode.github.io',
+  ogImage: '/og.png',
   images: {
     logoLight: '/logo.svg',
     logoDark: '/logo-dark.svg',
@@ -35,23 +35,8 @@ export const siteConfig = {
   social: [
     {
       title: 'GitHub',
-      href: 'https://github.com/justinhuangcode/astro-theme-aither',
+      href: 'https://github.com/justinhuangcode',
       icon: 'github',
-    },
-    {
-      title: 'Twitter',
-      href: '#',
-      icon: 'x',
-    },
-    {
-      title: 'Discord',
-      href: '#',
-      icon: 'discord',
-    },
-    {
-      title: 'Email',
-      href: '#',
-      icon: 'mail',
     },
     {
       title: 'RSS',
@@ -106,7 +91,7 @@ export const siteConfig = {
         items: [
           {
             title: 'GitHub',
-            href: 'https://github.com/justinhuangcode/astro-theme-aither',
+            href: 'https://github.com/justinhuangcode',
             external: true,
           },
         ],

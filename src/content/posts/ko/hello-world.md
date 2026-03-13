@@ -3,8 +3,8 @@ title: 👋 Hello World
 date: 2026-01-01
 category: Tutorial
 description: Astro-Theme-Aither에 오신 것을 환영합니다 — 타이포그래피가 디자인을 이끄는 블로그 테마
-tags: [Hello, Astro]
-pinned: true
+tags: [hello, astro]
+pinned: false
 ---
 
 Astro-Theme-Aither에 오신 것을 환영합니다.
@@ -56,7 +56,7 @@ title: 글 제목
 date: 2026-01-15
 category: General
 description: SEO와 소셜 미리보기를 위한 간단한 요약
-tags: [Topic, Another]
+tags: [topic, another]
 ---
 
 여기에 내용을 작성하세요.
