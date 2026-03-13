@@ -1,0 +1,17 @@
+---
+/**
+ * Tag — plain text with # prefix, muted color.
+ * Matches the common blog pattern: #必看 #软件 #Chrome
+ */
+import { translateTag } from '@/i18n';
+
+interface Props {
+  tag: string;
+  locale?: string;
+}
+
+const { tag, locale = 'en' } = Astro.props;
+const displayTag = translateTag(tag, locale);
+---
+
+<span class="inline-block text-xs font-mono text-muted-foreground">#{displayTag}</span>

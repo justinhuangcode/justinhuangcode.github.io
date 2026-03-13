@@ -1,0 +1,74 @@
+---
+import { getLocaleFromUrl, getMessages } from '@/i18n';
+import ArrowLeft from '@/components/icons/ArrowLeft.astro';
+import ArrowRight from '@/components/icons/ArrowRight.astro';
+
+interface Props {
+  currentPage: number;
+  totalPages: number;
+  basePath?: string;
+}
+
+const locale = getLocaleFromUrl(Astro.url);
+const m = getMessages(locale);
+const { currentPage, totalPages, basePath = '/' } = Astro.props;
+
+const base = basePath.replace(/\/$/, '');
+function pageHref(page: number) {
+  return page <= 1 ? `${base}/` : `${base}/page/${page}/`;
+}
+
+const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+---
+
+{
+  totalPages > 1 && (
+    <nav
+      class="mt-8 mb-12 flex items-center justify-center gap-1"
+      aria-label="Blog pagination"
+    >
+      {currentPage > 1 ? (
+        <a
+          href={pageHref(currentPage - 1)}
+          class="inline-flex items-center justify-center size-9 rounded-full text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+          aria-label={m.blog.previous}
+        >
+          <ArrowLeft class="size-4" />
+        </a>
+      ) : (
+        <span class="inline-flex items-center justify-center size-9 rounded-full text-muted-foreground/30 cursor-not-allowed">
+          <ArrowLeft class="size-4" />
+        </span>
+      )}
+
+      {pages.map((page) => (
+        page === currentPage ? (
+          <span class="inline-flex items-center justify-center size-9 rounded-full bg-foreground text-background text-sm font-semibold">
+            {page}
+          </span>
+        ) : (
+          <a
+            href={pageHref(page)}
+            class="inline-flex items-center justify-center size-9 rounded-full text-sm text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+          >
+            {page}
+          </a>
+        )
+      ))}
+
+      {currentPage < totalPages ? (
+        <a
+          href={pageHref(currentPage + 1)}
+          class="inline-flex items-center justify-center size-9 rounded-full text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+          aria-label={m.blog.next}
+        >
+          <ArrowRight class="size-4" />
+        </a>
+      ) : (
+        <span class="inline-flex items-center justify-center size-9 rounded-full text-muted-foreground/30 cursor-not-allowed">
+          <ArrowRight class="size-4" />
+        </span>
+      )}
+    </nav>
+  )
+}

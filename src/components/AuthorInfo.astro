@@ -1,0 +1,31 @@
+---
+import { Image } from 'astro:assets';
+import { siteConfig } from '@/config/site';
+
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+const { name, avatar } = siteConfig.author;
+---
+
+<div class:list={['flex items-center gap-2', className]}>
+  {avatar ? (
+    <Image
+      src={avatar}
+      alt={name}
+      width={24}
+      height={24}
+      class="size-6 rounded-full object-cover"
+    />
+  ) : (
+    <div class="size-6 rounded-full bg-muted flex items-center justify-center text-muted-foreground">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" shape-rendering="geometricPrecision">
+        <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+        <circle cx="12" cy="7" r="4" />
+      </svg>
+    </div>
+  )}
+  <span class="text-sm font-mono text-muted-foreground">{name}</span>
+</div>
