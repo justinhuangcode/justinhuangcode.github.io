@@ -1,0 +1,23 @@
+---
+/**
+ * Crisp Chat — auto-enabled when siteConfig.crisp.websiteId is set.
+ * Renders nothing when the ID is empty.
+ */
+import { siteConfig } from '@/config/site';
+
+const crispId = siteConfig.crisp.websiteId;
+---
+
+{crispId && (
+  <script is:inline define:vars={{ crispId }}>
+    window.$crisp = [];
+    window.CRISP_WEBSITE_ID = crispId;
+    (function () {
+      var d = document;
+      var s = d.createElement('script');
+      s.src = 'https://client.crisp.chat/l.js';
+      s.async = 1;
+      d.getElementsByTagName('head')[0].appendChild(s);
+    })();
+  </script>
+)}

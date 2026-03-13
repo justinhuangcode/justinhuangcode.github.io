@@ -1,0 +1,142 @@
+---
+/**
+ * Table of Contents — sticky right sidebar with scroll spy.
+ * Uses Astro's built-in headings from render().
+ * Only shows h2 and h3 levels.
+ * Collapsible with toggle button.
+ */
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+interface Props {
+  headings: Heading[];
+  label?: string;
+}
+
+const { headings, label = 'On this page' } = Astro.props;
+const filtered = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
+---
+
+{filtered.length > 0 && (
+  <nav aria-label="Table of contents" class="toc hidden xl:block">
+    <div class="sticky top-[80px] max-h-[calc(100vh-6rem)] overflow-y-auto">
+      <div class="flex items-center justify-between mb-3">
+        <p class="text-sm font-semibold text-foreground">{label}</p>
+        <button
+          type="button"
+          class="toc-toggle inline-flex items-center justify-center size-5 rounded text-muted-foreground hover:text-foreground cursor-pointer appearance-none bg-transparent border-none p-0 outline-none"
+          aria-expanded="true"
+          aria-label="Toggle table of contents"
+        >
+          <svg class="toc-chevron size-3.5 transition-transform duration-200" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" shape-rendering="geometricPrecision">
+            <path d="M4 6l4 4 4-4" />
+          </svg>
+        </button>
+      </div>
+      <div class="toc-list-wrapper grid grid-rows-[1fr] transition-[grid-template-rows] duration-200">
+      <ul class="overflow-hidden space-y-1.5 text-sm">
+        {filtered.map((heading) => (
+          <li style={heading.depth === 3 ? 'padding-left: 1rem' : ''}>
+            <a
+              href={`#${heading.slug}`}
+              class="toc-link block py-0.5 text-muted-foreground transition-colors duration-150 hover:text-foreground"
+              data-slug={heading.slug}
+            >
+              {heading.text}
+            </a>
+          </li>
+        ))}
+      </ul>
+      </div>
+    </div>
+  </nav>
+)}
+
+<script>
+  function initToc() {
+    const links = document.querySelectorAll<HTMLAnchorElement>('.toc-link');
+    if (!links.length) return;
+
+    // Toggle
+    const toggle = document.querySelector('.toc-toggle');
+    const wrapper = document.querySelector<HTMLElement>('.toc-list-wrapper');
+    const chevron = document.querySelector('.toc-chevron');
+
+    if (toggle && wrapper) {
+      toggle.addEventListener('click', () => {
+        const expanded = toggle.getAttribute('aria-expanded') === 'true';
+        toggle.setAttribute('aria-expanded', String(!expanded));
+        wrapper.style.gridTemplateRows = expanded ? '0fr' : '1fr';
+        chevron?.classList.toggle('toc-chevron-collapsed', expanded);
+      });
+    }
+
+    // Scroll spy — find the heading closest to top of viewport
+    const headingEls: HTMLElement[] = [];
+    links.forEach((link) => {
+      const slug = link.dataset.slug;
+      if (slug) {
+        const el = document.getElementById(slug);
+        if (el) headingEls.push(el);
+      }
+    });
+
+    if (!headingEls.length) return;
+
+    const OFFSET = 100; // nav height + buffer
+
+    function updateActive() {
+      let current = '';
+
+      for (const el of headingEls) {
+        const top = el.getBoundingClientRect().top;
+        if (top <= OFFSET) {
+          current = el.id;
+        } else {
+          break;
+        }
+      }
+
+      // If no heading has passed the offset, highlight the first one
+      if (!current && headingEls.length) {
+        current = headingEls[0].id;
+      }
+
+      links.forEach((l) => l.classList.remove('toc-active'));
+      if (current) {
+        const active = document.querySelector(`.toc-link[data-slug="${current}"]`);
+        active?.classList.add('toc-active');
+      }
+    }
+
+    let ticking = false;
+    function onScroll() {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          updateActive();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    updateActive();
+  }
+
+  initToc();
+  document.addEventListener('astro:after-swap', initToc);
+</script>
+
+<style>
+  .toc-link.toc-active {
+    color: var(--color-link);
+    font-weight: 600;
+  }
+  .toc-chevron-collapsed {
+    transform: rotate(-90deg);
+  }
+</style>

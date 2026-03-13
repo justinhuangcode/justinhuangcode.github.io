@@ -1,0 +1,89 @@
+---
+/**
+ * Giscus comment system — auto theme switching, i18n support.
+ * Always shows the comment section; loads Giscus when configured,
+ * otherwise shows a placeholder.
+ */
+import { siteConfig } from '@/config/site';
+import { getMessages, type Locale } from '@/i18n';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'en' } = Astro.props;
+const g = siteConfig.giscus;
+const m = getMessages(locale);
+
+const langMap: Record<string, string> = {
+  en: 'en',
+  'zh-hans': 'zh-CN',
+  'zh-hant': 'zh-TW',
+  ko: 'ko',
+  fr: 'fr',
+  de: 'de',
+  it: 'it',
+  es: 'es',
+  ru: 'ru',
+  id: 'id',
+  'pt-br': 'pt',
+};
+const lang = langMap[locale] || 'en';
+const enabled = g.repo !== '' && g.repoId !== '' && g.categoryId !== '';
+---
+
+<div class="giscus-wrapper mt-10">
+  <p class="text-sm font-semibold mb-4 text-foreground">{m.blog.comments}</p>
+
+  {enabled ? (
+    <script
+      is:inline
+      src="https://giscus.app/client.js"
+      data-repo={g.repo}
+      data-repo-id={g.repoId}
+      data-category={g.category}
+      data-category-id={g.categoryId}
+      data-mapping={g.mapping}
+      data-strict="0"
+      data-reactions-enabled={g.reactionsEnabled ? '1' : '0'}
+      data-emit-metadata={g.emitMetadata ? '1' : '0'}
+      data-input-position={g.inputPosition}
+      data-theme="preferred_color_scheme"
+      data-lang={lang}
+      data-loading="lazy"
+      crossorigin="anonymous"
+      async
+    />
+  ) : (
+    <div class="rounded border border-dashed border-border py-8 flex flex-col items-center gap-2 text-muted-foreground text-sm">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" shape-rendering="geometricPrecision">
+        <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+      </svg>
+      <span>{m.blog.commentsPlaceholder}</span>
+    </div>
+  )}
+</div>
+
+<script>
+  function updateGiscusTheme() {
+    const isDark = document.documentElement.classList.contains('dark');
+    const theme = isDark ? 'dark' : 'light';
+    const iframe = document.querySelector<HTMLIFrameElement>('iframe.giscus-frame');
+    if (iframe) {
+      iframe.contentWindow?.postMessage(
+        { giscus: { setConfig: { theme } } },
+        'https://giscus.app'
+      );
+    }
+  }
+
+  const observer = new MutationObserver((mutations) => {
+    for (const mutation of mutations) {
+      if (mutation.attributeName === 'class') {
+        updateGiscusTheme();
+      }
+    }
+  });
+  observer.observe(document.documentElement, { attributes: true });
+  document.addEventListener('astro:after-swap', updateGiscusTheme);
+</script>

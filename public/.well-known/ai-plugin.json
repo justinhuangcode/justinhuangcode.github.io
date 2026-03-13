@@ -1,0 +1,17 @@
+{
+  "schema_version": "v1",
+  "name": "Astro-Theme-Aither",
+  "description": "An AI-native Astro theme that believes text itself is beautiful.",
+  "auth": { "type": "none" },
+  "api": {
+    "type": "content",
+    "endpoints": {
+      "llms_txt": "/llms.txt",
+      "llms_full_txt": "/llms-full.txt",
+      "posts_json": "/api/posts.json",
+      "rss": "/rss.xml",
+      "sitemap": "/sitemap-index.xml"
+    }
+  },
+  "content_policy": "All content is freely accessible to AI agents for reading, indexing, and summarization."
+}

@@ -1,0 +1,299 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: #FFFFFF;
+  --foreground: #000000;
+  --card: #FFFFFF;
+  --card-foreground: #000000;
+  --popover: #FFFFFF;
+  --popover-foreground: #000000;
+  --primary: #007AFF;
+  --primary-foreground: #FFFFFF;
+  --secondary: #F2F2F7;
+  --secondary-foreground: #000000;
+  --muted: #F2F2F7;
+  --muted-foreground: #8E8E93;
+  --accent: #F2F2F7;
+  --accent-foreground: #000000;
+  --destructive: #FF3B30;
+  --border: #C6C6C8;
+  --input: #C6C6C8;
+  --ring: #007AFF;
+  --radius: 0.625rem;
+
+  /* Hover background — Apple systemGray6 */
+  --color-bg-hover: #F2F2F7;
+
+  /* Link tokens — Apple systemBlue */
+  --color-link: #007AFF;
+  --color-link-hover: #0063D1;
+
+  /* Navbar tokens — Bootstrap 3 default */
+  --color-nav-bg: #f8f8f8;
+  --color-nav-border: #e7e7e7;
+  --color-nav-text: #777;
+  --color-nav-text-hover: #5e5e5e;
+  --color-nav-text-active: #555;
+  --color-nav-hover-bg: rgba(0, 0, 0, 0.05);
+}
+
+.dark {
+  --background: #000000;
+  --foreground: #FFFFFF;
+  --card: #1C1C1E;
+  --card-foreground: #FFFFFF;
+  --popover: #1C1C1E;
+  --popover-foreground: #FFFFFF;
+  --primary: #0A84FF;
+  --primary-foreground: #FFFFFF;
+  --secondary: #2C2C2E;
+  --secondary-foreground: #FFFFFF;
+  --muted: #1C1C1E;
+  --muted-foreground: #8E8E93;
+  --accent: #2C2C2E;
+  --accent-foreground: #FFFFFF;
+  --destructive: #FF453A;
+  --border: #38383A;
+  --input: #38383A;
+  --ring: #0A84FF;
+
+  /* Hover background — Apple systemGray6 dark */
+  --color-bg-hover: #1C1C1E;
+
+  /* Link tokens — Apple systemBlue dark */
+  --color-link: #0A84FF;
+  --color-link-hover: #409CFF;
+
+  /* Navbar tokens — Bootstrap 3 dark */
+  --color-nav-bg: #111;
+  --color-nav-border: #333;
+  --color-nav-text: #999;
+  --color-nav-text-hover: #ccc;
+  --color-nav-text-active: #ddd;
+  --color-nav-hover-bg: rgba(255, 255, 255, 0.08);
+}
+
+@theme inline {
+  --font-body: -apple-system, BlinkMacSystemFont, "PingFang SC",
+    "Microsoft YaHei", system-ui, sans-serif;
+  --font-serif: ui-serif, Georgia, "Noto Serif", "Palatino Linotype",
+    "Book Antiqua", Palatino, serif;
+  --font-mono: ui-monospace, "Source Code Pro", Consolas, Monaco, monospace;
+  --border-width: 1px;
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply font-body antialiased bg-background text-foreground;
+    font-weight: 400;
+  }
+  html {
+    @apply font-body scroll-smooth;
+    scroll-padding-top: 80px;
+  }
+}
+
+/* ── Bootstrap 3 gradient navbar ── */
+
+.site-nav {
+  background-color: var(--color-nav-bg);
+  background-image: linear-gradient(to bottom, #fff 0%, #f8f8f8 100%);
+  background-repeat: repeat-x;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    0 1px 5px rgba(0, 0, 0, 0.075);
+}
+
+.site-nav .nav-link-active {
+  background-image: linear-gradient(to bottom, #dbdbdb 0%, #e2e2e2 100%);
+  background-repeat: repeat-x;
+  box-shadow: inset 0 3px 9px rgba(0, 0, 0, 0.075);
+}
+
+.dark .site-nav {
+  background-color: var(--color-nav-bg);
+  background-image: linear-gradient(to bottom, #1a1a1a 0%, #111 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 1px 5px rgba(0, 0, 0, 0.3);
+}
+
+.dark .site-nav .nav-link-active {
+  background-image: linear-gradient(to bottom, #222 0%, #2a2a2a 100%);
+  box-shadow: inset 0 3px 9px rgba(0, 0, 0, 0.2);
+}
+
+/* ── Scroll-reveal & entrance animations ── */
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes crossfade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-crossfade-in {
+  animation: crossfade-in 0.4s cubic-bezier(0.25, 1, 0.5, 1) both;
+}
+
+/* Stagger delay utilities for choreographed entrances */
+.delay-0 {
+  animation-delay: 0ms;
+}
+.delay-1 {
+  animation-delay: 100ms;
+}
+.delay-2 {
+  animation-delay: 200ms;
+}
+.delay-3 {
+  animation-delay: 300ms;
+}
+.delay-4 {
+  animation-delay: 400ms;
+}
+.delay-5 {
+  animation-delay: 500ms;
+}
+
+/* Scroll-reveal: hidden until in view */
+.reveal-hidden {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.reveal-visible {
+  animation: fade-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ── Theme transition (View Transitions API — circular reveal) ── */
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* ── Global interaction polish ── */
+
+/* Smooth focus-visible ring for all focusable elements */
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: var(--radius);
+}
+
+/* Smooth hover/focus transitions for interactive elements */
+a,
+button,
+[role="button"] {
+  transition-property: color, background-color, border-color, box-shadow, opacity;
+  transition-duration: 0.15s;
+  transition-timing-function: ease;
+  /* Prevent transitions from firing on page load */
+  transition-delay: 0s;
+}
+
+/* Block all transitions until page is ready */
+html.no-transition *,
+html.no-transition *::before,
+html.no-transition *::after {
+  transition: none !important;
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .reveal-hidden {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Remove underline from heading links in prose */
+.prose h1 a,
+.prose h2 a,
+.prose h3 a,
+.prose h4 a,
+.prose h5 a,
+.prose h6 a {
+  text-decoration: none;
+}
+.prose h1 a:hover,
+.prose h2 a:hover,
+.prose h3 a:hover,
+.prose h4 a:hover,
+.prose h5 a:hover,
+.prose h6 a:hover {
+  text-decoration: none;
+}
