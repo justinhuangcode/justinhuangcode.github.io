@@ -2,6 +2,7 @@
   "name": "astro-theme-aither",
   "type": "module",
   "version": "2026.03.13",
+  "packageManager": "pnpm@10.32.1",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
