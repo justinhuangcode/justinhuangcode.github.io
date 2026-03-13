@@ -2,7 +2,7 @@
 
 [English](./README.md) | [简体中文](./README_ZH-HANS.md) | [繁體中文](./README_ZH-HANT.md) | **한국어** | [Français](./README_FR.md) | [Deutsch](./README_DE.md) | [Italiano](./README_IT.md) | [Español](./README_ES.md) | [Русский](./README_RU.md) | [Bahasa Indonesia](./README_ID.md) | [Português (BR)](./README_PT-BR.md)
 
-[![Deploy](https://github.com/justinhuangcode/astro-theme-aither/actions/workflows/deploy-github-pages.yml/badge.svg)](https://github.com/justinhuangcode/astro-theme-aither/actions/workflows/deploy-github-pages.yml)
+[![Deploy](https://github.com/justinhuangcode/astro-theme-aither/actions/workflows/deploy-cloudflare-pages.yml/badge.svg)](https://github.com/justinhuangcode/astro-theme-aither/actions/workflows/deploy-cloudflare-pages.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE)
 [![Astro](https://img.shields.io/badge/astro-6.0%2B-BC52EE.svg?style=flat-square&logo=astro&logoColor=white)](https://astro.build)
 [![Tailwind CSS](https://img.shields.io/badge/tailwindcss-v4-06B6D4.svg?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
@@ -263,14 +263,14 @@ public/
 └── .well-known/
 .github/
 └── workflows/
-    └── deploy-github-pages.yml     # GitHub Pages 배포 (기본)
+    └── deploy-cloudflare-pages.yml     # GitHub Pages 배포 (기본)
 ```
 
 ## 배포
 
 ### GitHub Pages (기본)
 
-포함된 워크플로우(`.github/workflows/deploy-github-pages.yml`)가 자동으로 배포합니다:
+포함된 워크플로우(`.github/workflows/deploy-cloudflare-pages.yml`)가 자동으로 배포합니다:
 
 1. 저장소 **Settings** > **Pages** > **Source**에서 **GitHub Actions** 선택
 2. `astro.config.mjs`의 `site`를 GitHub Pages URL로 업데이트

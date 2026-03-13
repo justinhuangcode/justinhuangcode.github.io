@@ -2,7 +2,7 @@
 
 **English** | [简体中文](./README_ZH-HANS.md) | [繁體中文](./README_ZH-HANT.md) | [한국어](./README_KO.md) | [Français](./README_FR.md) | [Deutsch](./README_DE.md) | [Italiano](./README_IT.md) | [Español](./README_ES.md) | [Русский](./README_RU.md) | [Bahasa Indonesia](./README_ID.md) | [Português (BR)](./README_PT-BR.md)
 
-[![Deploy](https://github.com/justinhuangcode/astro-theme-aither/actions/workflows/deploy-github-pages.yml/badge.svg)](https://github.com/justinhuangcode/astro-theme-aither/actions/workflows/deploy-github-pages.yml)
+[![Deploy](https://github.com/justinhuangcode/astro-theme-aither/actions/workflows/deploy-cloudflare-pages.yml/badge.svg)](https://github.com/justinhuangcode/astro-theme-aither/actions/workflows/deploy-cloudflare-pages.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE)
 [![Astro](https://img.shields.io/badge/astro-6.0%2B-BC52EE.svg?style=flat-square&logo=astro&logoColor=white)](https://astro.build)
 [![Tailwind CSS](https://img.shields.io/badge/tailwindcss-v4-06B6D4.svg?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
@@ -267,18 +267,18 @@ public/
 └── .well-known/
 .github/
 └── workflows/
-    ├── deploy-github-pages.yml     # GitHub Pages deployment (default)
+    ├── deploy-cloudflare-pages.yml  # Cloudflare Pages deployment
 ```
 
 ## Deployment
 
-### GitHub Pages (default)
+### Cloudflare Pages (default)
 
-The included workflow (`.github/workflows/deploy-github-pages.yml`) deploys automatically:
+The included workflow (`.github/workflows/deploy-cloudflare-pages.yml`) deploys automatically:
 
-1. Go to your repo **Settings** > **Pages** > **Source**: select **GitHub Actions**
-2. Update `site` in `astro.config.mjs` to your GitHub Pages URL
-3. Push to `main` -- the site deploys automatically
+1. Set GitHub Secrets: `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`
+2. Update `site` in `astro.config.mjs` to your Cloudflare Pages URL
+3. Push to `main` -- the site builds and deploys automatically
 
 ### Other platforms
 
@@ -286,7 +286,7 @@ Since the output is static HTML in `dist/`, you can deploy anywhere:
 
 ```bash
 pnpm build
-# Upload dist/ to Netlify, Vercel, or any static host
+# Upload dist/ to Netlify, Vercel, GitHub Pages, or any static host
 ```
 
 ## Design Philosophy
