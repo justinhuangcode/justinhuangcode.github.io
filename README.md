@@ -101,7 +101,7 @@ Create Markdown files in `src/content/posts/{locale}/`:
 ```markdown
 ---
 title: Your Post Title
-date: 2026-01-01
+date: "2026-01-01T16:27:43+08:00"
 description: Optional description for SEO
 category: Technology
 tags: [optional, tags]
@@ -115,7 +115,7 @@ Your content here.
 | Field | Type | Required | Default | Description |
 |---|---|---|---|---|
 | `title` | string | Yes | -- | Post title |
-| `date` | date | Yes | -- | Publication date (YYYY-MM-DD) |
+| `date` | datetime | Yes | -- | Publication timestamp in ISO 8601 with seconds and timezone, for example `2026-01-01T16:27:43+08:00` |
 | `description` | string | No | -- | Used in RSS feed and meta tags |
 | `category` | string | No | `"General"` | Post category |
 | `tags` | string[] | No | -- | Post tags |

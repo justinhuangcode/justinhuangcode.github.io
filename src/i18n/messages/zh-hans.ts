@@ -57,6 +57,7 @@ export const zhHans = {
     markdown: 'Markdown',
     guide: '指南',
     'paper-reading': '论文共读',
+    'technical-report-reading': '技术报告共读',
     seq2seq: 'Seq2Seq',
     transformer: 'Transformer',
     attention: 'Attention',
@@ -66,6 +67,7 @@ export const zhHans = {
     chinchilla: 'Chinchilla',
     rust: 'Rust',
     openclaw: 'OpenClaw',
+    'residual-connections': '残差连接',
   } as Record<string, string>,
   categories: {
     General: '通用',
@@ -75,6 +77,7 @@ export const zhHans = {
     Tutorial: '教程',
     OpenClaw: 'OpenClaw',
     'Paper Reading': '论文共读',
+    'Technical Report Reading': '技术报告共读',
   } as Record<string, string>,
   localeBanner: {
     message: '检测到您的浏览器语言为{lang}，是否切换？',

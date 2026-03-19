@@ -1,19 +1,30 @@
 ---
-title: "논문 읽기: Sequence to Sequence Learning with Neural Networks"
-date: 2026-01-24
+title: "논문 읽기: 《Sequence to Sequence Learning with Neural Networks》 (신경망을 이용한 시퀀스-투-시퀀스 학습)"
+date: "2026-01-24T16:41:08+08:00"
 category: "Paper Reading"
 description: 인코더-디코더 패러다임의 확립, 핵심 코드를 Rust로 재구현
 tags: [paper-reading, seq2seq, AI, LLM, rust]
 pinned: false
 ---
 
-2014년 9월 10일, 세 명의 Google 연구자가 arXiv(연구자들이 저널 심사를 거치지 않고 논문을 공개할 수 있는 프리프린트 서버)에 한 편의 논문을 올렸다: <a href="/papers/1409.3215v3.pdf" target="_blank"><i>Sequence to Sequence Learning with Neural Networks</i></a>.
+2014년 9월 10일, 세 명의 Google 연구자가 arXiv(연구자들이 저널 심사를 거치지 않고 논문을 공개할 수 있는 프리프린트 서버)에 한 편의 논문을 올렸다: [《Sequence to Sequence Learning with Neural Networks》](/papers/1409.3215v3.pdf) (신경망을 이용한 시퀀스-투-시퀀스 학습).
 
 저자는 Ilya Sutskever, Oriol Vinyals, Quoc V. Le로, 모두 Google 소속이었다. Sutskever는 AlexNet의 공동 저자로, Alex Krizhevsky, Geoffrey Hinton과 함께 딥러닝 혁명의 불을 지핀 논문을 작성했으며, 이후 OpenAI의 공동 창립자가 되었다. Vinyals는 이후 DeepMind에서 AlphaStar(DeepMind의 StarCraft AI)를 이끌었고, Quoc V. Le는 Google에서 AutoML 등의 연구를 주도했다.
 
 이 논문이 한 일은 겉보기에 놀라울 정도로 단순하다: 하나의 신경망으로 문장을 읽어 벡터로 압축하고, 또 다른 신경망으로 그 벡터에서 번역을 생성한다. 입력과 출력은 길이도, 언어도, 구조도 다를 수 있다. 이 프레임워크에는 이름이 있다: "Sequence to Sequence" (Seq2Seq).
 
 이것이 encoder-decoder 패러다임을 확립했다. 이후 [Bahdanau가 여기에 attention을 추가했고](/ko/posts/neural-machine-translation-by-jointly-learning-to-align-and-translate/), [Vaswani 등이 Transformer로 아키텍처 전체를 새로 썼다](/ko/posts/attention-is-all-you-need/). 하지만 출발점은 이 논문이었다.
+
+## 0. 먼저 몇 가지 용어부터
+
+머신러닝 배경이 없다면, 이 논문의 작업 흐름에 맞춰 아래 용어부터 익혀 두면 된다:
+
+- `Seq2Seq / 시퀀스-투-시퀀스`: 하나의 입력 시퀀스를 다른 출력 시퀀스로 직접 바꾸는 방식이다. 예를 들어 영어 문장을 프랑스어 문장으로 바꾸는 식이다.
+- `encoder`: 입력을 처음부터 끝까지 읽는 부분이다.
+- `decoder`: 출력을 한 단어씩 써 내려가는 부분이다.
+- `RNN / 순환 신경망`: 텍스트를 순서대로만 처리할 수 있는 오래된 구조다.
+- `LSTM`: RNN의 개선형으로, 긴 문장에서 앞쪽 정보를 더 오래 기억하도록 만든 구조다.
+- `vector / 벡터`: 일단은 "숫자들로 압축해 둔 요약본" 정도로 이해하면 충분하다.
 
 ## 1. 문제
 
@@ -170,9 +181,9 @@ let translation = model.decode(&encoded);
 
 **논문 읽기 시리즈**
 
-- [<i>Neural Machine Translation by Jointly Learning to Align and Translate</i>](/ko/posts/neural-machine-translation-by-jointly-learning-to-align-and-translate/) — Attention의 기원
-- [<i>Attention Is All You Need</i>](/ko/posts/attention-is-all-you-need/) — Attention이 주인공이 되다: Transformer의 탄생
-- [<i>BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</i>](/ko/posts/bert/) — 사전학습 패러다임의 확립
-- [<i>Scaling Laws for Neural Language Models</i>](/ko/posts/scaling-laws-for-neural-language-models/) — 스케일의 수학: 왜 더 큰 모델이 예측 가능하게 더 좋은가
-- [<i>Language Models are Few-Shot Learners</i>](/ko/posts/language-models-are-few-shot-learners/) — 더 큰 모델, 맥락에서 능력을 이끌어내는 데 더 뛰어나다
-- [<i>Training Compute-Optimal Large Language Models</i>](/ko/posts/training-compute-optimal-large-language-models/) — 컴퓨팅 예산을 현명하게 쓰는 법
+- [《Neural Machine Translation by Jointly Learning to Align and Translate》](/ko/posts/neural-machine-translation-by-jointly-learning-to-align-and-translate/) (정렬과 번역을 공동으로 학습하는 신경 기계 번역) — Attention의 기원
+- [《Attention Is All You Need》](/ko/posts/attention-is-all-you-need/) (어텐션만 있으면 충분하다) — Attention이 주인공이 되다: Transformer의 탄생
+- [《BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding》](/ko/posts/bert/) (BERT: 언어 이해를 위한 깊은 양방향 트랜스포머 사전학습) — 사전학습 패러다임의 확립
+- [《Scaling Laws for Neural Language Models》](/ko/posts/scaling-laws-for-neural-language-models/) (신경 언어 모델을 위한 스케일링 법칙) — 스케일의 수학: 왜 더 큰 모델이 예측 가능하게 더 좋은가
+- [《Language Models are Few-Shot Learners》](/ko/posts/language-models-are-few-shot-learners/) (언어 모델은 퓨샷 학습자다) — 더 큰 모델, 맥락에서 능력을 이끌어내는 데 더 뛰어나다
+- [《Training Compute-Optimal Large Language Models》](/ko/posts/training-compute-optimal-large-language-models/) (연산량 최적의 대규모 언어 모델 학습) — 컴퓨팅 예산을 현명하게 쓰는 법

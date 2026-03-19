@@ -1,13 +1,13 @@
 ---
 title: "Paper Reading: Attention Is All You Need"
-date: 2026-01-06
+date: "2026-01-06T16:18:46+08:00"
 category: "Paper Reading"
 description: Sharing my understanding of the Transformer paper, with core code reimplemented in Rust
 tags: [paper-reading, transformer, AI, LLM, rust]
 pinned: false
 ---
 
-On June 12, 2017, eight people uploaded a paper to arXiv (a preprint server where researchers can publish papers without waiting for journal peer review), with a title of just five words: <a href="/papers/1706.03762v7.pdf" target="_blank"><i>Attention Is All You Need</i></a>.
+On June 12, 2017, eight people uploaded a paper to arXiv (a preprint server where researchers can publish papers without waiting for journal peer review), with a title of just five words: [*Attention Is All You Need*](/papers/1706.03762v7.pdf).
 
 The eight were Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Łukasz Kaiser, and Illia Polosukhin, most of them working at Google Brain and Google Research at the time.
 
@@ -234,9 +234,9 @@ Attention Is All You Need.
 
 **Paper Reading Series**
 
-- [<i>Sequence to Sequence Learning with Neural Networks</i>](/posts/sequence-to-sequence-learning-with-neural-networks/) — Establishing the encoder-decoder paradigm
-- [<i>Neural Machine Translation by Jointly Learning to Align and Translate</i>](/posts/neural-machine-translation-by-jointly-learning-to-align-and-translate/) — The origin of attention
-- [<i>BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</i>](/posts/bert/) — Establishing the pre-training paradigm
-- [<i>Scaling Laws for Neural Language Models</i>](/posts/scaling-laws-for-neural-language-models/) — The mathematics of scale
-- [<i>Language Models are Few-Shot Learners</i>](/posts/language-models-are-few-shot-learners/) — Larger models, better at eliciting abilities from context
-- [<i>Training Compute-Optimal Large Language Models</i>](/posts/training-compute-optimal-large-language-models/) — How to spend your compute budget wisely
+- [*Sequence to Sequence Learning with Neural Networks*](/posts/sequence-to-sequence-learning-with-neural-networks/) — Establishing the encoder-decoder paradigm
+- [*Neural Machine Translation by Jointly Learning to Align and Translate*](/posts/neural-machine-translation-by-jointly-learning-to-align-and-translate/) — The origin of attention
+- [*BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding*](/posts/bert/) — Establishing the pre-training paradigm
+- [*Scaling Laws for Neural Language Models*](/posts/scaling-laws-for-neural-language-models/) — The mathematics of scale
+- [*Language Models are Few-Shot Learners*](/posts/language-models-are-few-shot-learners/) — Larger models, better at eliciting abilities from context
+- [*Training Compute-Optimal Large Language Models*](/posts/training-compute-optimal-large-language-models/) — How to spend your compute budget wisely

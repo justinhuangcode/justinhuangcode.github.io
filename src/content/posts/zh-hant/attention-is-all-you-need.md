@@ -1,13 +1,13 @@
 ---
-title: 論文共讀：《Attention Is All You Need》
-date: 2026-01-06
+title: "論文共讀：《Attention Is All You Need》（注意力就是你所需要的全部）"
+date: "2026-01-06T16:18:46+08:00"
 category: "Paper Reading"
 description: 分享我對 Transformer 論文的理解，附 Rust 複現程式碼
 tags: [paper-reading, transformer, AI, LLM, rust]
 pinned: false
 ---
 
-2017 年 6 月 12 日，八個人在 arXiv（一個學術論文預印本網站，論文不用等期刊審稿就能直接發布）上傳了一篇論文，標題只有五個詞：<a href="/papers/1706.03762v7.pdf" target="_blank">《Attention Is All You Need》</a>（注意力就是你所需要的全部）。
+2017 年 6 月 12 日，八個人在 arXiv（一個學術論文預印本網站，論文不用等期刊審稿就能直接發布）上傳了一篇論文，標題只有五個詞：[《Attention Is All You Need》](/papers/1706.03762v7.pdf)（注意力就是你所需要的全部）。
 
 這八個人是 Ashish Vaswani、Noam Shazeer、Niki Parmar、Jakob Uszkoreit、Llion Jones、Aidan N. Gomez、Łukasz Kaiser 和 Illia Polosukhin，當時大多在 Google Brain 和 Google Research 工作。
 
@@ -18,6 +18,16 @@ pinned: false
 近九年後的今天，ChatGPT、Claude、DeepSeek、Qwen，這些 AI 產品的底層架構思路，大多都能追溯到這 15 頁紙。
 
 這篇文章是我讀完論文後的理解，附帶 Rust 複現的核心程式碼。不是翻譯，不是摘要。沒有技術背景也能讀下去。
+
+## 0. 先認幾個詞
+
+如果你沒有機器學習背景，先順著這篇論文真正想取代的舊方案，記住下面幾個詞就夠了：
+
+- `RNN / 循環神經網路`：一種更早的序列模型。它處理句子時必須一個詞一個詞往後讀，像人用手指著文章逐行看。
+- `attention`：從很多資訊裡，挑出當前最該看的那幾部分。你可以先把它理解成「有選擇地回頭看重點」。
+- `Query / Key / Value`：注意力機制裡的三個角色。Query 像「我現在想找什麼」，Key 像「每段資訊貼著什麼標籤」，Value 則是「真正被取回來的內容」。
+- `Transformer`：以 attention 為核心搭起來的一整套架構。它不靠循環一步步往前推，而是讓每個位置都能直接看其他位置。
+- `並行`：這裡不是說模型更聰明，而是說它能同時處理很多位置，不必像 RNN 那樣排隊。
 
 ## 1. 一句話說清楚
 
@@ -228,15 +238,15 @@ struct DecoderLayer {
 
 這篇論文給出了那個架構。
 
-Attention Is All You Need.
+《Attention Is All You Need》（注意力就是你所需要的全部）。
 
 ---
 
 **論文共讀系列**
 
-- [《Sequence to Sequence Learning with Neural Networks》](/zh-hant/posts/sequence-to-sequence-learning-with-neural-networks/) — 編碼器-解碼器範式的確立
-- [《Neural Machine Translation by Jointly Learning to Align and Translate》](/zh-hant/posts/neural-machine-translation-by-jointly-learning-to-align-and-translate/) — 注意力機制的起源
-- [《BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding》](/zh-hant/posts/bert/) — 預訓練範式的確立
-- [<i>Scaling Laws for Neural Language Models</i>](/zh-hant/posts/scaling-laws-for-neural-language-models/) — 規模的數學：為什麼更大的模型可預測地更好
-- [《Language Models are Few-Shot Learners》](/zh-hant/posts/language-models-are-few-shot-learners/) — 更大的模型，更善於從上下文中誘發能力
-- [《Training Compute-Optimal Large Language Models》](/zh-hant/posts/training-compute-optimal-large-language-models/) — 如何最有效地分配算力
+- [《Sequence to Sequence Learning with Neural Networks》](/zh-hant/posts/sequence-to-sequence-learning-with-neural-networks/)（使用神經網路進行序列到序列學習） — 編碼器-解碼器範式的確立
+- [《Neural Machine Translation by Jointly Learning to Align and Translate》](/zh-hant/posts/neural-machine-translation-by-jointly-learning-to-align-and-translate/)（通過聯合學習對齊與翻譯實現神經機器翻譯） — 注意力機制的起源
+- [《BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding》](/zh-hant/posts/bert/)（BERT：用於語言理解的深度雙向 Transformer 預訓練） — 預訓練範式的確立
+- [《Scaling Laws for Neural Language Models》](/zh-hant/posts/scaling-laws-for-neural-language-models/)（神經語言模型的縮放定律） — 規模的數學：為什麼更大的模型可預測地更好
+- [《Language Models are Few-Shot Learners》](/zh-hant/posts/language-models-are-few-shot-learners/)（語言模型是少樣本學習者） — 更大的模型，更善於從上下文中誘發能力
+- [《Training Compute-Optimal Large Language Models》](/zh-hant/posts/training-compute-optimal-large-language-models/)（訓練算力最優的大型語言模型） — 如何最有效地分配算力

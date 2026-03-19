@@ -1,6 +1,6 @@
 ---
 title: 👋 Hello World
-date: 2026-01-01
+date: "2026-01-01T16:07:13+08:00"
 category: Tutorial
 description: Welcome to Astro-Theme-Aither — an AI-native Astro theme that believes text itself is beautiful.
 tags: [hello, astro]
@@ -54,7 +54,7 @@ Create a new `.md` file in `src/content/posts/en/` with the following frontmatte
 ```markdown
 ---
 title: Your Post Title
-date: 2026-01-15
+date: "2026-01-15T16:27:43+08:00"
 category: General
 description: A brief summary for SEO and social previews
 tags: [topic, another]
@@ -64,7 +64,7 @@ pinned: false
 Your content starts here.
 ```
 
-The `title`, `date`, and `category` fields are required. The `description` field is strongly recommended because it populates the meta description tag and Open Graph previews. Tags are optional. Set `pinned: false` to pin a post to the top of the list.
+The `title`, `date`, and `category` fields are required. Use ISO 8601 for `date`, including seconds and a timezone offset, for example `2026-01-15T16:27:43+08:00`. The `description` field is strongly recommended because it populates the meta description tag and Open Graph previews. Tags are optional. Set `pinned: false` to pin a post to the top of the list.
 
 For multilingual content, create the same file in each locale directory (`zh-hans/`, `ko/`, `fr/`, etc.) with translated content.
 

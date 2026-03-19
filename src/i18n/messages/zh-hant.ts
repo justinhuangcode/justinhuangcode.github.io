@@ -57,6 +57,7 @@ export const zhHant = {
     markdown: 'Markdown',
     guide: '指南',
     'paper-reading': '論文共讀',
+    'technical-report-reading': '技術報告共讀',
     seq2seq: 'Seq2Seq',
     transformer: 'Transformer',
     attention: 'Attention',
@@ -66,6 +67,7 @@ export const zhHant = {
     chinchilla: 'Chinchilla',
     rust: 'Rust',
     openclaw: 'OpenClaw',
+    'residual-connections': '殘差連接',
   } as Record<string, string>,
   categories: {
     General: '通用',
@@ -75,6 +77,7 @@ export const zhHant = {
     Tutorial: '教學',
     OpenClaw: 'OpenClaw',
     'Paper Reading': '論文共讀',
+    'Technical Report Reading': '技術報告共讀',
   } as Record<string, string>,
   localeBanner: {
     message: '偵測到您的瀏覽器語言為{lang}，是否切換？',

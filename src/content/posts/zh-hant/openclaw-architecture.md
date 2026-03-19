@@ -1,6 +1,6 @@
 ---
 title: OpenClaw 專題：架構分析 🦞
-date: 2026-02-24
+date: "2026-02-24T16:37:11+08:00"
 category: "OpenClaw"
 description: 基於 v2026.3.8 原始碼，拆解一個自託管 AI 助手的工程骨架
 tags: [AI, open-source, openclaw]

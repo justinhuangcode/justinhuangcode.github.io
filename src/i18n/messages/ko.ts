@@ -57,6 +57,7 @@ export const ko = {
     markdown: 'Markdown',
     guide: '가이드',
     'paper-reading': '논문 읽기',
+    'technical-report-reading': '기술 리포트 읽기',
     seq2seq: 'Seq2Seq',
     transformer: 'Transformer',
     attention: 'Attention',
@@ -66,6 +67,7 @@ export const ko = {
     chinchilla: 'Chinchilla',
     rust: 'Rust',
     openclaw: 'OpenClaw',
+    'residual-connections': '잔차 연결',
   } as Record<string, string>,
   categories: {
     General: '일반',
@@ -74,7 +76,8 @@ export const ko = {
     Design: '디자인',
     Tutorial: '튜토리얼',
     OpenClaw: 'OpenClaw',
-    'Paper Reading': 'Paper Reading',
+    'Paper Reading': '논문 읽기',
+    'Technical Report Reading': '기술 리포트 읽기',
   } as Record<string, string>,
   localeBanner: {
     message: '브라우저 언어가 {lang}(으)로 감지되었습니다. 전환하시겠습니까?',

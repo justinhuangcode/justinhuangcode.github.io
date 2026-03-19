@@ -1,19 +1,19 @@
 ---
 title: "Paper Reading: Neural Machine Translation by Jointly Learning to Align and Translate"
-date: 2026-01-11
+date: "2026-01-11T16:26:19+08:00"
 category: "Paper Reading"
 description: The origin of attention mechanism, with core code reimplemented in Rust
 tags: [paper-reading, attention, AI, LLM, rust]
 pinned: false
 ---
 
-On September 1, 2014, three researchers uploaded a paper to arXiv (a preprint server where researchers can publish papers without waiting for journal peer review): <a href="/papers/1409.0473v7.pdf" target="_blank"><i>Neural Machine Translation by Jointly Learning to Align and Translate</i></a>.
+On September 1, 2014, three researchers uploaded a paper to arXiv (a preprint server where researchers can publish papers without waiting for journal peer review): [*Neural Machine Translation by Jointly Learning to Align and Translate*](/papers/1409.0473v7.pdf).
 
 The three were Dzmitry Bahdanau, KyungHyun Cho, and Yoshua Bengio, from the University of Montreal. Yoshua Bengio is one of the "three godfathers" of deep learning, alongside Geoffrey Hinton and Yann LeCun; the three shared the 2018 Turing Award. Bahdanau was still a PhD student at the time.
 
 The core contribution of this paper can be summarized in one thing: teaching a translation model to look back at different parts of the source sentence when generating each word. It sounds obvious in hindsight, but in the neural machine translation research of the time, this was a genuinely novel idea. It has a name: the "attention mechanism."
 
-Three years later, eight people at Google pushed this idea to its logical extreme and wrote [<i>Attention Is All You Need</i>](/posts/attention-is-all-you-need/). So if you want to understand the Transformer, this paper is one of its most important predecessors.
+Three years later, eight people at Google pushed this idea to its logical extreme and wrote [*Attention Is All You Need*](/posts/attention-is-all-you-need/). So if you want to understand the Transformer, this paper is one of its most important predecessors.
 
 ## 1. The Problem
 
@@ -183,9 +183,9 @@ And that look changed an entire era.
 
 **Paper Reading Series**
 
-- [<i>Sequence to Sequence Learning with Neural Networks</i>](/posts/sequence-to-sequence-learning-with-neural-networks/) — Establishing the encoder-decoder paradigm
-- [<i>Attention Is All You Need</i>](/posts/attention-is-all-you-need/) — Attention takes center stage: the birth of the Transformer
-- [<i>BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</i>](/posts/bert/) — Establishing the pre-training paradigm
-- [<i>Scaling Laws for Neural Language Models</i>](/posts/scaling-laws-for-neural-language-models/) — The mathematics of scale
-- [<i>Language Models are Few-Shot Learners</i>](/posts/language-models-are-few-shot-learners/) — Larger models, better at eliciting abilities from context
-- [<i>Training Compute-Optimal Large Language Models</i>](/posts/training-compute-optimal-large-language-models/) — How to spend your compute budget wisely
+- [*Sequence to Sequence Learning with Neural Networks*](/posts/sequence-to-sequence-learning-with-neural-networks/) — Establishing the encoder-decoder paradigm
+- [*Attention Is All You Need*](/posts/attention-is-all-you-need/) — Attention takes center stage: the birth of the Transformer
+- [*BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding*](/posts/bert/) — Establishing the pre-training paradigm
+- [*Scaling Laws for Neural Language Models*](/posts/scaling-laws-for-neural-language-models/) — The mathematics of scale
+- [*Language Models are Few-Shot Learners*](/posts/language-models-are-few-shot-learners/) — Larger models, better at eliciting abilities from context
+- [*Training Compute-Optimal Large Language Models*](/posts/training-compute-optimal-large-language-models/) — How to spend your compute budget wisely

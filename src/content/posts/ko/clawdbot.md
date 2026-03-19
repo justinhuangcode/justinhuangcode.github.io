@@ -1,6 +1,6 @@
 ---
 title: "Clawdbot: 주목할 만한 탈중앙화 오픈소스 AI 프로젝트"
-date: 2026-01-16
+date: "2026-01-16T16:34:57+08:00"
 category: "OpenClaw"
 description: 모든 채팅 채널을 AI 에이전트에 연결해주는 셀프 호스팅 플랫폼
 tags: [AI, open-source]
@@ -11,7 +11,7 @@ pinned: false
 
 대화, 데이터, 컨텍스트 -- 전부 다른 누군가의 서버에 저장된다. AI를 사용하긴 하지만, 진정한 의미에서 소유하고 있는 건 아니다.
 
-<a href="https://github.com/clawdbot/clawdbot" target="_blank">Clawdbot</a>이라는 오픈소스 프로젝트는 정반대의 방향을 택했다.
+[Clawdbot](https://github.com/clawdbot/clawdbot)이라는 오픈소스 프로젝트는 정반대의 방향을 택했다.
 
 이 프로젝트가 하려는 건 또 하나의 더 똑똑한 챗봇을 만드는 게 아니라, AI 능력을 사용자의 손에 돌려주는 것이다. 자신의 기기에서 실행하고, 이미 쓰고 있는 채팅 도구에 연결하고, 데이터와 컨텍스트와 통제권을 온전히 자기 것으로 유지하는 것.
 

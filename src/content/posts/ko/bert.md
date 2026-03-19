@@ -1,19 +1,30 @@
 ---
-title: "논문 읽기: BERT — Pre-training of Deep Bidirectional Transformers for Language Understanding"
-date: 2026-01-31
+title: "논문 읽기: 《BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding》 (BERT: 언어 이해를 위한 깊은 양방향 트랜스포머 사전학습)"
+date: "2026-01-31T16:52:21+08:00"
 category: "Paper Reading"
 description: 사전학습 패러다임의 확립, 핵심 코드를 Rust로 재구현
 tags: [paper-reading, bert, AI, LLM, rust]
 pinned: false
 ---
 
-2018년 10월 11일, Google AI Language 팀은 arXiv(연구자들이 학술지 동료 심사를 거치지 않고 논문을 게시할 수 있는 프리프린트 서버)에 한 편의 논문을 업로드했다: <a href="/papers/1810.04805v2.pdf" target="_blank"><i>BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</i></a>.
+2018년 10월 11일, Google AI Language 팀은 arXiv(연구자들이 학술지 동료 심사를 거치지 않고 논문을 게시할 수 있는 프리프린트 서버)에 한 편의 논문을 업로드했다: [《BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding》](/papers/1810.04805v2.pdf) (BERT: 언어 이해를 위한 깊은 양방향 트랜스포머 사전학습).
 
 저자는 Jacob Devlin, Ming-Wei Chang, Kenton Lee, Kristina Toutanova로, 모두 Google 소속이다. Devlin은 Google에 합류하기 전 Microsoft Research에서 근무했으며, Google에서 BERT의 설계와 구현을 주도했다.
 
 BERT는 Bidirectional Encoder Representations from Transformers의 약자다. 당시로서는 상당히 대담한 시도를 했다: 먼저 대량의 레이블이 없는 텍스트로 범용 pre-training을 수행한 뒤, 출력 레이어 하나만 추가하고 특정 태스크에 fine-tuning하여 최첨단 성능을 달성한 것이다.
 
 이 "pre-train 후 fine-tune" 패러다임은 이후 NLP 전체의 표준 접근 방식이 되었다. GPT 시리즈도 비슷한 아이디어를 따랐지만 다른 길을 택했다 — 단방향 생성이다. BERT는 양방향 이해를 선택했다. 두 갈래의 길은 각각 방대한 모델 계보를 탄생시켰다.
+
+## 0. 먼저 몇 가지 용어부터
+
+대형 언어 모델의 학습 흐름이 낯설다면, 이 논문에서 가장 중요한 아래 용어만 먼저 잡아두면 된다:
+
+- `Transformer`: BERT가 사용하는 기본 아키텍처다. 문장의 좌우 문맥을 함께 보며 처리하는 기계라고 생각하면 된다.
+- `pre-training / 사전 학습`: 특정 작업부터 배우는 것이 아니라, 방대한 일반 텍스트에서 언어 자체를 먼저 배우는 단계다.
+- `fine-tuning / 파인튜닝`: 사전 학습으로 얻은 능력을 특정 작업에 맞게 조금 더 조정하는 단계다.
+- `bidirectional / 양방향`: 어떤 위치를 이해할 때 왼쪽만 보는 것이 아니라 오른쪽도 함께 본다는 뜻이다.
+- `MLM / Masked Language Model`: 일부 단어를 가리고, 주변 문맥만 보고 그 단어를 맞히게 하는 학습 방식이다.
+- `NSP / Next Sentence Prediction`: 두 문장이 실제로 이어지는 문장인지 판단하게 하는 학습 방식이다.
 
 ## 1. 문제
 
@@ -195,9 +206,9 @@ Pre-training에는 며칠이 걸릴 수 있지만, fine-tuning은 보통 수 분
 
 **논문 읽기 시리즈**
 
-- [<i>Sequence to Sequence Learning with Neural Networks</i>](/ko/posts/sequence-to-sequence-learning-with-neural-networks/) — 인코더-디코더 패러다임의 확립
-- [<i>Neural Machine Translation by Jointly Learning to Align and Translate</i>](/ko/posts/neural-machine-translation-by-jointly-learning-to-align-and-translate/) — Attention의 기원
-- [<i>Attention Is All You Need</i>](/ko/posts/attention-is-all-you-need/) — Attention이 주역이 되다: Transformer의 탄생
-- [<i>Scaling Laws for Neural Language Models</i>](/ko/posts/scaling-laws-for-neural-language-models/) — 스케일의 수학: 왜 더 큰 모델이 예측 가능하게 더 좋은가
-- [<i>Language Models are Few-Shot Learners</i>](/ko/posts/language-models-are-few-shot-learners/) — 더 큰 모델, 문맥에서 더 잘 이끌어내는 능력
-- [<i>Training Compute-Optimal Large Language Models</i>](/ko/posts/training-compute-optimal-large-language-models/) — 컴퓨팅 예산을 현명하게 쓰는 법
+- [《Sequence to Sequence Learning with Neural Networks》](/ko/posts/sequence-to-sequence-learning-with-neural-networks/) (신경망을 이용한 시퀀스-투-시퀀스 학습) — 인코더-디코더 패러다임의 확립
+- [《Neural Machine Translation by Jointly Learning to Align and Translate》](/ko/posts/neural-machine-translation-by-jointly-learning-to-align-and-translate/) (정렬과 번역을 공동으로 학습하는 신경 기계 번역) — Attention의 기원
+- [《Attention Is All You Need》](/ko/posts/attention-is-all-you-need/) (어텐션만 있으면 충분하다) — Attention이 주역이 되다: Transformer의 탄생
+- [《Scaling Laws for Neural Language Models》](/ko/posts/scaling-laws-for-neural-language-models/) (신경 언어 모델을 위한 스케일링 법칙) — 스케일의 수학: 왜 더 큰 모델이 예측 가능하게 더 좋은가
+- [《Language Models are Few-Shot Learners》](/ko/posts/language-models-are-few-shot-learners/) (언어 모델은 퓨샷 학습자다) — 더 큰 모델, 문맥에서 더 잘 이끌어내는 능력
+- [《Training Compute-Optimal Large Language Models》](/ko/posts/training-compute-optimal-large-language-models/) (연산량 최적의 대규모 언어 모델 학습) — 컴퓨팅 예산을 현명하게 쓰는 법

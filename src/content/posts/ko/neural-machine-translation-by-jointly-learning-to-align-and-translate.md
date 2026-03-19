@@ -1,19 +1,29 @@
 ---
-title: "논문 읽기: Neural Machine Translation by Jointly Learning to Align and Translate"
-date: 2026-01-11
+title: "논문 읽기: 《Neural Machine Translation by Jointly Learning to Align and Translate》 (정렬과 번역을 공동으로 학습하는 신경 기계 번역)"
+date: "2026-01-11T16:26:19+08:00"
 category: "Paper Reading"
 description: 어텐션 메커니즘의 기원, 핵심 코드를 Rust로 재구현
 tags: [paper-reading, attention, AI, LLM, rust]
 pinned: false
 ---
 
-2014년 9월 1일, 세 명의 연구자가 arXiv(연구자들이 학술지 피어 리뷰를 거치지 않고 논문을 공개할 수 있는 프리프린트 서버)에 한 편의 논문을 업로드했다: <a href="/papers/1409.0473v7.pdf" target="_blank"><i>Neural Machine Translation by Jointly Learning to Align and Translate</i></a>.
+2014년 9월 1일, 세 명의 연구자가 arXiv(연구자들이 학술지 피어 리뷰를 거치지 않고 논문을 공개할 수 있는 프리프린트 서버)에 한 편의 논문을 업로드했다: [《Neural Machine Translation by Jointly Learning to Align and Translate》](/papers/1409.0473v7.pdf) (정렬과 번역을 공동으로 학습하는 신경 기계 번역).
 
 저자는 몬트리올 대학교의 Dzmitry Bahdanau, KyungHyun Cho, Yoshua Bengio 세 사람이다. Yoshua Bengio는 Geoffrey Hinton, Yann LeCun과 함께 딥러닝의 "세 거장"으로 불리며, 세 사람은 2018년 튜링상을 공동 수상했다. Bahdanau는 당시 아직 박사과정 학생이었다.
 
 이 논문의 핵심 기여는 한 가지로 요약할 수 있다: 번역 모델이 각 단어를 생성할 때 원문의 서로 다른 부분을 되돌아볼 수 있게 한 것이다. 지금 생각하면 당연해 보이지만, 당시 신경 기계 번역 연구에서 이것은 진정으로 새로운 아이디어였다. 이 아이디어에는 이름이 있다: "attention 메커니즘."
 
-3년 후, Google의 여덟 명의 연구자가 이 아이디어를 논리적 극한까지 밀어붙여 [<i>Attention Is All You Need</i>](/ko/posts/attention-is-all-you-need/)를 썼다. Transformer를 이해하고 싶다면, 이 논문은 가장 중요한 선행 연구 중 하나다.
+3년 후, Google의 여덟 명의 연구자가 이 아이디어를 논리적 극한까지 밀어붙여 [《Attention Is All You Need》](/ko/posts/attention-is-all-you-need/) (어텐션만 있으면 충분하다)를 썼다. Transformer를 이해하고 싶다면, 이 논문은 가장 중요한 선행 연구 중 하나다.
+
+## 0. 먼저 몇 가지 용어부터
+
+머신러닝 배경이 전혀 없어도, 이 논문이 고치려 한 병목만 먼저 잡으면 읽기가 훨씬 쉬워진다:
+
+- `encoder-decoder`: 한쪽이 원문을 끝까지 읽고, 다른 한쪽이 번역문을 한 단어씩 써 내려가는 구조다.
+- `RNN / 순환 신경망`: 당시 주류였던 시퀀스 모델이다. 텍스트를 반드시 순서대로 처리해야 한다.
+- `hidden state / 은닉 상태`: 모델이 어떤 위치까지 읽은 뒤 손에 쥐고 있는 임시 메모라고 생각하면 된다.
+- `alignment / 정렬`: 원문 어느 부분이 지금 생성하려는 번역 단어와 대응되는지를 뜻한다.
+- `attention`: 하나의 압축 벡터만 바라보는 대신, 필요할 때 원문의 더 relevant 한 위치를 다시 보게 만드는 방식이다.
 
 ## 1. 문제
 
@@ -183,9 +193,9 @@ impl AttentionDecoder {
 
 **논문 읽기 시리즈**
 
-- [<i>Sequence to Sequence Learning with Neural Networks</i>](/ko/posts/sequence-to-sequence-learning-with-neural-networks/) — Encoder-decoder 패러다임의 확립
-- [<i>Attention Is All You Need</i>](/ko/posts/attention-is-all-you-need/) — Attention이 주역이 되다: Transformer의 탄생
-- [<i>BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</i>](/ko/posts/bert/) — 사전 학습 패러다임의 확립
-- [<i>Scaling Laws for Neural Language Models</i>](/ko/posts/scaling-laws-for-neural-language-models/) — 스케일의 수학: 왜 더 큰 모델이 예측 가능하게 더 좋은가
-- [<i>Language Models are Few-Shot Learners</i>](/ko/posts/language-models-are-few-shot-learners/) — 더 큰 모델, 문맥에서 능력을 더 잘 이끌어내다
-- [<i>Training Compute-Optimal Large Language Models</i>](/ko/posts/training-compute-optimal-large-language-models/) — 컴퓨팅 예산을 현명하게 쓰는 법
+- [《Sequence to Sequence Learning with Neural Networks》](/ko/posts/sequence-to-sequence-learning-with-neural-networks/) (신경망을 이용한 시퀀스-투-시퀀스 학습) — Encoder-decoder 패러다임의 확립
+- [《Attention Is All You Need》](/ko/posts/attention-is-all-you-need/) (어텐션만 있으면 충분하다) — Attention이 주역이 되다: Transformer의 탄생
+- [《BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding》](/ko/posts/bert/) (BERT: 언어 이해를 위한 깊은 양방향 트랜스포머 사전학습) — 사전 학습 패러다임의 확립
+- [《Scaling Laws for Neural Language Models》](/ko/posts/scaling-laws-for-neural-language-models/) (신경 언어 모델을 위한 스케일링 법칙) — 스케일의 수학: 왜 더 큰 모델이 예측 가능하게 더 좋은가
+- [《Language Models are Few-Shot Learners》](/ko/posts/language-models-are-few-shot-learners/) (언어 모델은 퓨샷 학습자다) — 더 큰 모델, 문맥에서 능력을 더 잘 이끌어내다
+- [《Training Compute-Optimal Large Language Models》](/ko/posts/training-compute-optimal-large-language-models/) (연산량 최적의 대규모 언어 모델 학습) — 컴퓨팅 예산을 현명하게 쓰는 법

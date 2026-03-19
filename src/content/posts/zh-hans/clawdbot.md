@@ -1,6 +1,6 @@
 ---
 title: Clawdbot：一个值得关注的去中心化 AI 开源项目
-date: 2026-01-16
+date: "2026-01-16T16:34:57+08:00"
 category: "OpenClaw"
 description: 一个把所有聊天渠道接入 AI Agent 的自托管平台
 tags: [AI, open-source]
@@ -11,7 +11,7 @@ pinned: false
 
 你的对话、你的数据、你的上下文，最终都沉淀在别人的服务器里。你在使用 AI，但你并不真正拥有它。
 
-<a href="https://github.com/clawdbot/clawdbot" target="_blank">Clawdbot</a> 这个开源项目，走的恰恰是反方向。
+[Clawdbot](https://github.com/clawdbot/clawdbot) 这个开源项目，走的恰恰是反方向。
 
 它想做的，不是再造一个更聪明的聊天机器人，而是把 AI 的能力真正放回用户手中：跑在你自己的机器上，接入你已经在用的聊天工具，让数据、上下文和控制权都留在你自己这里。
 

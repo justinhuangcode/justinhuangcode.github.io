@@ -1,19 +1,30 @@
 ---
-title: 论文共读：《Sequence to Sequence Learning with Neural Networks》
-date: 2026-01-24
+title: "论文共读：《Sequence to Sequence Learning with Neural Networks》（使用神经网络进行序列到序列学习）"
+date: "2026-01-24T16:41:08+08:00"
 category: "Paper Reading"
 description: 编码器-解码器范式的确立，附 Rust 复现代码
 tags: [paper-reading, seq2seq, AI, LLM, rust]
 pinned: false
 ---
 
-2014 年 9 月 10 日，三个 Google 研究员在 arXiv（一个学术论文预印本网站，论文不用等期刊审稿就能直接发布）上传了一篇论文：<a href="/papers/1409.3215v3.pdf" target="_blank">《Sequence to Sequence Learning with Neural Networks》</a>（使用神经网络进行序列到序列学习）。
+2014 年 9 月 10 日，三个 Google 研究员在 arXiv（一个学术论文预印本网站，论文不用等期刊审稿就能直接发布）上传了一篇论文：[《Sequence to Sequence Learning with Neural Networks》](/papers/1409.3215v3.pdf)（使用神经网络进行序列到序列学习）。
 
 作者是 Ilya Sutskever、Oriol Vinyals 和 Quoc V. Le，均来自 Google。Sutskever 是 AlexNet 的作者之一，与 Alex Krizhevsky、Geoffrey Hinton 合作完成了那篇引爆深度学习的计算机视觉论文，后来成为 OpenAI 联合创始人之一；Vinyals 后来在 DeepMind 主导了 AlphaStar（星际争霸 AI）；Quoc V. Le 则在 Google 推动了 AutoML 等研究。
 
 这篇论文做了一件看似简单的事：用一个神经网络读完一句话，压成一个向量，再用另一个神经网络从这个向量里生成翻译。输入和输出可以长度不同、语言不同、结构不同。这个框架有一个名字，叫「序列到序列」（Sequence to Sequence，简称 Seq2Seq）。
 
 它确立了编码器-解码器（Encoder-Decoder）这个范式。后来 [Bahdanau 在此基础上加入了注意力机制](/zh-hans/posts/neural-machine-translation-by-jointly-learning-to-align-and-translate/)，再后来 [Vaswani 等人用 Transformer 把整个架构重写](/zh-hans/posts/attention-is-all-you-need/)。但起点，是这篇论文。
+
+## 0. 先认几个词
+
+如果你没有机器学习背景，可以先按这篇论文的工作流，记住下面几个词：
+
+- `Seq2Seq / 序列到序列`：把一段输入序列直接变成另一段输出序列，比如把英文句子变成法文句子。
+- `Encoder / 编码器`：负责把输入从头到尾读完。
+- `Decoder / 解码器`：负责把输出一个词一个词写出来。
+- `RNN / 循环神经网络`：一种只能按顺序处理文本的旧架构。
+- `LSTM`：RNN 的改良版，更擅长在长句子里记住前面的信息。
+- `向量 / vector`：你可以先把它理解成“用一串数字压缩出来的一份摘要”。
 
 ## 1. 要解决什么问题
 
@@ -170,9 +181,9 @@ let translation = model.decode(&encoded);
 
 **论文共读系列**
 
-- [《Neural Machine Translation by Jointly Learning to Align and Translate》](/zh-hans/posts/neural-machine-translation-by-jointly-learning-to-align-and-translate/) — 注意力机制的起源
-- [《Attention Is All You Need》](/zh-hans/posts/attention-is-all-you-need/) — 注意力成为主角，Transformer 的诞生
-- [《BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding》](/zh-hans/posts/bert/) — 预训练范式的确立
-- [<i>Scaling Laws for Neural Language Models</i>](/zh-hans/posts/scaling-laws-for-neural-language-models/) — 规模的数学：为什么更大的模型可预测地更好
-- [《Language Models are Few-Shot Learners》](/zh-hans/posts/language-models-are-few-shot-learners/) — 更大的模型，更善于从上下文中诱发能力
-- [《Training Compute-Optimal Large Language Models》](/zh-hans/posts/training-compute-optimal-large-language-models/) — 怎样花算力最划算
+- [《Neural Machine Translation by Jointly Learning to Align and Translate》](/zh-hans/posts/neural-machine-translation-by-jointly-learning-to-align-and-translate/)（通过联合学习对齐与翻译实现神经机器翻译） — 注意力机制的起源
+- [《Attention Is All You Need》](/zh-hans/posts/attention-is-all-you-need/)（注意力就是你所需要的全部） — 注意力成为主角，Transformer 的诞生
+- [《BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding》](/zh-hans/posts/bert/)（BERT：用于语言理解的深度双向 Transformer 预训练） — 预训练范式的确立
+- [《Scaling Laws for Neural Language Models》](/zh-hans/posts/scaling-laws-for-neural-language-models/)（神经语言模型的缩放定律） — 规模的数学：为什么更大的模型可预测地更好
+- [《Language Models are Few-Shot Learners》](/zh-hans/posts/language-models-are-few-shot-learners/)（语言模型是少样本学习者） — 更大的模型，更善于从上下文中诱发能力
+- [《Training Compute-Optimal Large Language Models》](/zh-hans/posts/training-compute-optimal-large-language-models/)（训练计算最优的大语言模型） — 怎样花算力最划算

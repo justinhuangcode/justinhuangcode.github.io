@@ -1,6 +1,6 @@
 ---
 title: 👋 Hello World
-date: 2026-01-01
+date: "2026-01-01T16:07:13+08:00"
 category: Tutorial
 description: Astro-Theme-Aither에 오신 것을 환영합니다 — 타이포그래피가 디자인을 이끄는 블로그 테마
 tags: [hello, astro]
@@ -53,7 +53,7 @@ src/
 ```markdown
 ---
 title: 글 제목
-date: 2026-01-15
+date: "2026-01-15T16:27:43+08:00"
 category: General
 description: SEO와 소셜 미리보기를 위한 간단한 요약
 tags: [topic, another]
@@ -62,7 +62,7 @@ tags: [topic, another]
 여기에 내용을 작성하세요.
 ```
 
-`title`, `date`, `category` 필드는 필수입니다. `description` 필드는 메타 설명 태그와 Open Graph 미리보기를 채우기 때문에 작성을 강력히 권장합니다. 태그는 선택 사항이지만 독자들이 관련 콘텐츠를 발견하는 데 도움이 됩니다.
+`title`, `date`, `category` 필드는 필수입니다. `date`는 초와 시간대까지 포함한 ISO 8601 형식을 사용하는 것이 좋습니다. 예: `2026-01-15T16:27:43+08:00`. `description` 필드는 메타 설명 태그와 Open Graph 미리보기를 채우기 때문에 작성을 강력히 권장합니다. 태그는 선택 사항이지만 독자들이 관련 콘텐츠를 발견하는 데 도움이 됩니다.
 
 ## 무엇이 포함되어 있나
 

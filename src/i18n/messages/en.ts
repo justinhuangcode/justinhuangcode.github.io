@@ -57,6 +57,7 @@ export const en = {
     markdown: 'Markdown',
     guide: 'Guide',
     'paper-reading': 'Paper Reading',
+    'technical-report-reading': 'Technical Report Reading',
     seq2seq: 'Seq2Seq',
     transformer: 'Transformer',
     attention: 'Attention',
@@ -66,6 +67,7 @@ export const en = {
     chinchilla: 'Chinchilla',
     rust: 'Rust',
     openclaw: 'OpenClaw',
+    'residual-connections': 'Residual Connections',
   } as Record<string, string>,
   categories: {
     General: 'General',
@@ -75,6 +77,7 @@ export const en = {
     Tutorial: 'Tutorial',
     OpenClaw: 'OpenClaw',
     'Paper Reading': 'Paper Reading',
+    'Technical Report Reading': 'Technical Report Reading',
   } as Record<string, string>,
   localeBanner: {
     message: 'We detected your browser language is {lang}. Switch to it?',

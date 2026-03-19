@@ -1,6 +1,6 @@
 ---
 title: 👋 你好，世界
-date: 2026-01-01
+date: "2026-01-01T16:07:13+08:00"
 category: Tutorial
 description: 歡迎來到 Astro-Theme-Aither——一個相信文字本身就很美的 AI 原生 Astro 主題。
 tags: [hello, astro]
@@ -52,7 +52,7 @@ src/
 ```markdown
 ---
 title: 我的第一篇文章
-date: 2026-01-15
+date: "2026-01-15T16:27:43+08:00"
 category: General
 description: SEO 和社群預覽的簡短摘要
 tags: [topic, another]
@@ -62,7 +62,7 @@ pinned: false
 正文從這裡開始。
 ```
 
-`title`、`date`、`category` 是必填項。`description` 強烈建議填寫。設定 `pinned: false` 可將文章置頂。
+`title`、`date`、`category` 是必填項。`date` 建議使用帶時區、精確到秒的 ISO 8601 格式，例如 `2026-01-15T16:27:43+08:00`。`description` 強烈建議填寫。設定 `pinned: false` 可將文章置頂。
 
 多語系內容只需在對應語言目錄（`en/`、`ko/`、`fr/` 等）建立同名檔案。
 

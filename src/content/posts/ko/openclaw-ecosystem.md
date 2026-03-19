@@ -1,6 +1,6 @@
 ---
 title: "OpenClaw 특집: 생태계 분석 🦞"
-date: 2026-02-03
+date: "2026-02-03T16:09:32+08:00"
 category: "OpenClaw"
 description: 하나의 오픈소스 프로젝트에서 완전한 AI 어시스턴트 생태계로
 tags: [AI, open-source, openclaw]

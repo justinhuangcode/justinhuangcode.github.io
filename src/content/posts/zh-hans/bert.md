@@ -1,19 +1,30 @@
 ---
-title: 论文共读：《BERT：Pre-training of Deep Bidirectional Transformers for Language Understanding》
-date: 2026-01-31
+title: "论文共读：《BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding》（BERT：用于语言理解的深度双向 Transformer 预训练）"
+date: "2026-01-31T16:52:21+08:00"
 category: "Paper Reading"
 description: 预训练范式的确立，附 Rust 复现代码
 tags: [paper-reading, bert, AI, LLM, rust]
 pinned: false
 ---
 
-2018 年 10 月 11 日，Google AI Language 团队在 arXiv（一个学术论文预印本网站，论文不用等期刊审稿就能直接发布）上传了一篇论文：<a href="/papers/1810.04805v2.pdf" target="_blank">《BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding》</a>（BERT：用于语言理解的深度双向 Transformer 预训练）。
+2018 年 10 月 11 日，Google AI Language 团队在 arXiv（一个学术论文预印本网站，论文不用等期刊审稿就能直接发布）上传了一篇论文：[《BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding》](/papers/1810.04805v2.pdf)（BERT：用于语言理解的深度双向 Transformer 预训练）。
 
 作者是 Jacob Devlin、Ming-Wei Chang、Kenton Lee 和 Kristina Toutanova，四人均来自 Google。Devlin 此前在微软研究院工作，加入 Google 后主导了 BERT 的设计和实现。
 
 BERT 的全名是 Bidirectional Encoder Representations from Transformers：来自 Transformer 的双向编码器表示。它做了一件在当时看来非常大胆的事：先在海量无标注文本上做通用预训练，然后只需要加一层输出层、在具体任务上做少量微调，就能拿到最优结果。
 
 这个「先预训练、再微调」的范式，后来成为了整个 NLP 领域的标准做法。GPT 系列也用了类似的思路，但走的是另一条路：单向生成。BERT 选择了双向理解。两条路后来各自发展出了庞大的模型家族。
+
+## 0. 先认几个词
+
+如果你对大模型训练流程还不熟，可以先记住这篇论文最关键的几个词：
+
+- `Transformer`：BERT 用的基础架构。你可以先把它理解成一台能同时结合左右上下文来处理句子的机器。
+- `预训练`：先在海量通用文本上学语言本身，而不是一上来就做具体任务。
+- `微调`：把预训练得到的能力，再稍微调整到某个具体任务上。
+- `双向`：预测一个位置时，不只看左边，也看右边。
+- `MLM / 遮蔽语言模型`：故意遮住一部分词，让模型根据上下文把它们猜出来。
+- `NSP / 下一句预测`：让模型判断两个句子是不是前后相连。
 
 ## 1. 要解决什么问题
 
@@ -195,9 +206,9 @@ BERT 最优雅的地方在于微调的简单性。预训练完成后，不管什
 
 **论文共读系列**
 
-- [《Sequence to Sequence Learning with Neural Networks》](/zh-hans/posts/sequence-to-sequence-learning-with-neural-networks/) — 编码器-解码器范式的确立
-- [《Neural Machine Translation by Jointly Learning to Align and Translate》](/zh-hans/posts/neural-machine-translation-by-jointly-learning-to-align-and-translate/) — 注意力机制的起源
-- [《Attention Is All You Need》](/zh-hans/posts/attention-is-all-you-need/) — 注意力成为主角，Transformer 的诞生
-- [<i>Scaling Laws for Neural Language Models</i>](/zh-hans/posts/scaling-laws-for-neural-language-models/) — 规模的数学：为什么更大的模型可预测地更好
-- [《Language Models are Few-Shot Learners》](/zh-hans/posts/language-models-are-few-shot-learners/) — 更大的模型，更善于从上下文中诱发能力
-- [《Training Compute-Optimal Large Language Models》](/zh-hans/posts/training-compute-optimal-large-language-models/) — 怎样花算力最划算
+- [《Sequence to Sequence Learning with Neural Networks》](/zh-hans/posts/sequence-to-sequence-learning-with-neural-networks/)（使用神经网络进行序列到序列学习） — 编码器-解码器范式的确立
+- [《Neural Machine Translation by Jointly Learning to Align and Translate》](/zh-hans/posts/neural-machine-translation-by-jointly-learning-to-align-and-translate/)（通过联合学习对齐与翻译实现神经机器翻译） — 注意力机制的起源
+- [《Attention Is All You Need》](/zh-hans/posts/attention-is-all-you-need/)（注意力就是你所需要的全部） — 注意力成为主角，Transformer 的诞生
+- [《Scaling Laws for Neural Language Models》](/zh-hans/posts/scaling-laws-for-neural-language-models/)（神经语言模型的缩放定律） — 规模的数学：为什么更大的模型可预测地更好
+- [《Language Models are Few-Shot Learners》](/zh-hans/posts/language-models-are-few-shot-learners/)（语言模型是少样本学习者） — 更大的模型，更善于从上下文中诱发能力
+- [《Training Compute-Optimal Large Language Models》](/zh-hans/posts/training-compute-optimal-large-language-models/)（训练计算最优的大语言模型） — 怎样花算力最划算

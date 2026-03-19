@@ -101,7 +101,7 @@ pnpm dev
 ```markdown
 ---
 title: 文章標題
-date: 2026-01-01
+date: "2026-01-01T16:27:43+08:00"
 description: 選填的描述，用於 SEO 和社群分享
 category: Tutorial
 tags: [選填, 標籤]
@@ -115,7 +115,7 @@ image: ./optional-cover.jpg
 | 欄位 | 型別 | 必填 | 預設值 | 說明 |
 |---|---|---|---|---|
 | `title` | string | 是 | -- | 文章標題 |
-| `date` | date | 是 | -- | 發佈日期（YYYY-MM-DD） |
+| `date` | datetime | 是 | -- | 使用 ISO 8601、帶時區且精確到秒的發佈時間，例如 `2026-01-01T16:27:43+08:00` |
 | `description` | string | 否 | -- | 用於 RSS、meta 標籤和 OG 圖片 |
 | `category` | string | 否 | `"General"` | 文章分類 |
 | `tags` | string[] | 否 | -- | 文章標籤 |

@@ -1,19 +1,30 @@
 ---
-title: "논문 읽기: Training Compute-Optimal Large Language Models"
-date: 2026-03-11
+title: "논문 읽기: 《Training Compute-Optimal Large Language Models》 (연산량 최적의 대규모 언어 모델 학습)"
+date: "2026-03-11T16:58:04+08:00"
 category: "Paper Reading"
 description: Chinchilla 논문 — 왜 대부분의 대형 모델이 과소 학습되었는지, 그리고 컴퓨팅 예산을 현명하게 쓰는 법, 핵심 코드를 Rust로 재구현
 tags: [paper-reading, chinchilla, scaling-laws, AI, LLM, rust]
 pinned: false
 ---
 
-2022년 3월 29일, DeepMind의 연구팀이 arXiv(연구자들이 학술지 심사를 거치지 않고 논문을 공개할 수 있는 프리프린트 서버)에 논문을 업로드했다: <a href="/papers/2203.15556v1.pdf" target="_blank"><i>Training Compute-Optimal Large Language Models</i></a>.
+2022년 3월 29일, DeepMind의 연구팀이 arXiv(연구자들이 학술지 심사를 거치지 않고 논문을 공개할 수 있는 프리프린트 서버)에 논문을 업로드했다: [《Training Compute-Optimal Large Language Models》](/papers/2203.15556v1.pdf) (연산량 최적의 대규모 언어 모델 학습).
 
 제1저자는 Jordan Hoffmann이고, 공저자로 Sebastian Borgeaud, Arthur Mensch, Elena Buchatskaya, Trevor Cai, Eliza Rutherford 등 다수가 참여했다 — 당시 전원 DeepMind 소속이었다. Arthur Mensch는 이후 유럽에서 가장 주목받는 AI 기업 중 하나인 Mistral AI를 공동 창립하게 된다.
 
 이 논문은 흔히 "Chinchilla 논문"이라 불린다 — 팀이 자신들의 발견을 검증하기 위해 학습시킨 700억 파라미터 모델의 이름에서 따온 것이다. 논문 제목이 아니라 동물 이름이 붙었다. AI 업계에서 "Chinchilla 스케일링"은 이 논문의 핵심 주장을 가리키는 관용어가 되었다.
 
 그 주장은 단순하고, 대담하며, 업계 대부분에게 불편한 것이었다: **2022년의 가장 큰 언어 모델들 중 다수는 "모델이 충분히 크지 않은" 것이 아니라, 각자의 컴퓨팅 예산 대비 현저하게 과소 학습된 것이었다.**
+
+## 0. 먼저 몇 가지 용어부터
+
+이 논문은 결국 "예산을 어디에 써야 하는가"를 따지는 글이라서, 아래 용어를 먼저 잡아두면 핵심이 훨씬 빨리 들어온다:
+
+- `컴퓨팅 예산`: 이번 학습 전체에 얼마만큼의 계산 자원을 쓸 수 있는지다.
+- `파라미터 수`: 모델이 얼마나 큰지를 나타낸다.
+- `token / 토큰`: 모델이 실제로 읽는 최소 텍스트 단위다. 글자나 단어 조각 정도로 생각하면 된다.
+- `loss / 손실`: 모델이 전체적으로 얼마나 많이 틀리는지를 나타내는 값이다. 낮을수록 좋다.
+- `scaling law / 스케일링 법칙`: 파라미터 수, 데이터 양, 컴퓨팅이 바뀔 때 모델 성능이 어떻게 함께 바뀌는지를 설명하는 법칙이다.
+- `undertrained / 과소 학습`: 모델이 너무 작은 것이 아니라, 데이터나 학습량이 부족해서 잠재력을 다 끌어내지 못한 상태다.
 
 ## 1. 질문
 
@@ -326,9 +337,9 @@ Kaplan 논문은 말했다: 더 큰 모델이 예측 가능하게 더 낫다. Ch
 
 **논문 읽기 시리즈**
 
-- [<i>Sequence to Sequence Learning with Neural Networks</i>](/ko/posts/sequence-to-sequence-learning-with-neural-networks/) — 인코더-디코더 패러다임의 확립
-- [<i>Neural Machine Translation by Jointly Learning to Align and Translate</i>](/ko/posts/neural-machine-translation-by-jointly-learning-to-align-and-translate/) — 어텐션의 기원
-- [<i>Attention Is All You Need</i>](/ko/posts/attention-is-all-you-need/) — 어텐션이 주역이 되다: Transformer의 탄생
-- [<i>BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</i>](/ko/posts/bert/) — 사전 학습 패러다임의 확립
-- [<i>Scaling Laws for Neural Language Models</i>](/ko/posts/scaling-laws-for-neural-language-models/) — 규모의 수학
-- [<i>Language Models are Few-Shot Learners</i>](/ko/posts/language-models-are-few-shot-learners/) — 더 큰 모델, 컨텍스트에서 더 잘 능력을 이끌어내다
+- [《Sequence to Sequence Learning with Neural Networks》](/ko/posts/sequence-to-sequence-learning-with-neural-networks/) (신경망을 이용한 시퀀스-투-시퀀스 학습) — 인코더-디코더 패러다임의 확립
+- [《Neural Machine Translation by Jointly Learning to Align and Translate》](/ko/posts/neural-machine-translation-by-jointly-learning-to-align-and-translate/) (정렬과 번역을 공동으로 학습하는 신경 기계 번역) — 어텐션의 기원
+- [《Attention Is All You Need》](/ko/posts/attention-is-all-you-need/) (어텐션만 있으면 충분하다) — 어텐션이 주역이 되다: Transformer의 탄생
+- [《BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding》](/ko/posts/bert/) (BERT: 언어 이해를 위한 깊은 양방향 트랜스포머 사전학습) — 사전 학습 패러다임의 확립
+- [《Scaling Laws for Neural Language Models》](/ko/posts/scaling-laws-for-neural-language-models/) (신경 언어 모델을 위한 스케일링 법칙) — 규모의 수학
+- [《Language Models are Few-Shot Learners》](/ko/posts/language-models-are-few-shot-learners/) (언어 모델은 퓨샷 학습자다) — 더 큰 모델, 컨텍스트에서 더 잘 능력을 이끌어내다

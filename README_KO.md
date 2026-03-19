@@ -101,7 +101,7 @@ pnpm dev
 ```markdown
 ---
 title: 게시글 제목
-date: 2026-01-01
+date: "2026-01-01T16:27:43+08:00"
 description: SEO용 선택적 설명
 category: Technology
 tags: [선택적, 태그]
@@ -115,7 +115,7 @@ image: ./optional-cover.jpg
 | 필드 | 타입 | 필수 | 기본값 | 설명 |
 |---|---|---|---|---|
 | `title` | string | 예 | -- | 게시글 제목 |
-| `date` | date | 예 | -- | 발행일 (YYYY-MM-DD) |
+| `date` | datetime | 예 | -- | 초와 시간대까지 포함한 ISO 8601 발행 시각. 예: `2026-01-01T16:27:43+08:00` |
 | `description` | string | 아니오 | -- | RSS 피드 및 메타 태그에 사용 |
 | `category` | string | 아니오 | `"General"` | 게시글 카테고리 |
 | `tags` | string[] | 아니오 | -- | 게시글 태그 |

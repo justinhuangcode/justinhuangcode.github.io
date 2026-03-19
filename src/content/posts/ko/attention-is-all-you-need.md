@@ -1,13 +1,13 @@
 ---
-title: "논문 읽기: Attention Is All You Need"
-date: 2026-01-06
+title: "논문 읽기: 《Attention Is All You Need》 (어텐션만 있으면 충분하다)"
+date: "2026-01-06T16:18:46+08:00"
 category: "Paper Reading"
 description: Transformer 논문에 대한 이해, 핵심 코드를 Rust로 재구현
 tags: [paper-reading, transformer, AI, LLM, rust]
 pinned: false
 ---
 
-2017년 6월 12일, 여덟 명이 arXiv(연구자들이 학술지 심사를 기다리지 않고 논문을 발표할 수 있는 프리프린트 서버)에 논문 한 편을 올렸다. 제목은 단 다섯 단어: <a href="/papers/1706.03762v7.pdf" target="_blank"><i>Attention Is All You Need</i></a>.
+2017년 6월 12일, 여덟 명이 arXiv(연구자들이 학술지 심사를 기다리지 않고 논문을 발표할 수 있는 프리프린트 서버)에 논문 한 편을 올렸다. 제목은 단 다섯 단어: [《Attention Is All You Need》](/papers/1706.03762v7.pdf) (어텐션만 있으면 충분하다).
 
 여덟 명은 Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Łukasz Kaiser, 그리고 Illia Polosukhin이었으며, 대부분 당시 Google Brain과 Google Research에서 일하고 있었다.
 
@@ -18,6 +18,16 @@ pinned: false
 약 9년이 지난 지금, ChatGPT, Claude, DeepSeek, Qwen -- 이 AI 제품들의 기본 아키텍처는 거의 모두 그 15페이지짜리 논문으로 거슬러 올라갈 수 있다.
 
 이 글은 내가 논문을 읽고 이해한 내용을 정리한 것이며, 핵심 코드를 Rust로 재구현했다. 번역도, 요약도 아니다. 기술적 배경 지식 없이도 따라갈 수 있다.
+
+## 0. 먼저 몇 가지 용어부터
+
+머신러닝 배경이 전혀 없어도, 이 논문이 실제로 무엇을 바꾸려 했는지만 따라가면 된다. 아래 용어만 먼저 잡아두자:
+
+- `RNN / 순환 신경망`: 더 오래된 시퀀스 모델이다. 문장을 처리할 때 한 단어씩 순서대로 읽어야 한다.
+- `attention`: 많은 정보 중에서 지금 가장 봐야 할 부분을 골라내는 메커니즘이다. 일단은 "중요한 부분을 골라 다시 보는 방식" 정도로 이해하면 충분하다.
+- `Query / Key / Value`: attention 안의 세 역할이다. Query는 "지금 무엇을 찾고 있는가", Key는 "각 정보가 어떤 표식을 달고 있는가", Value는 "실제로 가져오는 내용"에 가깝다.
+- `Transformer`: attention을 중심으로 세운 전체 아키텍처다. 순환에 기대지 않고, 각 위치가 다른 위치를 직접 볼 수 있다.
+- `병렬 처리`: 더 똑똑하다는 뜻이 아니라, RNN처럼 줄 서서 처리하지 않고 많은 위치를 동시에 처리할 수 있다는 뜻이다.
 
 ## 1. 한 문장 요약
 
@@ -228,15 +238,15 @@ struct DecoderLayer {
 
 이 논문이 우리에게 그 아키텍처를 주었다.
 
-Attention Is All You Need.
+《Attention Is All You Need》 (어텐션만 있으면 충분하다).
 
 ---
 
 **논문 읽기 시리즈**
 
-- [<i>Sequence to Sequence Learning with Neural Networks</i>](/ko/posts/sequence-to-sequence-learning-with-neural-networks/) — Encoder-decoder 패러다임의 확립
-- [<i>Neural Machine Translation by Jointly Learning to Align and Translate</i>](/ko/posts/neural-machine-translation-by-jointly-learning-to-align-and-translate/) — Attention의 기원
-- [<i>BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</i>](/ko/posts/bert/) — 사전 학습 패러다임의 확립
-- [<i>Scaling Laws for Neural Language Models</i>](/ko/posts/scaling-laws-for-neural-language-models/) — 스케일의 수학: 왜 더 큰 모델이 예측 가능하게 더 좋은가
-- [<i>Language Models are Few-Shot Learners</i>](/ko/posts/language-models-are-few-shot-learners/) — 더 큰 모델, 맥락에서 능력을 이끌어내는 데 더 뛰어남
-- [<i>Training Compute-Optimal Large Language Models</i>](/ko/posts/training-compute-optimal-large-language-models/) — 컴퓨팅 예산을 현명하게 쓰는 법
+- [《Sequence to Sequence Learning with Neural Networks》](/ko/posts/sequence-to-sequence-learning-with-neural-networks/) (신경망을 이용한 시퀀스-투-시퀀스 학습) — Encoder-decoder 패러다임의 확립
+- [《Neural Machine Translation by Jointly Learning to Align and Translate》](/ko/posts/neural-machine-translation-by-jointly-learning-to-align-and-translate/) (정렬과 번역을 공동으로 학습하는 신경 기계 번역) — Attention의 기원
+- [《BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding》](/ko/posts/bert/) (BERT: 언어 이해를 위한 깊은 양방향 트랜스포머 사전학습) — 사전 학습 패러다임의 확립
+- [《Scaling Laws for Neural Language Models》](/ko/posts/scaling-laws-for-neural-language-models/) (신경 언어 모델을 위한 스케일링 법칙) — 스케일의 수학: 왜 더 큰 모델이 예측 가능하게 더 좋은가
+- [《Language Models are Few-Shot Learners》](/ko/posts/language-models-are-few-shot-learners/) (언어 모델은 퓨샷 학습자다) — 더 큰 모델, 맥락에서 능력을 이끌어내는 데 더 뛰어남
+- [《Training Compute-Optimal Large Language Models》](/ko/posts/training-compute-optimal-large-language-models/) (연산량 최적의 대규모 언어 모델 학습) — 컴퓨팅 예산을 현명하게 쓰는 법

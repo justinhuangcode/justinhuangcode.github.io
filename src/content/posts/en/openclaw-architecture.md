@@ -1,6 +1,6 @@
 ---
 title: "OpenClaw Deep Dive: Architecture Analysis 🦞"
-date: 2026-02-24
+date: "2026-02-24T16:37:11+08:00"
 category: "OpenClaw"
 description: Dissecting the engineering skeleton of a self-hosted AI assistant, based on v2026.3.8 source code
 tags: [AI, open-source, openclaw]

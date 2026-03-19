@@ -1,13 +1,13 @@
 ---
 title: "Paper Reading: Scaling Laws for Neural Language Models"
-date: 2026-03-01
+date: "2026-03-01T16:45:39+08:00"
 category: "Paper Reading"
 description: The mathematics of scale — why bigger models are predictably better, with core code reimplemented in Rust
 tags: [paper-reading, scaling-laws, AI, LLM, rust]
 pinned: false
 ---
 
-On January 23, 2020, a team of ten researchers from OpenAI uploaded a paper to arXiv (a preprint server where researchers can publish papers without waiting for journal peer review): <a href="/papers/2001.08361v1.pdf" target="_blank"><i>Scaling Laws for Neural Language Models</i></a>.
+On January 23, 2020, a team of ten researchers from OpenAI uploaded a paper to arXiv (a preprint server where researchers can publish papers without waiting for journal peer review): [*Scaling Laws for Neural Language Models*](/papers/2001.08361v1.pdf).
 
 The ten were Jared Kaplan, Sam McCandlish, Tom Henighan, Tom B. Brown, Benjamin Chess, Rewon Child, Scott Gray, Alec Radford, Jeffrey Wu, and Dario Amodei. All at OpenAI at the time.
 
@@ -259,9 +259,9 @@ The AI industry later became a compute race. After reading this paper, you under
 
 **Paper Reading Series**
 
-- [<i>Sequence to Sequence Learning with Neural Networks</i>](/posts/sequence-to-sequence-learning-with-neural-networks/) — Establishing the encoder-decoder paradigm
-- [<i>Neural Machine Translation by Jointly Learning to Align and Translate</i>](/posts/neural-machine-translation-by-jointly-learning-to-align-and-translate/) — The origin of attention
-- [<i>Attention Is All You Need</i>](/posts/attention-is-all-you-need/) — Attention takes center stage: the birth of the Transformer
-- [<i>BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</i>](/posts/bert/) — Establishing the pre-training paradigm
-- [<i>Language Models are Few-Shot Learners</i>](/posts/language-models-are-few-shot-learners/) — Larger models, better at eliciting abilities from context
-- [<i>Training Compute-Optimal Large Language Models</i>](/posts/training-compute-optimal-large-language-models/) — How to spend your compute budget wisely
+- [*Sequence to Sequence Learning with Neural Networks*](/posts/sequence-to-sequence-learning-with-neural-networks/) — Establishing the encoder-decoder paradigm
+- [*Neural Machine Translation by Jointly Learning to Align and Translate*](/posts/neural-machine-translation-by-jointly-learning-to-align-and-translate/) — The origin of attention
+- [*Attention Is All You Need*](/posts/attention-is-all-you-need/) — Attention takes center stage: the birth of the Transformer
+- [*BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding*](/posts/bert/) — Establishing the pre-training paradigm
+- [*Language Models are Few-Shot Learners*](/posts/language-models-are-few-shot-learners/) — Larger models, better at eliciting abilities from context
+- [*Training Compute-Optimal Large Language Models*](/posts/training-compute-optimal-large-language-models/) — How to spend your compute budget wisely

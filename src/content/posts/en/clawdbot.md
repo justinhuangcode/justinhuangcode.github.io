@@ -1,6 +1,6 @@
 ---
 title: "Clawdbot: A Decentralized Open-Source AI Project Worth Watching"
-date: 2026-01-16
+date: "2026-01-16T16:34:57+08:00"
 category: "OpenClaw"
 description: A self-hosted platform that connects all your chat channels to an AI Agent
 tags: [AI, open-source]
@@ -11,7 +11,7 @@ Most mainstream AI assistants today are centralized.
 
 Your conversations, your data, your context -- all of it ends up on someone else's servers. You use AI, but you don't truly own it.
 
-<a href="https://github.com/clawdbot/clawdbot" target="_blank">Clawdbot</a>, an open-source project, goes in exactly the opposite direction.
+[Clawdbot](https://github.com/clawdbot/clawdbot), an open-source project, goes in exactly the opposite direction.
 
 What it's trying to do is not build yet another smarter chatbot, but put AI capabilities back in the user's hands: running on your own machine, plugged into the chat tools you already use, keeping data, context, and control with you.
 
