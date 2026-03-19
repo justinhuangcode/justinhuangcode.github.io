@@ -1,23 +1,63 @@
 ---
 /**
- * Crisp Chat — auto-enabled when siteConfig.crisp.websiteId is set.
- * Renders nothing when the ID is empty.
+ * Crisp Chat — enabled in production when siteConfig.crisp.websiteId is set.
+ * To test locally, set PUBLIC_CRISP_ENABLE_IN_DEV=true in .env.
  */
 import { siteConfig } from '@/config/site';
 
 const crispId = siteConfig.crisp.websiteId;
+const shouldEnable =
+  Boolean(crispId) &&
+  (import.meta.env.PROD || import.meta.env.PUBLIC_CRISP_ENABLE_IN_DEV === 'true');
 ---
 
-{crispId && (
+{shouldEnable && (
   <script is:inline define:vars={{ crispId }}>
-    window.$crisp = [];
-    window.CRISP_WEBSITE_ID = crispId;
     (function () {
-      var d = document;
-      var s = d.createElement('script');
-      s.src = 'https://client.crisp.chat/l.js';
-      s.async = 1;
-      d.getElementsByTagName('head')[0].appendChild(s);
+      var loaded = false;
+      var idleId;
+      var timeoutId;
+      var events = ['pointerdown', 'keydown', 'touchstart', 'scroll'];
+
+      function cleanup() {
+        events.forEach(function (eventName) {
+          window.removeEventListener(eventName, loadCrisp, passiveOptions);
+        });
+
+        if ('cancelIdleCallback' in window && idleId) {
+          window.cancelIdleCallback(idleId);
+        }
+
+        if (timeoutId) {
+          window.clearTimeout(timeoutId);
+        }
+      }
+
+      function loadCrisp() {
+        if (loaded) return;
+        loaded = true;
+        cleanup();
+
+        window.$crisp = window.$crisp || [];
+        window.CRISP_WEBSITE_ID = crispId;
+
+        var d = document;
+        var s = d.createElement('script');
+        s.src = 'https://client.crisp.chat/l.js';
+        s.async = true;
+        d.getElementsByTagName('head')[0].appendChild(s);
+      }
+
+      var passiveOptions = { passive: true };
+      events.forEach(function (eventName) {
+        window.addEventListener(eventName, loadCrisp, passiveOptions);
+      });
+
+      if ('requestIdleCallback' in window) {
+        idleId = window.requestIdleCallback(loadCrisp, { timeout: 10000 });
+      } else {
+        timeoutId = window.setTimeout(loadCrisp, 8000);
+      }
     })();
   </script>
 )}
