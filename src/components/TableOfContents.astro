@@ -16,13 +16,15 @@ interface Props {
   label?: string;
 }
 
+import { IconChevronDown } from '@/components/icons';
+
 const { headings, label = 'On this page' } = Astro.props;
 const filtered = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
 ---
 
 {filtered.length > 0 && (
   <nav aria-label="Table of contents" class="toc hidden xl:block">
-    <div class="sticky top-[80px] max-h-[calc(100vh-6rem)] overflow-y-auto">
+    <div class="sticky top-[80px] max-h-[calc(100vh-6rem)] overflow-y-auto scrollbar-none">
       <div class="flex items-center justify-between mb-3">
         <p class="text-sm font-semibold text-foreground">{label}</p>
         <button
@@ -31,9 +33,7 @@ const filtered = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
           aria-expanded="true"
           aria-label="Toggle table of contents"
         >
-          <svg class="toc-chevron size-3.5 transition-transform duration-200" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" shape-rendering="geometricPrecision">
-            <path d="M4 6l4 4 4-4" />
-          </svg>
+          <IconChevronDown className="toc-chevron size-3.5 transition-transform duration-200" />
         </button>
       </div>
       <div class="toc-list-wrapper grid grid-rows-[1fr] transition-[grid-template-rows] duration-200">
@@ -138,5 +138,12 @@ const filtered = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
   }
   .toc-chevron-collapsed {
     transform: rotate(-90deg);
+  }
+  .scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
   }
 </style>

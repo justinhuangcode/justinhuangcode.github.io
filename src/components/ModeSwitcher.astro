@@ -1,0 +1,412 @@
+---
+import { IconChevronRight, IconMonitor, IconMoon, IconPalette, IconSun } from '@/components/icons';
+import {
+  defaultThemeLabels,
+  themeGroups,
+  type ThemeGroupKey,
+  type ThemeLabels,
+} from '@/config/themes';
+import type { ColorMode, ThemeStyle } from '@/lib/theme';
+
+interface ModeSwitcherLabels {
+  light: string;
+  dark: string;
+  system: string;
+  moreThemes: string;
+  beta?: string;
+  classic: string;
+  modern: string;
+  extra: string;
+  scifi: string;
+  toggle: string;
+  mainModes?: string;
+}
+
+interface Props {
+  labels?: ModeSwitcherLabels;
+  themeLabels?: ThemeLabels;
+  defaultMode?: ColorMode;
+  defaultStyle?: ThemeStyle;
+  showMoreThemes?: boolean;
+}
+
+const {
+  labels = {
+    light: 'Light',
+    dark: 'Dark',
+    system: 'System',
+    moreThemes: 'More Themes',
+    beta: 'Beta',
+    classic: 'Classic',
+    modern: 'Modern',
+    extra: 'Extra',
+    scifi: 'Sci-Fi',
+    toggle: 'Toggle theme',
+    mainModes: 'Main Modes',
+  },
+  themeLabels = defaultThemeLabels,
+  defaultMode = 'system',
+  defaultStyle = 'default',
+  showMoreThemes = true,
+} = Astro.props;
+
+const baseModes: { key: ColorMode; label: string; icon: typeof IconSun }[] = [
+  { key: 'light', label: labels.light, icon: IconSun },
+  { key: 'dark', label: labels.dark, icon: IconMoon },
+  { key: 'system', label: labels.system, icon: IconMonitor },
+];
+---
+
+<div
+  class="relative"
+  data-mode-switcher
+  data-default-mode={defaultMode}
+  data-default-style={defaultStyle}
+>
+  <button
+    type="button"
+    class="nav-utility-button inline-flex size-[34px] items-center justify-center rounded text-[var(--color-nav-text)] transition-colors hover:text-[var(--color-nav-text-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+    data-theme-trigger
+    aria-label={labels.toggle}
+    aria-haspopup="dialog"
+    aria-expanded="false"
+    aria-controls="desktop-theme-menu"
+  >
+    <span class="relative inline-flex size-[18px] items-center justify-center">
+      <span
+        class="transition-transform duration-500 ease-in-out"
+        data-trigger-icon="sun"
+      >
+        <IconSun className="size-[18px]" />
+      </span>
+      <span
+        class="absolute transition-transform duration-500 ease-in-out"
+        data-trigger-icon="moon"
+      >
+        <IconMoon className="size-[18px]" />
+      </span>
+    </span>
+  </button>
+
+	  <div
+	    id="desktop-theme-menu"
+	    class="nav-panel absolute right-0 top-[calc(100%+0.55rem)] z-50 hidden w-[15rem] max-w-[calc(100vw-2rem)] overflow-visible rounded-xl border border-border/70 bg-popover p-1 text-popover-foreground shadow-lg ring-1 ring-foreground/10"
+	    data-theme-panel
+	    role="menu"
+	    aria-label={labels.toggle}
+	  >
+    {
+      baseModes.map(({ key, label, icon: Icon }) => (
+        <button
+          type="button"
+          class="nav-panel-link flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-[15px] text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:bg-accent focus-visible:text-accent-foreground focus-visible:outline-none data-[active=true]:bg-accent data-[active=true]:font-semibold data-[active=true]:text-primary"
+          data-mode-item={key}
+          data-active="false"
+          role="menuitemradio"
+        >
+          <Icon className="size-4 shrink-0" />
+          <span>{label}</span>
+        </button>
+      ))
+    }
+
+    {showMoreThemes && (
+      <Fragment>
+        <div class="my-1 h-px bg-border/70"></div>
+
+        <div class="relative" data-themes-root data-open="false">
+	          <button
+	            type="button"
+	            class="nav-panel-link flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-[15px] text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:bg-accent focus-visible:text-accent-foreground focus-visible:outline-none data-[active=true]:bg-accent data-[active=true]:font-semibold data-[active=true]:text-primary"
+	            data-themes-trigger
+	            data-active="false"
+	            aria-haspopup="menu"
+	            aria-expanded="false"
+	          >
+	            <IconPalette className="size-4 shrink-0" />
+	            <span class="min-w-0 flex-1 truncate whitespace-nowrap">{labels.moreThemes}</span>
+	            <span class="inline-flex shrink-0 items-center rounded-full border border-primary/20 bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase leading-none tracking-[0.12em] text-primary/85">
+	              {labels.beta ?? 'Beta'}
+	            </span>
+	            <IconChevronRight className="size-3.5 shrink-0 text-muted-foreground" />
+	          </button>
+
+          <div
+            class="nav-panel pointer-events-none invisible absolute left-[calc(100%-0.2rem)] top-0 z-50 w-[19rem] max-w-[calc(100vw-2rem)] max-h-[70vh] overflow-y-auto rounded-xl border border-border/70 bg-popover p-1 text-popover-foreground opacity-0 shadow-lg ring-1 ring-foreground/10 transition-opacity duration-150"
+            data-themes-panel
+            role="menu"
+            aria-label={labels.moreThemes}
+          >
+            {
+              themeGroups.map((group) => (
+                <section class="py-1">
+                  <p class="px-3 pb-1 pt-1 text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
+                    {labels[group.key as ThemeGroupKey]}
+                  </p>
+                  <div class="space-y-0.5">
+                    {group.themes.map((theme) => (
+                      <button
+                        type="button"
+                        class="nav-panel-link flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-[15px] text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:bg-accent focus-visible:text-accent-foreground focus-visible:outline-none data-[active=true]:bg-accent data-[active=true]:font-semibold data-[active=true]:text-primary"
+                        data-style-item={theme.key}
+                        data-active="false"
+                        role="menuitemradio"
+                      >
+                        <span
+                          class="inline-block size-3 shrink-0 rounded-full ring-1 ring-foreground/20"
+                          style={`background-color:${theme.color}`}
+                        />
+                        <span>{themeLabels[theme.key]}</span>
+                      </button>
+                    ))}
+                  </div>
+                </section>
+              ))
+            }
+          </div>
+        </div>
+      </Fragment>
+    )}
+  </div>
+</div>
+
+<style>
+  [data-mode-switcher][data-resolved-mode='light'] [data-trigger-icon='sun'] {
+    transform: rotate(0deg) scale(1);
+  }
+
+  [data-mode-switcher][data-resolved-mode='light'] [data-trigger-icon='moon'] {
+    transform: rotate(45deg) scale(0);
+  }
+
+  [data-mode-switcher][data-resolved-mode='dark'] [data-trigger-icon='sun'] {
+    transform: rotate(-45deg) scale(0);
+  }
+
+  [data-mode-switcher][data-resolved-mode='dark'] [data-trigger-icon='moon'] {
+    transform: rotate(0deg) scale(1);
+  }
+
+  [data-themes-root]:hover > [data-themes-panel],
+  [data-themes-root]:focus-within > [data-themes-panel],
+  [data-themes-root][data-open='true'] > [data-themes-panel] {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  [data-themes-panel]::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -0.95rem;
+    width: 0.95rem;
+  }
+
+</style>
+
+<script>
+  import {
+    THEME_CHANGE_EVENT,
+    getStoredThemePreferences,
+    isColorMode,
+    isThemeStyle,
+    resolveColorMode,
+    setThemePreferences,
+    type ColorMode,
+    type ThemeStyle,
+  } from '@/lib/theme';
+
+  const DESKTOP_MENU_EVENT = 'aither:desktop-menu-open';
+
+  function runThemeTransition(trigger: HTMLButtonElement | null, update: () => void) {
+    if (!document.startViewTransition || !trigger) {
+      update();
+      return;
+    }
+
+    const rect = trigger.getBoundingClientRect();
+    const x = rect.left + rect.width / 2;
+    const y = rect.top + rect.height / 2;
+    const right = window.innerWidth - rect.left;
+    const bottom = window.innerHeight - rect.top;
+    const maxRadius = Math.hypot(
+      Math.max(rect.left, right),
+      Math.max(rect.top, bottom),
+    );
+
+    const transition = document.startViewTransition(update);
+    transition.ready.then(() => {
+      document.documentElement.animate(
+        {
+          clipPath: [
+            `circle(0px at ${x}px ${y}px)`,
+            `circle(${maxRadius}px at ${x}px ${y}px)`,
+          ],
+        },
+        {
+          duration: 700,
+          easing: 'ease-in-out',
+          pseudoElement: '::view-transition-new(root)',
+        },
+      );
+    });
+  }
+
+  document.querySelectorAll('[data-mode-switcher]').forEach((root) => {
+    if (!(root instanceof HTMLElement) || root.dataset.bound === 'true') return;
+    root.dataset.bound = 'true';
+
+    const rawDefaultMode = root.dataset.defaultMode ?? '';
+    const rawDefaultStyle = root.dataset.defaultStyle ?? '';
+    const defaultMode: ColorMode = isColorMode(rawDefaultMode)
+      ? rawDefaultMode
+      : 'system';
+    const defaultStyle: ThemeStyle = isThemeStyle(rawDefaultStyle)
+      ? rawDefaultStyle
+      : 'default';
+    const trigger = root.querySelector('[data-theme-trigger]');
+    const panel = root.querySelector('[data-theme-panel]');
+    const themesRoot = root.querySelector('[data-themes-root]');
+    const themesTrigger = root.querySelector('[data-themes-trigger]');
+    const modeItems = Array.from(root.querySelectorAll('[data-mode-item]'));
+    const styleItems = Array.from(root.querySelectorAll('[data-style-item]'));
+
+    if (!(trigger instanceof HTMLButtonElement) || !(panel instanceof HTMLElement)) return;
+
+    let themesPinnedOpen = false;
+
+    const setThemesExpanded = (expanded: boolean) => {
+      if (!(themesTrigger instanceof HTMLElement) || !(themesRoot instanceof HTMLElement)) return;
+      themesTrigger.setAttribute('aria-expanded', String(expanded));
+      themesRoot.dataset.open = String(expanded);
+    };
+
+    const closeMenu = () => {
+      themesPinnedOpen = false;
+      setThemesExpanded(false);
+      panel.classList.add('hidden');
+      trigger.setAttribute('aria-expanded', 'false');
+    };
+
+    const openMenu = () => {
+      window.dispatchEvent(
+        new CustomEvent(DESKTOP_MENU_EVENT, {
+          detail: { owner: 'theme' },
+        }),
+      );
+      panel.classList.remove('hidden');
+      trigger.setAttribute('aria-expanded', 'true');
+    };
+
+    const toggleMenu = () => {
+      if (panel.classList.contains('hidden')) {
+        openMenu();
+      } else {
+        closeMenu();
+      }
+    };
+
+    const sync = () => {
+      const { mode, style } = getStoredThemePreferences(defaultMode, defaultStyle);
+      const resolvedMode = resolveColorMode(mode);
+      const customStyleActive = style !== 'default';
+
+      modeItems.forEach((item) => {
+        if (!(item instanceof HTMLElement)) return;
+        const isActive = !customStyleActive && item.dataset.modeItem === mode;
+        item.dataset.active = String(isActive);
+        item.setAttribute('aria-pressed', String(isActive));
+      });
+
+      styleItems.forEach((item) => {
+        if (!(item instanceof HTMLElement)) return;
+        const isActive = item.dataset.styleItem === style;
+        item.dataset.active = String(isActive);
+        item.setAttribute('aria-pressed', String(isActive));
+      });
+
+      if (themesTrigger instanceof HTMLElement) {
+        const isCustomTheme = customStyleActive;
+        themesTrigger.dataset.active = String(isCustomTheme);
+      }
+
+      root.dataset.resolvedMode = resolvedMode;
+    };
+
+    trigger.addEventListener('click', (event) => {
+      event.stopPropagation();
+      toggleMenu();
+    });
+
+    modeItems.forEach((item) => {
+      if (!(item instanceof HTMLButtonElement)) return;
+      item.addEventListener('click', () => {
+        const nextMode = item.dataset.modeItem;
+        if (!nextMode || !isColorMode(nextMode)) return;
+        runThemeTransition(trigger, () => {
+          setThemePreferences({ mode: nextMode, style: 'default' });
+        });
+        closeMenu();
+      });
+    });
+
+    if (themesRoot instanceof HTMLElement && themesTrigger instanceof HTMLButtonElement) {
+      themesTrigger.addEventListener('click', (event) => {
+        event.stopPropagation();
+        themesPinnedOpen = !(themesPinnedOpen && themesRoot.dataset.open === 'true');
+        setThemesExpanded(themesPinnedOpen);
+      });
+
+      themesRoot.addEventListener('mouseenter', () => setThemesExpanded(true));
+      themesRoot.addEventListener('mouseleave', () => {
+        if (!themesPinnedOpen) {
+          setThemesExpanded(false);
+        }
+      });
+      themesRoot.addEventListener('focusin', () => setThemesExpanded(true));
+      themesRoot.addEventListener('focusout', (event) => {
+        if (event.relatedTarget instanceof Node && themesRoot.contains(event.relatedTarget)) return;
+        if (!themesPinnedOpen) {
+          setThemesExpanded(false);
+        }
+      });
+    }
+
+    styleItems.forEach((item) => {
+      if (!(item instanceof HTMLButtonElement)) return;
+      item.addEventListener('click', () => {
+        const nextStyle = item.dataset.styleItem;
+        if (!nextStyle || !isThemeStyle(nextStyle)) return;
+        runThemeTransition(trigger, () => {
+          const { mode } = getStoredThemePreferences(defaultMode, defaultStyle);
+          setThemePreferences({ mode, style: nextStyle });
+        });
+        closeMenu();
+      });
+    });
+
+    document.addEventListener('click', (event) => {
+      if (!(event.target instanceof Node) || !root.contains(event.target)) {
+        closeMenu();
+      }
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        closeMenu();
+      }
+    });
+
+    window.addEventListener(DESKTOP_MENU_EVENT, (event) => {
+      const customEvent = event as CustomEvent<{ owner?: string }>;
+      if (customEvent.detail?.owner !== 'theme') {
+        closeMenu();
+      }
+    });
+
+    window.addEventListener(THEME_CHANGE_EVENT, sync);
+    sync();
+  });
+</script>

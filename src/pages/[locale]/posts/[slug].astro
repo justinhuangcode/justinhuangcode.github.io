@@ -1,6 +1,9 @@
 ---
 import PostPage from '@/components/pages/PostPage.astro';
-import { nonDefaultLocales, type Locale } from '@/i18n';
+import {
+  nonDefaultLocales,
+  type Locale,
+} from '@/i18n';
 import { getPostStaticPaths } from '@/lib/site-content';
 import type { PostEntry } from '@/lib/posts';
 
@@ -14,7 +17,6 @@ export async function getStaticPaths() {
       nextPost: PostEntry | null;
     };
   }> = [];
-
   for (const locale of nonDefaultLocales) {
     const localePaths = await getPostStaticPaths(locale);
     localePaths.forEach((path) => {
@@ -24,7 +26,6 @@ export async function getStaticPaths() {
       });
     });
   }
-
   return paths;
 }
 

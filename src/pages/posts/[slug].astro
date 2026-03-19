@@ -1,17 +1,12 @@
 ---
 import PostPage from '@/components/pages/PostPage.astro';
 import { getPostStaticPaths } from '@/lib/site-content';
-import type { PostEntry } from '@/lib/posts';
 
 export async function getStaticPaths() {
   return getPostStaticPaths('en');
 }
 
-const { post, prevPost, nextPost } = Astro.props as {
-  post: PostEntry;
-  prevPost: PostEntry | null;
-  nextPost: PostEntry | null;
-};
+const { post, prevPost, nextPost } = Astro.props;
 ---
 
 <PostPage locale="en" post={post} prevPost={prevPost} nextPost={nextPost} />

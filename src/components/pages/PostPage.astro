@@ -1,11 +1,11 @@
 ---
 import { render } from 'astro:content';
-import ArrowLeft from '@/components/icons/ArrowLeft.astro';
-import ArrowRight from '@/components/icons/ArrowRight.astro';
 import BlogCoverImage from '@/components/BlogCoverImage.astro';
 import CategoryPill from '@/components/CategoryPill.astro';
 import Container from '@/components/Container.astro';
 import Giscus from '@/components/Giscus.astro';
+import { IconArrowLeft as ArrowLeft } from '@/components/icons';
+import { IconArrowRight as ArrowRight } from '@/components/icons';
 import Layout from '@/layouts/Layout.astro';
 import Prose from '@/components/Prose.astro';
 import TableOfContents from '@/components/TableOfContents.astro';
@@ -129,7 +129,7 @@ const articleJsonLd = [
               class="group flex flex-col items-start text-sm hover:text-foreground sm:max-w-[45%] py-2"
             >
               <span class="inline-flex items-center gap-1 text-muted-foreground group-hover:text-foreground">
-                <ArrowLeft class="size-3.5" />
+                <ArrowLeft className="size-3.5" />
                 {m.blog.prevPost}
               </span>
               <span class="mt-1 text-[var(--color-link)] group-hover:text-[var(--color-link-hover)]">{prevPost.data.title}</span>
@@ -142,7 +142,7 @@ const articleJsonLd = [
             >
               <span class="inline-flex items-center gap-1 text-muted-foreground group-hover:text-foreground">
                 {m.blog.nextPost}
-                <ArrowRight class="size-3.5" />
+                <ArrowRight className="size-3.5" />
               </span>
               <span class="mt-1 text-[var(--color-link)] group-hover:text-[var(--color-link-hover)]">{nextPost.data.title}</span>
             </a>

@@ -1,6 +1,9 @@
 ---
 import BlogIndexPage from '@/components/pages/BlogIndexPage.astro';
-import { getPaginatedPosts, getPaginationStaticPaths } from '@/lib/site-content';
+import {
+  getPaginatedPosts,
+  getPaginationStaticPaths,
+} from '@/lib/site-content';
 
 export async function getStaticPaths() {
   return getPaginationStaticPaths('en');

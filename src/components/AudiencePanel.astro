@@ -1,0 +1,205 @@
+---
+interface Props {
+  variant: 'human' | 'agent';
+  lead: string;
+  highlight: string;
+  steps: string[];
+  copyLabel: string;
+  copiedLabel: string;
+}
+
+const { variant, lead, highlight, steps, copyLabel, copiedLabel } = Astro.props;
+const isAgent = variant === 'agent';
+---
+
+<section
+  class:list={[
+    'audience-panel-frame overflow-hidden rounded-2xl border px-4 py-3 sm:px-5 sm:py-3.5',
+    'border-border/80 bg-accent/12 shadow-[0_4px_14px_rgba(15,23,42,0.025)]',
+  ]}
+>
+  <div class="flex flex-col gap-3">
+    <div class="min-w-0">
+      <p
+        class="audience-rich text-center text-[0.84rem] leading-6 text-foreground/84 sm:text-[0.88rem]"
+        set:html={lead}
+      />
+    </div>
+
+    <div
+      class:list={[
+        'command-panel rounded-none border px-4 py-2.5 sm:px-4 sm:py-3',
+        isAgent ? 'border-primary/25 bg-[#0d1117]' : 'border-foreground/10 bg-[#111315]',
+      ]}
+      data-command-block
+    >
+      <div class="command-panel-inner">
+        <p
+          class="audience-rich command-panel-text text-left font-mono text-[0.74rem] font-medium leading-[1.65] text-[#f3f4f6] sm:text-[0.8rem]"
+          data-command-text
+          set:html={highlight}
+        >
+        </p>
+        <button
+          type="button"
+          class="command-copy-button"
+          data-command-copy
+          data-copy-label={copyLabel}
+          data-copied-label={copiedLabel}
+          aria-label={copyLabel}
+        >
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" class="h-3.5 w-3.5" stroke="currentColor" stroke-width="2">
+            <rect x="9" y="9" width="11" height="11" rx="0"></rect>
+            <path d="M5 15V5h10"></path>
+          </svg>
+          <span data-copy-label-text>{copyLabel}</span>
+        </button>
+      </div>
+    </div>
+
+    <ol class="grid w-full gap-1.5 text-left text-[0.84rem] leading-6 text-muted-foreground">
+      {
+        steps.map((step, index) => (
+          <li class="grid min-w-0 grid-cols-[auto_minmax(0,1fr)] items-start gap-2">
+            <span class="shrink-0 font-mono text-[0.88rem] font-semibold text-primary">
+              {index + 1}.
+            </span>
+            <span class="audience-rich" set:html={step} />
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .audience-rich .audience-token {
+    display: inline;
+    white-space: nowrap;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", system-ui, sans-serif;
+    letter-spacing: 0;
+  }
+
+  .audience-rich .audience-url {
+    display: inline;
+    white-space: nowrap;
+    font-family: var(--font-code);
+    letter-spacing: 0;
+  }
+
+  .command-panel-text {
+    font-family: var(--font-code);
+    min-width: 0;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  html:lang(zh-Hans) .audience-rich {
+    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+    letter-spacing: 0;
+  }
+
+  html:lang(zh-Hant) .audience-rich {
+    font-family: "PingFang TC", "Microsoft JhengHei", "Heiti TC", system-ui, sans-serif;
+    letter-spacing: 0;
+  }
+
+  html:lang(zh-Hans) .command-panel-text,
+  html:lang(zh-Hant) .command-panel-text {
+    font-family: var(--font-body);
+    letter-spacing: 0;
+  }
+
+  .command-panel-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 0.9rem;
+  }
+
+  .command-copy-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    align-self: start;
+    justify-self: end;
+    border: 1px solid color-mix(in srgb, white 12%, transparent);
+    background: color-mix(in srgb, black 25%, transparent);
+    color: rgba(255, 255, 255, 0.74);
+    padding: 0.3rem 0.55rem;
+    font-family: var(--font-code);
+    font-size: 0.72rem;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: 0.01em;
+    transition:
+      border-color 160ms ease,
+      color 160ms ease,
+      background-color 160ms ease;
+  }
+
+  .command-copy-button:hover {
+    border-color: color-mix(in srgb, var(--primary) 45%, transparent);
+    color: rgba(255, 255, 255, 0.96);
+  }
+
+  .command-copy-button[data-copied='true'] {
+    border-color: color-mix(in srgb, #22c55e 52%, transparent);
+    color: #22c55e;
+  }
+
+  @media (max-width: 639px) {
+    .command-panel-inner {
+      grid-template-columns: 1fr;
+      gap: 0.7rem;
+    }
+
+    .command-copy-button {
+      justify-self: start;
+    }
+  }
+</style>
+
+<script>
+  const copyText = async (text: string) => {
+    if (!navigator.clipboard?.writeText) {
+      throw new Error('Clipboard API unavailable');
+    }
+
+    await navigator.clipboard.writeText(text);
+  };
+
+  const bindCommandCopyButtons = () => {
+    document.querySelectorAll<HTMLButtonElement>('[data-command-copy]').forEach((button) => {
+      if (button.dataset.bound === 'true') return;
+      button.dataset.bound = 'true';
+
+      const label = button.querySelector<HTMLSpanElement>('[data-copy-label-text]');
+      const defaultLabel = button.dataset.copyLabel || 'Copy';
+      const copiedLabel = button.dataset.copiedLabel || 'Copied';
+
+      button.addEventListener('click', async () => {
+        const container = button.closest('[data-command-block]');
+        const text = container?.querySelector<HTMLElement>('[data-command-text]')?.textContent?.trim();
+        if (!text || !label) return;
+
+        try {
+          await copyText(text);
+          label.textContent = copiedLabel;
+          button.dataset.copied = 'true';
+
+          window.setTimeout(() => {
+            label.textContent = defaultLabel;
+            button.dataset.copied = 'false';
+          }, 1400);
+        } catch {
+          label.textContent = defaultLabel;
+          button.dataset.copied = 'false';
+        }
+      });
+    });
+  };
+
+  bindCommandCopyButtons();
+  document.addEventListener('astro:page-load', bindCommandCopyButtons);
+</script>

@@ -1,0 +1,136 @@
+---
+import type { Locale } from '@/i18n';
+
+interface Props {
+  currentLocale: Locale;
+  currentPath: string;
+  allMessages: Record<string, { message: string; switch: string }>;
+}
+
+const { currentLocale, currentPath, allMessages } = Astro.props;
+---
+
+<div
+  class="fixed inset-x-0 top-0 z-[51] hidden bg-gradient-to-r from-primary to-primary/80 text-white shadow-lg"
+  data-locale-banner
+  data-current-locale={currentLocale}
+  data-current-path={currentPath}
+>
+  <div class="mx-auto px-[15px] py-2.5 min-[768px]:max-w-[750px] min-[992px]:max-w-[970px] min-[1200px]:max-w-[1170px]">
+    <div class="flex items-center justify-between gap-3 sm:gap-4">
+      <span class="text-[14px] font-semibold leading-snug sm:text-[16px]" data-locale-banner-text></span>
+      <div class="flex shrink-0 items-center gap-2">
+        <button
+          type="button"
+          class="rounded-md bg-white px-4 py-1.5 text-sm font-semibold text-primary shadow-sm transition-colors hover:bg-white/90"
+          data-locale-banner-switch
+        ></button>
+        <button
+          type="button"
+          class="rounded p-1 transition-colors hover:bg-white/20"
+          aria-label="Close"
+          data-locale-banner-dismiss
+        >
+          ×
+        </button>
+      </div>
+    </div>
+  </div>
+  <script is:inline type="application/json" data-locale-banner-messages set:html={JSON.stringify(allMessages)}></script>
+</div>
+
+<script>
+  import { getLocalizedPath, localeLabels, type Locale } from '@/i18n';
+
+  const DISMISSED_KEY = 'locale-banner-dismissed';
+  const PREFERRED_KEY = 'preferred-locale';
+
+  function detectLocale() {
+    const lang = (navigator.language || '').toLowerCase();
+    const code = lang.split('-')[0];
+
+    if (code === 'zh') {
+      if (lang.includes('tw') || lang.includes('hk') || lang.includes('hant')) {
+        return 'zh-hant';
+      }
+      return 'zh-hans';
+    }
+    if (code === 'ko') return 'ko';
+    if (code === 'en') return 'en';
+    return null;
+  }
+
+  document.querySelectorAll('[data-locale-banner]').forEach((banner) => {
+    if (!(banner instanceof HTMLElement) || banner.dataset.bound === 'true') return;
+    banner.dataset.bound = 'true';
+
+    const currentLocale = (banner.dataset.currentLocale ?? 'en') as Locale;
+    const currentPath = banner.dataset.currentPath ?? '/';
+    const messagesNode = banner.querySelector('[data-locale-banner-messages]');
+    const text = banner.querySelector('[data-locale-banner-text]');
+    const switchButton = banner.querySelector('[data-locale-banner-switch]');
+    const dismissButton = banner.querySelector('[data-locale-banner-dismiss]');
+    const header = document.querySelector('header');
+    const spacer = document.querySelector('[data-navbar-spacer]');
+    const allMessages = messagesNode?.textContent ? JSON.parse(messagesNode.textContent) : {};
+    let targetLocale: Locale | null = null;
+
+    if (
+      !(text instanceof HTMLElement) ||
+      !(switchButton instanceof HTMLButtonElement) ||
+      !(dismissButton instanceof HTMLButtonElement)
+    ) {
+      return;
+    }
+
+    const resetOffset = () => {
+      if (header instanceof HTMLElement) header.style.top = '0px';
+      if (spacer instanceof HTMLElement) spacer.style.height = '50px';
+    };
+
+    const applyOffset = () => {
+      const height = banner.offsetHeight;
+      if (header instanceof HTMLElement) header.style.top = `${height}px`;
+      if (spacer instanceof HTMLElement) spacer.style.height = `${50 + height}px`;
+    };
+
+    const hideBanner = () => {
+      banner.classList.add('hidden');
+      resetOffset();
+    };
+
+    if (localStorage.getItem(PREFERRED_KEY) || sessionStorage.getItem(DISMISSED_KEY)) {
+      hideBanner();
+      return;
+    }
+
+    const detected = detectLocale();
+    if (!detected || detected === currentLocale) {
+      hideBanner();
+      return;
+    }
+
+    targetLocale = detected;
+    const messages = allMessages[targetLocale] || allMessages[currentLocale];
+    const languageName = localeLabels[targetLocale] || targetLocale;
+    text.textContent = messages.message.replace('{lang}', languageName);
+    switchButton.textContent = messages.switch;
+    banner.classList.remove('hidden');
+    applyOffset();
+
+    switchButton.addEventListener('click', () => {
+      if (!targetLocale) return;
+      localStorage.setItem(PREFERRED_KEY, targetLocale);
+      sessionStorage.setItem(DISMISSED_KEY, '1');
+      window.location.href = getLocalizedPath(currentPath, targetLocale);
+    });
+
+    dismissButton.addEventListener('click', () => {
+      sessionStorage.setItem(DISMISSED_KEY, '1');
+      hideBanner();
+    });
+
+    window.addEventListener('resize', applyOffset);
+    window.addEventListener('pagehide', resetOffset, { once: true });
+  });
+</script>

@@ -1,10 +1,11 @@
 ---
 import Container from './Container.astro';
+import LanguageSwitcher from './LanguageSwitcher.astro';
+import ModeSwitcher from './ModeSwitcher.astro';
+import NavbarMobile from './NavbarMobile.astro';
 import { siteConfig } from '@/config/site';
+import { getLocalizedThemeLabels } from '@/config/themes';
 import { getMessages, getLocalizedPath, type Locale } from '@/i18n';
-import ModeSwitcher from '@/components/react/ModeSwitcher';
-import LanguageSwitcher from '@/components/react/LanguageSwitcher';
-import NavbarMobile from '@/components/react/NavbarMobile';
 
 interface Props {
   locale: Locale;
@@ -12,11 +13,27 @@ interface Props {
 
 const { locale } = Astro.props;
 const m = getMessages(locale);
+const themeLabels = getLocalizedThemeLabels(locale);
 const currentPath = Astro.url.pathname;
+const navLabels = m.nav as Record<string, string>;
+const showModeSwitch = siteConfig.ui.enableModeSwitch;
+const showMoreThemes = siteConfig.ui.showMoreThemesMenu;
+
+// Merge static nav items with auto-generated section nav items
+const sectionNavItems = siteConfig.sections.map((s) => ({
+  labelKey: s.labelKey,
+  href: `/${s.id}`,
+}));
+// Insert section items before the last nav item (About)
+const allNavItems = [
+  ...siteConfig.nav.slice(0, -1),
+  ...sectionNavItems,
+  ...siteConfig.nav.slice(-1),
+];
 ---
 
 <header
-  class="site-nav fixed inset-x-0 top-0 z-40 min-h-[50px] border-b border-[var(--color-nav-border)]"
+  class="site-nav fixed inset-x-0 top-0 z-40 min-h-[58px] border-b border-[var(--color-nav-border)]"
 >
   <Container class="px-4">
     <nav
@@ -26,7 +43,7 @@ const currentPath = Astro.url.pathname;
       <a
         href={getLocalizedPath('/', locale)}
         aria-label="Home"
-        class="text-[18px] font-semibold leading-5 py-[15px] pr-[15px] text-[var(--color-nav-text-active)] hover:text-[var(--color-nav-text-hover)]"
+        class="site-brand text-[18px] font-semibold leading-5 py-[19px] pr-[18px] text-[var(--color-nav-text-active)] hover:text-[var(--color-nav-text-hover)]"
       >
         <span class="flex items-center gap-2"><span aria-hidden="true">✍️</span><span>{siteConfig.name}</span></span>
       </a>
@@ -34,7 +51,7 @@ const currentPath = Astro.url.pathname;
       <div class="flex items-center">
         <ul class="flex list-none">
           {
-            siteConfig.nav.map((item) => {
+            allNavItems.map((item) => {
               const href = getLocalizedPath(item.href, locale);
               const cleanCurrent = currentPath.replace(/\/$/, '') || '/';
               const cleanHref = href.replace(/\/$/, '') || '/';
@@ -44,13 +61,14 @@ const currentPath = Astro.url.pathname;
                   <a
                     href={href}
                     class:list={[
-                      'block text-sm leading-5 p-[15px] hover:text-[var(--color-text)] hover:no-underline',
+                      'nav-item block text-[15px] leading-5 px-[14px] py-[19px] hover:text-[var(--color-text)] hover:no-underline',
                       isActive
                         ? 'nav-link-active font-semibold text-[var(--color-nav-text-active)]'
                         : 'text-[var(--color-nav-text)]',
                     ]}
+                    data-text={navLabels[item.labelKey] ?? item.labelKey}
                   >
-                    {m.nav[item.labelKey]}
+                    <span class="col-start-1 row-start-1">{navLabels[item.labelKey] ?? item.labelKey}</span>
                   </a>
                 </li>
               );
@@ -59,24 +77,34 @@ const currentPath = Astro.url.pathname;
         </ul>
 
         <div class="flex items-center gap-1 ml-2">
-          <ModeSwitcher client:idle labels={m.common.mode} />
-          <LanguageSwitcher client:idle currentLocale={locale} currentPath={currentPath} />
+          {showModeSwitch && (
+            <ModeSwitcher
+              labels={m.common.mode}
+              themeLabels={themeLabels}
+              defaultMode={siteConfig.ui.defaultMode}
+              defaultStyle={siteConfig.ui.defaultStyle}
+              showMoreThemes={showMoreThemes}
+            />
+          )}
+          <LanguageSwitcher currentLocale={locale} currentPath={currentPath} />
         </div>
       </div>
     </nav>
 
     <NavbarMobile
-      client:idle
       locale={locale}
       currentPath={currentPath}
       siteName={siteConfig.name}
-      logoLight={siteConfig.images.logoLight}
-      logoDark={siteConfig.images.logoDark}
-      navLinks={siteConfig.nav.map((item) => ({ title: m.nav[item.labelKey], href: getLocalizedPath(item.href, locale) }))}
+      navLinks={allNavItems.map((item) => ({ title: navLabels[item.labelKey] ?? item.labelKey, href: getLocalizedPath(item.href, locale) }))}
       languageLabel={m.common.language}
       modeLabels={m.common.mode}
+      themeLabels={themeLabels}
+      showThemeControls={showModeSwitch}
+      showMoreThemes={showMoreThemes}
+      defaultMode={siteConfig.ui.defaultMode}
+      defaultStyle={siteConfig.ui.defaultStyle}
     />
   </Container>
 </header>
 
-<div class="h-[50px]" aria-hidden="true" data-navbar-spacer></div>
+<div class="h-[58px]" aria-hidden="true" data-navbar-spacer></div>

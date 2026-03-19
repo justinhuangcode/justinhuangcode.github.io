@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "./themes.css";
 @plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
@@ -27,6 +28,47 @@
 
   /* Hover background — Apple systemGray6 */
   --color-bg-hover: #F2F2F7;
+
+  /* ── Content / Typography tokens ── */
+  --font-heading: var(--font-body);
+  --font-ui: var(--font-body);
+  --font-code: ui-monospace, "SF Mono", "Source Code Pro", Consolas, monospace;
+  --line-height-body: 1.47;
+  --paragraph-spacing: 18px;
+  --letter-spacing-h1: -0.015em;
+
+  /* Heading colors (per level — enables multi-color themes) */
+  --heading-h1-color: var(--foreground);
+  --heading-h2-color: var(--foreground);
+  --heading-h3-color: var(--foreground);
+  --heading-h4-color: var(--foreground);
+
+  /* Heading decorations */
+  --heading-h1-border: none;
+  --heading-h2-border: none;
+  --heading-h1-font-variant: normal;
+
+  /* Strong / Em */
+  --strong-color: inherit;
+  --strong-bg: transparent;
+  --em-color: inherit;
+
+  /* Blockquote */
+  --blockquote-bg: transparent;
+  --blockquote-border-color: var(--border);
+  --blockquote-border-radius: 0;
+  --blockquote-font-style: normal;
+  --blockquote-text-color: var(--muted-foreground);
+
+  /* Code */
+  --code-bg: var(--muted);
+  --code-color: var(--primary);
+  --code-border-radius: 4px;
+  --pre-bg: var(--muted);
+  --pre-border-radius: 0;
+
+  /* Image */
+  --image-border-radius: 0.375rem;
 
   /* Link tokens — Apple systemBlue */
   --color-link: #007AFF;
@@ -77,9 +119,89 @@
   --color-nav-hover-bg: rgba(255, 255, 255, 0.08);
 }
 
+/* ── Theme: Nord ── */
+html.nord {
+  --background: #2E3440;
+  --foreground: #ECEFF4;
+  --card: #3B4252;
+  --card-foreground: #ECEFF4;
+  --popover: #3B4252;
+  --popover-foreground: #ECEFF4;
+  --primary: #88C0D0;
+  --primary-foreground: #2E3440;
+  --secondary: #3B4252;
+  --secondary-foreground: #ECEFF4;
+  --muted: #3B4252;
+  --muted-foreground: #D8DEE9;
+  --accent: #434C5E;
+  --accent-foreground: #ECEFF4;
+  --destructive: #BF616A;
+  --border: #4C566A;
+  --input: #4C566A;
+  --ring: #88C0D0;
+  --color-bg-hover: #3B4252;
+  --color-link: #88C0D0;
+  --color-link-hover: #8FBCBB;
+  --color-nav-bg: #2E3440;
+  --color-nav-border: #3B4252;
+  --color-nav-text: #D8DEE9;
+  --color-nav-text-hover: #ECEFF4;
+  --color-nav-text-active: #ECEFF4;
+  --color-nav-hover-bg: rgba(136, 192, 208, 0.1);
+
+  /* Content / Typography */
+  --heading-h1-color: #88c0d0;
+  --heading-h2-color: #81a1c1;
+  --heading-h3-color: #88c0d0;
+  --strong-color: #eceff4;
+  --em-color: #a3be8c;
+  --blockquote-bg: #3b4252;
+  --blockquote-border-color: #4c566a;
+}
+
+/* ── Theme: Rose ── */
+html.rose {
+  --background: #1A1018;
+  --foreground: #F5E6F0;
+  --card: #2A1A25;
+  --card-foreground: #F5E6F0;
+  --popover: #2A1A25;
+  --popover-foreground: #F5E6F0;
+  --primary: #F472B6;
+  --primary-foreground: #1A1018;
+  --secondary: #2A1A25;
+  --secondary-foreground: #F5E6F0;
+  --muted: #2A1A25;
+  --muted-foreground: #C9A0B8;
+  --accent: #3D2235;
+  --accent-foreground: #F5E6F0;
+  --destructive: #FB7185;
+  --border: #4A2A40;
+  --input: #4A2A40;
+  --ring: #F472B6;
+  --color-bg-hover: #2A1A25;
+  --color-link: #F472B6;
+  --color-link-hover: #F9A8D4;
+  --color-nav-bg: #1A1018;
+  --color-nav-border: #3D2235;
+  --color-nav-text: #C9A0B8;
+  --color-nav-text-hover: #F5E6F0;
+  --color-nav-text-active: #F5E6F0;
+  --color-nav-hover-bg: rgba(244, 114, 182, 0.1);
+
+  /* Content / Typography */
+  --heading-h1-color: #F472B6;
+  --heading-h2-color: #F9A8D4;
+  --strong-bg: rgba(244, 114, 182, 0.1);
+  --em-color: #C9A0B8;
+  --blockquote-bg: #2A1A25;
+  --blockquote-border-color: #F472B6;
+  --blockquote-border-radius: 8px;
+}
+
 @theme inline {
-  --font-body: -apple-system, BlinkMacSystemFont, "PingFang SC",
-    "Microsoft YaHei", system-ui, sans-serif;
+  --font-body: -apple-system, BlinkMacSystemFont, "SF Pro Text",
+    "Helvetica Neue", system-ui, sans-serif;
   --font-serif: ui-serif, Georgia, "Noto Serif", "Palatino Linotype",
     "Book Antiqua", Palatino, serif;
   --font-mono: ui-monospace, "Source Code Pro", Consolas, Monaco, monospace;
@@ -111,17 +233,32 @@
   --radius-4xl: calc(var(--radius) + 16px);
 }
 
+html:lang(zh-Hans) {
+  --font-body: "PingFang SC", "Hiragino Sans GB", "Noto Sans SC",
+    "Microsoft YaHei", "Microsoft YaHei UI", system-ui, sans-serif;
+  --font-heading: var(--font-body);
+  --font-ui: var(--font-body);
+}
+
+html:lang(zh-Hant) {
+  --font-body: "PingFang TC", "Hiragino Sans CNS", "Noto Sans TC",
+    "Microsoft JhengHei", "Microsoft JhengHei UI", "Heiti TC", system-ui, sans-serif;
+  --font-heading: var(--font-body);
+  --font-ui: var(--font-body);
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
   body {
-    @apply font-body antialiased bg-background text-foreground;
+    @apply font-body antialiased bg-background text-foreground overflow-x-hidden;
     font-weight: 400;
   }
   html {
-    @apply font-body scroll-smooth;
+    @apply font-body scroll-smooth overflow-x-hidden;
     scroll-padding-top: 80px;
+    scrollbar-gutter: stable;
   }
 }
 
@@ -129,31 +266,33 @@
 
 .site-nav {
   background-color: var(--color-nav-bg);
-  background-image: linear-gradient(to bottom, #fff 0%, #f8f8f8 100%);
-  background-repeat: repeat-x;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.15),
-    0 1px 5px rgba(0, 0, 0, 0.075);
+  border-color: var(--color-nav-border);
+}
+
+.site-nav .nav-item {
+  display: inline-grid;
+  justify-items: center;
+  align-items: center;
+}
+
+.site-nav .nav-item > span,
+.site-nav .nav-item::after {
+  grid-area: 1 / 1;
+}
+
+.site-nav .nav-item::after {
+  content: attr(data-text);
+  font-weight: 600;
+  visibility: hidden;
+  pointer-events: none;
+  user-select: none;
 }
 
 .site-nav .nav-link-active {
-  background-image: linear-gradient(to bottom, #dbdbdb 0%, #e2e2e2 100%);
-  background-repeat: repeat-x;
-  box-shadow: inset 0 3px 9px rgba(0, 0, 0, 0.075);
+  box-shadow: inset 0 -2px 0 var(--color-link);
 }
 
-.dark .site-nav {
-  background-color: var(--color-nav-bg);
-  background-image: linear-gradient(to bottom, #1a1a1a 0%, #111 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.05),
-    0 1px 5px rgba(0, 0, 0, 0.3);
-}
-
-.dark .site-nav .nav-link-active {
-  background-image: linear-gradient(to bottom, #222 0%, #2a2a2a 100%);
-  box-shadow: inset 0 3px 9px rgba(0, 0, 0, 0.2);
-}
+/* dark nav styles removed — all themes now use CSS variables */
 
 /* ── Scroll-reveal & entrance animations ── */
 
@@ -278,6 +417,17 @@ html.no-transition *::after {
     opacity: 1;
     transform: none;
   }
+}
+
+/* Prevent images from overflowing viewport */
+img, video, iframe {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Giscus comment iframe responsive */
+.giscus-frame {
+  width: 100% !important;
 }
 
 /* Remove underline from heading links in prose */

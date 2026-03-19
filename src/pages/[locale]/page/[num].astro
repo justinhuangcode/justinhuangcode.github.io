@@ -1,21 +1,28 @@
 ---
 import BlogIndexPage from '@/components/pages/BlogIndexPage.astro';
-import { nonDefaultLocales, type Locale } from '@/i18n';
-import { getPaginatedPosts, getPaginationStaticPaths } from '@/lib/site-content';
+import {
+  nonDefaultLocales,
+  type Locale,
+} from '@/i18n';
+import {
+  getPaginatedPosts,
+  getPaginationStaticPaths,
+} from '@/lib/site-content';
 
 export async function getStaticPaths() {
-  const paths: Array<{ params: { locale: string; num: string }; props: { locale: Locale } }> = [];
-
+  const paths: Array<{
+    params: { locale: string; num: string };
+    props: { locale: Locale };
+  }> = [];
   for (const locale of nonDefaultLocales) {
     const localePaths = await getPaginationStaticPaths(locale);
     localePaths.forEach((path) => {
       paths.push({
-        params: { locale, num: path.params.num },
+        params: { locale, ...path.params },
         props: { locale },
       });
     });
   }
-
   return paths;
 }
 

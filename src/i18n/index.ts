@@ -34,20 +34,6 @@ export const localeLabels: Record<Locale, string> = {
   ko: '한국어',
 };
 
-export const intlLocales: Record<Locale, string> = {
-  en: 'en-US',
-  'zh-hans': 'zh-CN',
-  'zh-hant': 'zh-TW',
-  ko: 'ko-KR',
-};
-
-export const htmlLangs: Record<Locale, string> = {
-  en: 'en',
-  'zh-hans': 'zh-Hans',
-  'zh-hant': 'zh-Hant',
-  ko: 'ko',
-};
-
 export function getMessages(locale: string = 'en'): Messages {
   return messages[locale] ?? en;
 }
@@ -69,6 +55,22 @@ export function translateCategory(key: string, locale: string = 'en'): string {
   const m = getMessages(locale);
   return m.categories[key] ?? key;
 }
+
+/** Map internal locale to Intl/BCP-47 locale for date formatting etc. */
+export const intlLocales: Record<Locale, string> = {
+  en: 'en-US',
+  'zh-hans': 'zh-CN',
+  'zh-hant': 'zh-TW',
+  ko: 'ko-KR',
+};
+
+/** Map internal locale to HTML lang attribute / inLanguage value */
+export const htmlLangs: Record<Locale, string> = {
+  en: 'en',
+  'zh-hans': 'zh-Hans',
+  'zh-hant': 'zh-Hant',
+  ko: 'ko',
+};
 
 export function getLocalizedPath(path: string, locale: Locale): string {
   const cleanPath = stripLocalePrefix(path);

@@ -1,0 +1,121 @@
+---
+import { IconLanguage } from '@/components/icons';
+import { getLocalizedPath, localeLabels, locales, type Locale } from '@/i18n';
+
+interface Props {
+  currentLocale: Locale;
+  currentPath: string;
+}
+
+const { currentLocale, currentPath } = Astro.props;
+---
+
+<div class="relative" data-language-switcher>
+  <button
+    type="button"
+    class="nav-utility-button inline-flex h-[34px] items-center justify-center rounded px-2 text-sm text-[var(--color-nav-text)] transition-colors hover:text-[var(--color-nav-text-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+    data-language-trigger
+    aria-label="Switch language"
+    aria-haspopup="menu"
+    aria-expanded="false"
+    aria-controls="desktop-language-menu"
+  >
+    <IconLanguage className="size-[18px]" />
+  </button>
+
+  <div
+    id="desktop-language-menu"
+    class="nav-panel absolute right-0 top-[calc(100%+0.55rem)] z-50 hidden w-[16rem] min-w-[16rem] overflow-hidden rounded-xl border border-border/70 bg-popover p-1 text-popover-foreground shadow-lg ring-1 ring-foreground/10"
+    data-language-panel
+    role="menu"
+    aria-label="Switch language"
+  >
+    {
+      locales.map((locale) => (
+        <a
+          href={getLocalizedPath(currentPath, locale)}
+          class="nav-panel-link group flex w-full items-center rounded-lg px-4 py-3 text-[15px] text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:bg-accent focus-visible:text-accent-foreground focus-visible:outline-none data-[active=true]:bg-accent data-[active=true]:font-semibold data-[active=true]:text-primary"
+          data-language-link={locale}
+          data-active={locale === currentLocale ? 'true' : 'false'}
+          role="menuitem"
+        >
+          <span class:list={[
+            'block w-full whitespace-nowrap',
+            locale === currentLocale ? '' : 'group-hover:font-semibold group-focus:font-semibold',
+          ]}>
+            {localeLabels[locale]}
+          </span>
+        </a>
+      ))
+    }
+  </div>
+</div>
+
+<script>
+  const DESKTOP_MENU_EVENT = 'aither:desktop-menu-open';
+
+  document.querySelectorAll('[data-language-switcher]').forEach((root) => {
+    if (!(root instanceof HTMLElement) || root.dataset.bound === 'true') return;
+    root.dataset.bound = 'true';
+
+    const trigger = root.querySelector('[data-language-trigger]');
+    const panel = root.querySelector('[data-language-panel]');
+    const links = Array.from(root.querySelectorAll('[data-language-link]'));
+
+    if (!(trigger instanceof HTMLButtonElement) || !(panel instanceof HTMLElement)) return;
+
+    const closeMenu = () => {
+      panel.classList.add('hidden');
+      trigger.setAttribute('aria-expanded', 'false');
+    };
+
+    const openMenu = () => {
+      window.dispatchEvent(
+        new CustomEvent(DESKTOP_MENU_EVENT, {
+          detail: { owner: 'language' },
+        }),
+      );
+      panel.classList.remove('hidden');
+      trigger.setAttribute('aria-expanded', 'true');
+    };
+
+    trigger.addEventListener('click', (event) => {
+      event.stopPropagation();
+      if (panel.classList.contains('hidden')) {
+        openMenu();
+      } else {
+        closeMenu();
+      }
+    });
+
+    links.forEach((link) => {
+      if (!(link instanceof HTMLAnchorElement)) return;
+      link.addEventListener('click', () => {
+        const locale = link.dataset.languageLink;
+        if (locale) {
+          localStorage.setItem('preferred-locale', locale);
+        }
+        closeMenu();
+      });
+    });
+
+    document.addEventListener('click', (event) => {
+      if (!(event.target instanceof Node) || !root.contains(event.target)) {
+        closeMenu();
+      }
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        closeMenu();
+      }
+    });
+
+    window.addEventListener(DESKTOP_MENU_EVENT, (event) => {
+      const customEvent = event as CustomEvent<{ owner?: string }>;
+      if (customEvent.detail?.owner !== 'language') {
+        closeMenu();
+      }
+    });
+  });
+</script>

@@ -1,0 +1,50 @@
+---
+import { formatDate } from '@/lib/formatter';
+import { type Locale } from '@/i18n';
+import { getSlug, type PostEntry } from '@/lib/posts';
+import { getPostMarkdownPath } from '@/lib/site-content';
+
+interface Props {
+  locale: Locale;
+  posts: PostEntry[];
+}
+
+const { locale, posts } = Astro.props;
+---
+
+<div class="ai-access-shell">
+  <ul class="blog-grid ai-access-frame ai-access-list list-none border border-border rounded mb-5 mt-4">
+    {
+      posts.map((post) => {
+        const slug = getSlug(post.id);
+        const markdownHref = getPostMarkdownPath(locale, slug);
+
+        return (
+          <li class="border-b border-border last:border-b-0">
+            <a
+              href={markdownHref}
+              class="group block px-5 py-[17px] transition-colors hover:bg-[var(--color-bg-hover)] focus-visible:bg-[var(--color-bg-hover)] focus-visible:outline-none sm:px-6 sm:py-[19px]"
+            >
+              <div>
+                <div class="min-w-0">
+                  <div class="blog-card-meta inline-flex items-center gap-2 text-[0.74rem] font-semibold text-muted-foreground mb-1.5">
+                    {post.data.pinned && <span>📌</span>}
+                    <span>{formatDate(post.data.date)}</span>
+                  </div>
+                  <div class="flex flex-wrap items-baseline gap-x-2 gap-y-1 py-0.5">
+                    <span class="blog-card-title text-[1.06rem] leading-[1.28] font-semibold text-[var(--color-link)] transition-colors group-hover:text-[var(--color-link-hover)] sm:text-[1.14rem]">
+                      {post.data.title}
+                    </span>
+                    <span class="shrink-0 font-mono text-[0.82rem] font-semibold tracking-[0.12em] text-foreground/55 transition-colors group-hover:text-[var(--color-link)]">
+                      .md
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </a>
+          </li>
+        );
+      })
+    }
+  </ul>
+</div>

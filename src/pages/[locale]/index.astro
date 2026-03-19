@@ -1,6 +1,9 @@
 ---
 import BlogIndexPage from '@/components/pages/BlogIndexPage.astro';
-import { nonDefaultLocales, type Locale } from '@/i18n';
+import {
+  nonDefaultLocales,
+  type Locale,
+} from '@/i18n';
 import { getPaginatedPosts } from '@/lib/site-content';
 
 export function getStaticPaths() {

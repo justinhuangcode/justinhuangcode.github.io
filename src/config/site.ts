@@ -1,20 +1,40 @@
 import type { ImageMetadata } from 'astro';
+import type { CollectionKey } from 'astro:content';
 
 export interface SocialLink {
   title: string;
   href: string;
-  icon: string; // icon identifier, e.g. 'github', 'x'
+  icon: 'github' | 'x' | 'discord' | 'mail' | 'rss';
 }
 
 export interface FooterLink {
   title: string;
   href: string;
   external?: boolean;
+  /** Optional i18n key — looks up m.footer[labelKey], falls back to title */
+  labelKey?: string;
 }
 
 export interface FooterSection {
   title: string;
   items: FooterLink[];
+}
+
+/**
+ * Custom content section (beyond the default blog posts).
+ * Each section gets its own list page + detail pages, auto-routed.
+ *
+ * To add a section:
+ * 1. Add entry here
+ * 2. Register collection in src/content.config.ts
+ * 3. Create content in src/content/{id}/{locale}/
+ * 4. Add nav.{labelKey} to i18n messages
+ */
+export interface ContentSection {
+  /** Collection ID — must match content.config.ts collection name and src/content/{id}/ directory */
+  id: CollectionKey;
+  /** i18n key used in nav and page title — maps to m.nav[labelKey] */
+  labelKey: string;
 }
 
 export const siteConfig = {
@@ -25,7 +45,7 @@ export const siteConfig = {
     name: 'Justin Huang',
     avatar: '' as ImageMetadata | string, // Import from src/assets/ for optimization, or use URL string
   },
-  url: 'https://justinhuangcode.github.io',
+  url: import.meta.env.SITE || 'https://justinhuangcode.github.io',
   ogImage: '/og/index.png',
   images: {
     logoLight: '/logo.svg',
@@ -55,7 +75,9 @@ export const siteConfig = {
   },
   ui: {
     defaultMode: 'system' as const,
+    defaultStyle: 'default' as const,
     enableModeSwitch: true,
+    showMoreThemesMenu: true,
   },
   giscus: {
     repo: import.meta.env.PUBLIC_GISCUS_REPO || '',
@@ -67,8 +89,12 @@ export const siteConfig = {
     emitMetadata: false,
     inputPosition: 'top' as const,
   },
+  // Custom content sections — each one auto-generates list + detail pages
+  // Example: { id: 'translations', labelKey: 'translations' }
+  sections: [] as ContentSection[],
   nav: [
     { labelKey: 'blog' as const, href: '/' },
+    // Section nav items are auto-appended from sections config above
     { labelKey: 'about' as const, href: '/about' },
   ],
   footer: {
@@ -77,7 +103,7 @@ export const siteConfig = {
       {
         title: 'Navigate',
         items: [
-          { title: 'About', href: '/about' },
+          { title: 'About', href: '/about', labelKey: 'about' },
         ],
       },
       {

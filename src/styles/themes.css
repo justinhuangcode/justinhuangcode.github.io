@@ -1,0 +1,1563 @@
+/* ── Theme: Mac ── */
+html.apple {
+  --background: #ffffff;
+  --foreground: #1d1d1f;
+  --card: #f5f5f7;
+  --card-foreground: #1d1d1f;
+  --popover: #f5f5f7;
+  --popover-foreground: #1d1d1f;
+  --primary: #0066cc;
+  --primary-foreground: #ffffff;
+  --secondary: #f5f5f7;
+  --secondary-foreground: #1d1d1f;
+  --muted: #f5f5f7;
+  --muted-foreground: #86868b;
+  --accent: #e8e8ed;
+  --accent-foreground: #1d1d1f;
+  --destructive: #ff3b30;
+  --border: #d2d2d7;
+  --input: #d2d2d7;
+  --ring: #0066cc;
+  --color-bg-hover: #f5f5f7;
+  --color-link: #0066cc;
+  --color-link-hover: #0055aa;
+  --color-nav-bg: #fbfbfd;
+  --color-nav-border: #d2d2d7;
+  --color-nav-text: #86868b;
+  --color-nav-text-hover: #1d1d1f;
+  --color-nav-text-active: #1d1d1f;
+  --color-nav-hover-bg: rgba(0, 102, 204, 0.06);
+
+  /* Content / Typography */
+  --image-border-radius: 12px;
+}
+
+/* ── Theme: Claude ── */
+html.claude-theme {
+  --background: #f8f6f0;
+  --foreground: #2b2b2b;
+  --card: #efeadf;
+  --card-foreground: #2b2b2b;
+  --popover: #efeadf;
+  --popover-foreground: #2b2b2b;
+  --primary: #b75c3d;
+  --primary-foreground: #ffffff;
+  --secondary: #efeadf;
+  --secondary-foreground: #2b2b2b;
+  --muted: #efeadf;
+  --muted-foreground: #7a7568;
+  --accent: #e6dfd2;
+  --accent-foreground: #2b2b2b;
+  --destructive: #c0392b;
+  --border: #d6cfc1;
+  --input: #d6cfc1;
+  --ring: #b75c3d;
+  --color-bg-hover: #efeadf;
+  --color-link: #b75c3d;
+  --color-link-hover: #9a4d33;
+  --color-nav-bg: #f5f2eb;
+  --color-nav-border: #d6cfc1;
+  --color-nav-text: #7a7568;
+  --color-nav-text-hover: #2b2b2b;
+  --color-nav-text-active: #2b2b2b;
+  --color-nav-hover-bg: rgba(183, 92, 61, 0.08);
+
+  /* Content / Typography */
+  --strong-bg: rgba(183, 92, 61, 0.08);
+  --blockquote-bg: rgba(183, 92, 61, 0.04);
+  --blockquote-border-color: #b75c3d;
+}
+
+/* ── Theme: WeChat ── */
+html.wechat {
+  --background: #ffffff;
+  --foreground: #333333;
+  --card: #f5f5f5;
+  --card-foreground: #333333;
+  --popover: #f5f5f5;
+  --popover-foreground: #333333;
+  --primary: #07c160;
+  --primary-foreground: #ffffff;
+  --secondary: #f5f5f5;
+  --secondary-foreground: #333333;
+  --muted: #f5f5f5;
+  --muted-foreground: #888888;
+  --accent: #ededed;
+  --accent-foreground: #333333;
+  --destructive: #e64340;
+  --border: #d9d9d9;
+  --input: #d9d9d9;
+  --ring: #07c160;
+  --color-bg-hover: #f5f5f5;
+  --color-link: #07c160;
+  --color-link-hover: #06a550;
+  --color-nav-bg: #fafafa;
+  --color-nav-border: #e0e0e0;
+  --color-nav-text: #888888;
+  --color-nav-text-hover: #333333;
+  --color-nav-text-active: #333333;
+  --color-nav-hover-bg: rgba(7, 193, 96, 0.06);
+
+  /* Content / Typography */
+  --strong-bg: rgba(7, 193, 96, 0.08);
+  --blockquote-bg: #f0f7f2;
+  --blockquote-border-color: #07c160;
+}
+
+/* ── Theme: NYT ── */
+html.nyt {
+  --background: #fdfaf6;
+  --foreground: #000000;
+  --card: #f2ede5;
+  --card-foreground: #000000;
+  --popover: #f2ede5;
+  --popover-foreground: #000000;
+  --primary: #326891;
+  --primary-foreground: #ffffff;
+  --secondary: #f2ede5;
+  --secondary-foreground: #000000;
+  --muted: #f2ede5;
+  --muted-foreground: #666666;
+  --accent: #e8e1d6;
+  --accent-foreground: #000000;
+  --destructive: #d0021b;
+  --border: #ccc5b9;
+  --input: #ccc5b9;
+  --ring: #326891;
+  --color-bg-hover: #f2ede5;
+  --color-link: #326891;
+  --color-link-hover: #285577;
+  --color-nav-bg: #faf7f2;
+  --color-nav-border: #ccc5b9;
+  --color-nav-text: #666666;
+  --color-nav-text-hover: #000000;
+  --color-nav-text-active: #000000;
+  --color-nav-hover-bg: rgba(50, 104, 145, 0.06);
+
+  /* Content / Typography */
+  --font-heading: Georgia, serif;
+  --heading-h1-border: 2px solid #000;
+  --blockquote-bg: #f0ede8;
+  --blockquote-border-color: #326891;
+  --blockquote-font-style: italic;
+}
+
+/* ── Theme: Medium ── */
+html.medium {
+  --background: #fcfcfc;
+  --foreground: #242424;
+  --card: #f2f2f2;
+  --card-foreground: #242424;
+  --popover: #f2f2f2;
+  --popover-foreground: #242424;
+  --primary: #1a8917;
+  --primary-foreground: #ffffff;
+  --secondary: #f2f2f2;
+  --secondary-foreground: #242424;
+  --muted: #f2f2f2;
+  --muted-foreground: #757575;
+  --accent: #e6e6e6;
+  --accent-foreground: #242424;
+  --destructive: #c94a4a;
+  --border: #d1d1d1;
+  --input: #d1d1d1;
+  --ring: #1a8917;
+  --color-bg-hover: #f2f2f2;
+  --color-link: #1a8917;
+  --color-link-hover: #157013;
+  --color-nav-bg: #f9f9f9;
+  --color-nav-border: #d1d1d1;
+  --color-nav-text: #757575;
+  --color-nav-text-hover: #242424;
+  --color-nav-text-active: #242424;
+  --color-nav-hover-bg: rgba(26, 137, 23, 0.06);
+
+  /* Content / Typography */
+  --line-height-body: 1.85;
+  --paragraph-spacing: 24px;
+  --blockquote-border-color: #1a8917;
+}
+
+/* ── Theme: Stripe ── */
+html.stripe {
+  --background: #f6f9fc;
+  --foreground: #425466;
+  --card: #e9eef4;
+  --card-foreground: #425466;
+  --popover: #e9eef4;
+  --popover-foreground: #425466;
+  --primary: #635bff;
+  --primary-foreground: #ffffff;
+  --secondary: #e9eef4;
+  --secondary-foreground: #425466;
+  --muted: #e9eef4;
+  --muted-foreground: #8898aa;
+  --accent: #dde4ec;
+  --accent-foreground: #425466;
+  --destructive: #e25950;
+  --border: #c4cdd9;
+  --input: #c4cdd9;
+  --ring: #635bff;
+  --color-bg-hover: #e9eef4;
+  --color-link: #635bff;
+  --color-link-hover: #524ae0;
+  --color-nav-bg: #f2f6fa;
+  --color-nav-border: #c4cdd9;
+  --color-nav-text: #8898aa;
+  --color-nav-text-hover: #425466;
+  --color-nav-text-active: #425466;
+  --color-nav-hover-bg: rgba(99, 91, 255, 0.06);
+
+  /* Content / Typography */
+  --blockquote-bg: #eef0ff;
+  --blockquote-border-color: #635bff;
+}
+
+/* ── Theme: Feishu ── */
+html.feishu {
+  --background: #f7f8fa;
+  --foreground: #1f2329;
+  --card: #ecedf0;
+  --card-foreground: #1f2329;
+  --popover: #ecedf0;
+  --popover-foreground: #1f2329;
+  --primary: #3370ff;
+  --primary-foreground: #ffffff;
+  --secondary: #ecedf0;
+  --secondary-foreground: #1f2329;
+  --muted: #ecedf0;
+  --muted-foreground: #8f959e;
+  --accent: #e0e2e6;
+  --accent-foreground: #1f2329;
+  --destructive: #f54a45;
+  --border: #c9cdd4;
+  --input: #c9cdd4;
+  --ring: #3370ff;
+  --color-bg-hover: #ecedf0;
+  --color-link: #3370ff;
+  --color-link-hover: #2860e0;
+  --color-nav-bg: #f3f4f6;
+  --color-nav-border: #c9cdd4;
+  --color-nav-text: #8f959e;
+  --color-nav-text-hover: #1f2329;
+  --color-nav-text-active: #1f2329;
+  --color-nav-hover-bg: rgba(51, 112, 255, 0.06);
+
+  /* Content / Typography */
+  --heading-h2-border: 2px solid #3370ff;
+  --blockquote-bg: #edf1ff;
+  --blockquote-border-color: #3370ff;
+}
+
+/* ── Theme: Linear ── */
+html.linear {
+  --background: #101114;
+  --foreground: #f1f1f2;
+  --card: #1b1c20;
+  --card-foreground: #f1f1f2;
+  --popover: #1b1c20;
+  --popover-foreground: #f1f1f2;
+  --primary: #5e6ad2;
+  --primary-foreground: #ffffff;
+  --secondary: #1b1c20;
+  --secondary-foreground: #f1f1f2;
+  --muted: #1b1c20;
+  --muted-foreground: #8a8f98;
+  --accent: #26272c;
+  --accent-foreground: #f1f1f2;
+  --destructive: #e5484d;
+  --border: #2e2f34;
+  --input: #2e2f34;
+  --ring: #5e6ad2;
+  --color-bg-hover: #1b1c20;
+  --color-link: #5e6ad2;
+  --color-link-hover: #7b85e0;
+  --color-nav-bg: #101114;
+  --color-nav-border: #26272c;
+  --color-nav-text: #8a8f98;
+  --color-nav-text-hover: #f1f1f2;
+  --color-nav-text-active: #f1f1f2;
+  --color-nav-hover-bg: rgba(94, 106, 210, 0.1);
+
+  /* Content / Typography */
+  --blockquote-bg: #1a1a1a;
+  --blockquote-border-color: #5e6ad2;
+}
+
+/* ── Theme: Retro ── */
+html.retro {
+  --background: #f4ecd8;
+  --foreground: #2b2621;
+  --card: #e8dfc9;
+  --card-foreground: #2b2621;
+  --popover: #e8dfc9;
+  --popover-foreground: #2b2621;
+  --primary: #8c2211;
+  --primary-foreground: #f4ecd8;
+  --secondary: #e8dfc9;
+  --secondary-foreground: #2b2621;
+  --muted: #e8dfc9;
+  --muted-foreground: #7a7164;
+  --accent: #ddd3bb;
+  --accent-foreground: #2b2621;
+  --destructive: #a03020;
+  --border: #c9bfa8;
+  --input: #c9bfa8;
+  --ring: #8c2211;
+  --color-bg-hover: #e8dfc9;
+  --color-link: #8c2211;
+  --color-link-hover: #6e1a0d;
+  --color-nav-bg: #f0e7d2;
+  --color-nav-border: #c9bfa8;
+  --color-nav-text: #7a7164;
+  --color-nav-text-hover: #2b2621;
+  --color-nav-text-active: #2b2621;
+  --color-nav-hover-bg: rgba(140, 34, 17, 0.08);
+
+  /* Content / Typography */
+  --font-heading: Georgia, serif;
+  --heading-h1-font-variant: small-caps;
+  --blockquote-bg: #efe5cc;
+  --blockquote-font-style: italic;
+  --blockquote-border-color: #8c2211;
+  --image-border-radius: 4px;
+}
+
+/* ── Theme: Bloomberg ── */
+html.bloomberg {
+  --background: #000000;
+  --foreground: #15fa52;
+  --card: #111111;
+  --card-foreground: #15fa52;
+  --popover: #111111;
+  --popover-foreground: #15fa52;
+  --primary: #ff8c00;
+  --primary-foreground: #000000;
+  --secondary: #111111;
+  --secondary-foreground: #15fa52;
+  --muted: #111111;
+  --muted-foreground: #10b83c;
+  --accent: #1a1a1a;
+  --accent-foreground: #15fa52;
+  --destructive: #ff4444;
+  --border: #2a2a2a;
+  --input: #2a2a2a;
+  --ring: #ff8c00;
+  --color-bg-hover: #111111;
+  --color-link: #ff8c00;
+  --color-link-hover: #ffab40;
+  --color-nav-bg: #000000;
+  --color-nav-border: #1a1a1a;
+  --color-nav-text: #10b83c;
+  --color-nav-text-hover: #15fa52;
+  --color-nav-text-active: #15fa52;
+  --color-nav-hover-bg: rgba(255, 140, 0, 0.1);
+
+  /* Content / Typography */
+  --font-heading: "SF Mono", "Courier New", monospace;
+  --blockquote-bg: transparent;
+  --blockquote-border-color: #333;
+}
+
+/* ── Theme: Notion ── */
+html.notion {
+  --background: #ffffff;
+  --foreground: #37352f;
+  --card: #f7f6f3;
+  --card-foreground: #37352f;
+  --popover: #f7f6f3;
+  --popover-foreground: #37352f;
+  --primary: #37352f;
+  --primary-foreground: #ffffff;
+  --secondary: #f7f6f3;
+  --secondary-foreground: #37352f;
+  --muted: #f7f6f3;
+  --muted-foreground: #9b9a97;
+  --accent: #eeedea;
+  --accent-foreground: #37352f;
+  --destructive: #e03e3e;
+  --border: #e3e2de;
+  --input: #e3e2de;
+  --ring: #37352f;
+  --color-bg-hover: #f7f6f3;
+  --color-link: #37352f;
+  --color-link-hover: #55534e;
+  --color-nav-bg: #fbfbfa;
+  --color-nav-border: #e3e2de;
+  --color-nav-text: #9b9a97;
+  --color-nav-text-hover: #37352f;
+  --color-nav-text-active: #37352f;
+  --color-nav-hover-bg: rgba(55, 53, 47, 0.05);
+
+  /* Content / Typography */
+  --line-height-body: 1.6;
+  --paragraph-spacing: 4px;
+  --letter-spacing-h1: -0.02em;
+  --code-color: #eb5757;
+  --code-border-radius: 3px;
+}
+
+/* ── Theme: GitHub ── */
+html.github {
+  --background: #ffffff;
+  --foreground: #1f2328;
+  --card: #f6f8fa;
+  --card-foreground: #1f2328;
+  --popover: #f6f8fa;
+  --popover-foreground: #1f2328;
+  --primary: #0969da;
+  --primary-foreground: #ffffff;
+  --secondary: #f6f8fa;
+  --secondary-foreground: #1f2328;
+  --muted: #f6f8fa;
+  --muted-foreground: #656d76;
+  --accent: #eaeef2;
+  --accent-foreground: #1f2328;
+  --destructive: #cf222e;
+  --border: #d0d7de;
+  --input: #d0d7de;
+  --ring: #0969da;
+  --color-bg-hover: #f6f8fa;
+  --color-link: #0969da;
+  --color-link-hover: #0550ae;
+  --color-nav-bg: #f6f8fa;
+  --color-nav-border: #d0d7de;
+  --color-nav-text: #656d76;
+  --color-nav-text-hover: #1f2328;
+  --color-nav-text-active: #1f2328;
+  --color-nav-hover-bg: rgba(9, 105, 218, 0.06);
+
+  /* Content / Typography */
+  --line-height-body: 1.6;
+  --heading-h1-border: 1px solid #d1d9e0;
+  --heading-h2-border: 1px solid #d1d9e0;
+  --blockquote-border-color: #d0d7de;
+  --blockquote-text-color: #656d76;
+}
+
+/* ── Theme: Xiaohongshu ── */
+html.xiaohongshu {
+  --background: #ffffff;
+  --foreground: #333333;
+  --card: #f5f5f5;
+  --card-foreground: #333333;
+  --popover: #f5f5f5;
+  --popover-foreground: #333333;
+  --primary: #d71a1b;
+  --primary-foreground: #ffffff;
+  --secondary: #f5f5f5;
+  --secondary-foreground: #333333;
+  --muted: #f5f5f5;
+  --muted-foreground: #888888;
+  --accent: #ededed;
+  --accent-foreground: #333333;
+  --destructive: #d71a1b;
+  --border: #d9d9d9;
+  --input: #d9d9d9;
+  --ring: #d71a1b;
+  --color-bg-hover: #f5f5f5;
+  --color-link: #d71a1b;
+  --color-link-hover: #b51517;
+  --color-nav-bg: #fafafa;
+  --color-nav-border: #e0e0e0;
+  --color-nav-text: #888888;
+  --color-nav-text-hover: #333333;
+  --color-nav-text-active: #333333;
+  --color-nav-hover-bg: rgba(215, 26, 27, 0.06);
+
+  /* Content / Typography */
+  --heading-h1-color: #d71a1b;
+  --strong-color: #d71a1b;
+  --blockquote-bg: #fef7f7;
+  --blockquote-border-color: #d71a1b;
+  --line-height-body: 1.8;
+  --image-border-radius: 8px;
+}
+
+/* ── Theme: Dracula ── */
+html.dracula {
+  --background: #282a36;
+  --foreground: #f8f8f2;
+  --card: #343746;
+  --card-foreground: #f8f8f2;
+  --popover: #343746;
+  --popover-foreground: #f8f8f2;
+  --primary: #bd93f9;
+  --primary-foreground: #282a36;
+  --secondary: #343746;
+  --secondary-foreground: #f8f8f2;
+  --muted: #343746;
+  --muted-foreground: #a9a9bf;
+  --accent: #3e4155;
+  --accent-foreground: #f8f8f2;
+  --destructive: #ff5555;
+  --border: #4a4d5e;
+  --input: #4a4d5e;
+  --ring: #bd93f9;
+  --color-bg-hover: #343746;
+  --color-link: #bd93f9;
+  --color-link-hover: #d4b4fc;
+  --color-nav-bg: #282a36;
+  --color-nav-border: #3e4155;
+  --color-nav-text: #a9a9bf;
+  --color-nav-text-hover: #f8f8f2;
+  --color-nav-text-active: #f8f8f2;
+  --color-nav-hover-bg: rgba(189, 147, 249, 0.1);
+
+  /* Content / Typography */
+  --heading-h1-color: #bd93f9;
+  --heading-h2-color: #ff79c6;
+  --heading-h3-color: #8be9fd;
+  --heading-h4-color: #50fa7b;
+  --strong-color: #ffb86c;
+  --em-color: #8be9fd;
+  --blockquote-bg: #44475a;
+  --blockquote-border-color: #bd93f9;
+}
+
+/* ── Theme: Sakura ── */
+html.sakura {
+  --background: #fef7f9;
+  --foreground: #4a3f4f;
+  --card: #f5e8ed;
+  --card-foreground: #4a3f4f;
+  --popover: #f5e8ed;
+  --popover-foreground: #4a3f4f;
+  --primary: #c44569;
+  --primary-foreground: #ffffff;
+  --secondary: #f5e8ed;
+  --secondary-foreground: #4a3f4f;
+  --muted: #f5e8ed;
+  --muted-foreground: #8e7a88;
+  --accent: #efdbe2;
+  --accent-foreground: #4a3f4f;
+  --destructive: #e74c6f;
+  --border: #e0c8d1;
+  --input: #e0c8d1;
+  --ring: #c44569;
+  --color-bg-hover: #f5e8ed;
+  --color-link: #c44569;
+  --color-link-hover: #a33a58;
+  --color-nav-bg: #fcf2f5;
+  --color-nav-border: #e0c8d1;
+  --color-nav-text: #8e7a88;
+  --color-nav-text-hover: #4a3f4f;
+  --color-nav-text-active: #4a3f4f;
+  --color-nav-hover-bg: rgba(196, 69, 105, 0.08);
+
+  /* Content / Typography */
+  --strong-bg: rgba(196, 69, 105, 0.06);
+  --em-color: #9b7fa7;
+  --blockquote-bg: #fceef2;
+  --blockquote-border-color: #e8a0b4;
+  --blockquote-border-radius: 8px;
+  --pre-border-radius: 12px;
+  --image-border-radius: 12px;
+  --line-height-body: 1.75;
+}
+
+/* ── Theme: Ocean ── */
+html.ocean {
+  --background: #0c2233;
+  --foreground: #c8d6e5;
+  --card: #153045;
+  --card-foreground: #c8d6e5;
+  --popover: #153045;
+  --popover-foreground: #c8d6e5;
+  --primary: #ff6b6b;
+  --primary-foreground: #0c2233;
+  --secondary: #153045;
+  --secondary-foreground: #c8d6e5;
+  --muted: #153045;
+  --muted-foreground: #8aa0b8;
+  --accent: #1d3c55;
+  --accent-foreground: #c8d6e5;
+  --destructive: #ff4757;
+  --border: #254a66;
+  --input: #254a66;
+  --ring: #ff6b6b;
+  --color-bg-hover: #153045;
+  --color-link: #ff6b6b;
+  --color-link-hover: #ff9090;
+  --color-nav-bg: #0c2233;
+  --color-nav-border: #1d3c55;
+  --color-nav-text: #8aa0b8;
+  --color-nav-text-hover: #c8d6e5;
+  --color-nav-text-active: #c8d6e5;
+  --color-nav-hover-bg: rgba(255, 107, 107, 0.1);
+
+  /* Content / Typography */
+  --heading-h1-color: #ff6b6b;
+  --heading-h2-color: #feca57;
+  --heading-h3-color: #54a0ff;
+  --strong-color: #feca57;
+  --em-color: #78e0a0;
+  --blockquote-bg: #152d42;
+  --blockquote-border-color: #54a0ff;
+}
+
+/* ── Theme: Mint ── */
+html.mint {
+  --background: #f0faf5;
+  --foreground: #2d4a3e;
+  --card: #e0f2ea;
+  --card-foreground: #2d4a3e;
+  --popover: #e0f2ea;
+  --popover-foreground: #2d4a3e;
+  --primary: #1a7a5a;
+  --primary-foreground: #ffffff;
+  --secondary: #e0f2ea;
+  --secondary-foreground: #2d4a3e;
+  --muted: #e0f2ea;
+  --muted-foreground: #6a8e7e;
+  --accent: #d0e8de;
+  --accent-foreground: #2d4a3e;
+  --destructive: #d04848;
+  --border: #b8d8c8;
+  --input: #b8d8c8;
+  --ring: #1a7a5a;
+  --color-bg-hover: #e0f2ea;
+  --color-link: #1a7a5a;
+  --color-link-hover: #14624a;
+  --color-nav-bg: #e8f6f0;
+  --color-nav-border: #b8d8c8;
+  --color-nav-text: #6a8e7e;
+  --color-nav-text-hover: #2d4a3e;
+  --color-nav-text-active: #2d4a3e;
+  --color-nav-hover-bg: rgba(26, 122, 90, 0.08);
+
+  /* Content / Typography */
+  --blockquote-bg: #e0f5ec;
+  --blockquote-border-color: #1a7a5a;
+  --image-border-radius: 8px;
+}
+
+/* ── Theme: Sunset ── */
+html.sunset {
+  --background: #fdf6ee;
+  --foreground: #3d2c1e;
+  --card: #f3e8d8;
+  --card-foreground: #3d2c1e;
+  --popover: #f3e8d8;
+  --popover-foreground: #3d2c1e;
+  --primary: #c0582a;
+  --primary-foreground: #ffffff;
+  --secondary: #f3e8d8;
+  --secondary-foreground: #3d2c1e;
+  --muted: #f3e8d8;
+  --muted-foreground: #8a7460;
+  --accent: #e9dac7;
+  --accent-foreground: #3d2c1e;
+  --destructive: #c43e2e;
+  --border: #d6c5ae;
+  --input: #d6c5ae;
+  --ring: #c0582a;
+  --color-bg-hover: #f3e8d8;
+  --color-link: #c0582a;
+  --color-link-hover: #a04a24;
+  --color-nav-bg: #faf2e8;
+  --color-nav-border: #d6c5ae;
+  --color-nav-text: #8a7460;
+  --color-nav-text-hover: #3d2c1e;
+  --color-nav-text-active: #3d2c1e;
+  --color-nav-hover-bg: rgba(192, 88, 42, 0.08);
+
+  /* Content / Typography */
+  --font-heading: Georgia, serif;
+  --line-height-body: 1.8;
+  --blockquote-bg: #f8ead6;
+  --blockquote-border-color: #e8a65d;
+  --blockquote-font-style: italic;
+}
+
+/* ── Theme: Monokai ── */
+html.monokai {
+  --background: #272822;
+  --foreground: #f8f8f2;
+  --card: #333428;
+  --card-foreground: #f8f8f2;
+  --popover: #333428;
+  --popover-foreground: #f8f8f2;
+  --primary: #f92672;
+  --primary-foreground: #ffffff;
+  --secondary: #333428;
+  --secondary-foreground: #f8f8f2;
+  --muted: #333428;
+  --muted-foreground: #a6a69c;
+  --accent: #3e3f36;
+  --accent-foreground: #f8f8f2;
+  --destructive: #f92672;
+  --border: #4a4b42;
+  --input: #4a4b42;
+  --ring: #f92672;
+  --color-bg-hover: #333428;
+  --color-link: #f92672;
+  --color-link-hover: #fb5c96;
+  --color-nav-bg: #272822;
+  --color-nav-border: #3e3f36;
+  --color-nav-text: #a6a69c;
+  --color-nav-text-hover: #f8f8f2;
+  --color-nav-text-active: #f8f8f2;
+  --color-nav-hover-bg: rgba(249, 38, 114, 0.1);
+
+  /* Content / Typography */
+  --font-heading: "SF Mono", "Fira Code", Consolas, monospace;
+  --heading-h1-color: #f92672;
+  --heading-h2-color: #a6e22e;
+  --heading-h3-color: #e6db74;
+  --heading-h4-color: #66d9ef;
+  --strong-color: #f92672;
+  --em-color: #e6db74;
+  --blockquote-bg: #3e3d32;
+  --blockquote-border-color: #f92672;
+}
+
+/* ── Theme: Solarized ── */
+html.solarized {
+  --background: #fdf6e3;
+  --foreground: #657b83;
+  --card: #eee8d5;
+  --card-foreground: #657b83;
+  --popover: #eee8d5;
+  --popover-foreground: #657b83;
+  --primary: #268bd2;
+  --primary-foreground: #fdf6e3;
+  --secondary: #eee8d5;
+  --secondary-foreground: #657b83;
+  --muted: #eee8d5;
+  --muted-foreground: #93a1a1;
+  --accent: #e4dcc6;
+  --accent-foreground: #657b83;
+  --destructive: #dc322f;
+  --border: #d3cbb7;
+  --input: #d3cbb7;
+  --ring: #268bd2;
+  --color-bg-hover: #eee8d5;
+  --color-link: #268bd2;
+  --color-link-hover: #2075b0;
+  --color-nav-bg: #f8f0dc;
+  --color-nav-border: #d3cbb7;
+  --color-nav-text: #93a1a1;
+  --color-nav-text-hover: #586e75;
+  --color-nav-text-active: #586e75;
+  --color-nav-hover-bg: rgba(38, 139, 210, 0.08);
+
+  /* Content / Typography */
+  --heading-h1-color: #cb4b16;
+  --heading-h2-color: #268bd2;
+  --heading-h3-color: #2aa198;
+  --blockquote-bg: #eee8d5;
+  --blockquote-border-color: #268bd2;
+}
+
+/* ── Theme: Cyberpunk ── */
+html.cyberpunk {
+  color-scheme: light;
+  --background: hsl(56 100% 50%);
+  --foreground: hsl(0 0% 10%);
+  --card: hsl(0 0% 100%);
+  --card-foreground: hsl(0 0% 10%);
+  --popover: hsl(0 0% 100%);
+  --popover-foreground: hsl(0 0% 10%);
+  --primary: hsl(0 0% 0%);
+  --primary-foreground: hsl(56 100% 50%);
+  --secondary: hsl(56 100% 45%);
+  --secondary-foreground: hsl(0 0% 10%);
+  --muted: hsl(56 100% 45%);
+  --muted-foreground: hsl(0 0% 40%);
+  --accent: hsl(0 0% 100%);
+  --accent-foreground: hsl(0 0% 10%);
+  --destructive: hsl(0 100% 40%);
+  --border: hsl(0 0% 10%);
+  --input: hsl(0 0% 10%);
+  --ring: hsl(0 0% 0%);
+  --color-bg-hover: hsl(56 100% 42%);
+  --color-link: hsl(0 0% 0%);
+  --color-link-hover: hsl(180 100% 25%);
+  --color-nav-bg: hsl(56 100% 50%);
+  --color-nav-border: hsl(0 0% 10%);
+  --color-nav-text: hsl(0 0% 20%);
+  --color-nav-text-hover: hsl(0 0% 0%);
+  --color-nav-text-active: hsl(0 0% 0%);
+  --color-nav-hover-bg: rgba(0, 0, 0, 0.08);
+  --radius: 0px;
+
+  /* Content / Typography */
+  --font-ui: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-heading: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-code: "JetBrains Mono", "SF Mono", monospace;
+  --heading-h1-color: hsl(0 0% 8%);
+  --heading-h2-color: hsl(0 0% 8%);
+  --heading-h3-color: hsl(0 0% 20%);
+  --strong-color: hsl(0 0% 8%);
+  --em-color: hsl(180 100% 25%);
+  --blockquote-bg: hsl(56 100% 58%);
+  --blockquote-border-color: hsl(0 0% 0%);
+  --blockquote-border-radius: 0;
+  --code-border-radius: 0;
+  --pre-border-radius: 0;
+  --image-border-radius: 0;
+  --theme-effect: cyberpunk;
+  --theme-glow-color: hsl(0 0% 0%);
+}
+
+/* ── Theme: Ink ── */
+html.ink {
+  --background: #ffffff;
+  --foreground: #111111;
+  --card: #f2f2f2;
+  --card-foreground: #111111;
+  --popover: #f2f2f2;
+  --popover-foreground: #111111;
+  --primary: #111111;
+  --primary-foreground: #ffffff;
+  --secondary: #f2f2f2;
+  --secondary-foreground: #111111;
+  --muted: #f2f2f2;
+  --muted-foreground: #767676;
+  --accent: #e6e6e6;
+  --accent-foreground: #111111;
+  --destructive: #cc0000;
+  --border: #d4d4d4;
+  --input: #d4d4d4;
+  --ring: #111111;
+  --color-bg-hover: #f2f2f2;
+  --color-link: #111111;
+  --color-link-hover: #444444;
+  --color-nav-bg: #fafafa;
+  --color-nav-border: #d4d4d4;
+  --color-nav-text: #767676;
+  --color-nav-text-hover: #111111;
+  --color-nav-text-active: #111111;
+  --color-nav-hover-bg: rgba(17, 17, 17, 0.05);
+
+  /* Content / Typography */
+  --blockquote-border-color: #000;
+}
+
+/* ── Theme: Lavender ── */
+html.lavender {
+  --background: #f5f0ff;
+  --foreground: #3d3155;
+  --card: #e9e0f8;
+  --card-foreground: #3d3155;
+  --popover: #e9e0f8;
+  --popover-foreground: #3d3155;
+  --primary: #6b4c9a;
+  --primary-foreground: #ffffff;
+  --secondary: #e9e0f8;
+  --secondary-foreground: #3d3155;
+  --muted: #e9e0f8;
+  --muted-foreground: #8070a0;
+  --accent: #ded2f0;
+  --accent-foreground: #3d3155;
+  --destructive: #c94a4a;
+  --border: #cfc0e5;
+  --input: #cfc0e5;
+  --ring: #6b4c9a;
+  --color-bg-hover: #e9e0f8;
+  --color-link: #6b4c9a;
+  --color-link-hover: #583e82;
+  --color-nav-bg: #f0eaf8;
+  --color-nav-border: #cfc0e5;
+  --color-nav-text: #8070a0;
+  --color-nav-text-hover: #3d3155;
+  --color-nav-text-active: #3d3155;
+  --color-nav-hover-bg: rgba(107, 76, 154, 0.08);
+
+  /* Content / Typography */
+  --blockquote-bg: #ece4ff;
+  --blockquote-border-color: #6b4c9a;
+}
+
+/* ── Theme: Forest ── */
+html.forest {
+  --background: #1a2e1a;
+  --foreground: #c8dcc8;
+  --card: #243d24;
+  --card-foreground: #c8dcc8;
+  --popover: #243d24;
+  --popover-foreground: #c8dcc8;
+  --primary: #7dce82;
+  --primary-foreground: #1a2e1a;
+  --secondary: #243d24;
+  --secondary-foreground: #c8dcc8;
+  --muted: #243d24;
+  --muted-foreground: #8aaa8a;
+  --accent: #2e4d2e;
+  --accent-foreground: #c8dcc8;
+  --destructive: #e05555;
+  --border: #3a5c3a;
+  --input: #3a5c3a;
+  --ring: #7dce82;
+  --color-bg-hover: #243d24;
+  --color-link: #7dce82;
+  --color-link-hover: #a0dea4;
+  --color-nav-bg: #1a2e1a;
+  --color-nav-border: #2e4d2e;
+  --color-nav-text: #8aaa8a;
+  --color-nav-text-hover: #c8dcc8;
+  --color-nav-text-active: #c8dcc8;
+  --color-nav-hover-bg: rgba(125, 206, 130, 0.1);
+
+  /* Content / Typography */
+  --heading-h1-color: #7dce82;
+  --heading-h2-color: #a8d8a8;
+  --blockquote-bg: #243824;
+  --blockquote-border-color: #7dce82;
+}
+
+/* ── Theme: Glacier ── */
+html.glacier {
+  --background: #eef4fa;
+  --foreground: #2c3e50;
+  --card: #dde8f2;
+  --card-foreground: #2c3e50;
+  --popover: #dde8f2;
+  --popover-foreground: #2c3e50;
+  --primary: #1565c0;
+  --primary-foreground: #ffffff;
+  --secondary: #dde8f2;
+  --secondary-foreground: #2c3e50;
+  --muted: #dde8f2;
+  --muted-foreground: #6a8299;
+  --accent: #cedce8;
+  --accent-foreground: #2c3e50;
+  --destructive: #c62828;
+  --border: #b8cce0;
+  --input: #b8cce0;
+  --ring: #1565c0;
+  --color-bg-hover: #dde8f2;
+  --color-link: #1565c0;
+  --color-link-hover: #10529e;
+  --color-nav-bg: #e5eef6;
+  --color-nav-border: #b8cce0;
+  --color-nav-text: #6a8299;
+  --color-nav-text-hover: #2c3e50;
+  --color-nav-text-active: #2c3e50;
+  --color-nav-hover-bg: rgba(21, 101, 192, 0.08);
+
+  /* Content / Typography */
+  --heading-h1-color: #1565c0;
+  --heading-h2-color: #1976d2;
+  --blockquote-bg: #e1eef6;
+  --blockquote-border-color: #1976d2;
+}
+
+/* ── Theme: Coffee ── */
+html.coffee {
+  --background: #f5efe6;
+  --foreground: #3e2723;
+  --card: #e8dfd3;
+  --card-foreground: #3e2723;
+  --popover: #e8dfd3;
+  --popover-foreground: #3e2723;
+  --primary: #6d4c41;
+  --primary-foreground: #f5efe6;
+  --secondary: #e8dfd3;
+  --secondary-foreground: #3e2723;
+  --muted: #e8dfd3;
+  --muted-foreground: #8d756b;
+  --accent: #ddd2c4;
+  --accent-foreground: #3e2723;
+  --destructive: #c0392b;
+  --border: #cdc0af;
+  --input: #cdc0af;
+  --ring: #6d4c41;
+  --color-bg-hover: #e8dfd3;
+  --color-link: #6d4c41;
+  --color-link-hover: #5a3e34;
+  --color-nav-bg: #f0e9df;
+  --color-nav-border: #cdc0af;
+  --color-nav-text: #8d756b;
+  --color-nav-text-hover: #3e2723;
+  --color-nav-text-active: #3e2723;
+  --color-nav-hover-bg: rgba(109, 76, 65, 0.08);
+
+  /* Content / Typography */
+  --blockquote-bg: #ece2d4;
+  --blockquote-border-color: #6d4c41;
+}
+
+/* ── Theme: Bauhaus ── */
+html.bauhaus {
+  --background: #ffffff;
+  --foreground: #1a1a1a;
+  --card: #f2f2f2;
+  --card-foreground: #1a1a1a;
+  --popover: #f2f2f2;
+  --popover-foreground: #1a1a1a;
+  --primary: #004d9f;
+  --primary-foreground: #ffffff;
+  --secondary: #f2f2f2;
+  --secondary-foreground: #1a1a1a;
+  --muted: #f2f2f2;
+  --muted-foreground: #737373;
+  --accent: #e6e6e6;
+  --accent-foreground: #1a1a1a;
+  --destructive: #cc0000;
+  --border: #cccccc;
+  --input: #cccccc;
+  --ring: #004d9f;
+  --color-bg-hover: #f2f2f2;
+  --color-link: #004d9f;
+  --color-link-hover: #003d80;
+  --color-nav-bg: #f9f9f9;
+  --color-nav-border: #cccccc;
+  --color-nav-text: #737373;
+  --color-nav-text-hover: #1a1a1a;
+  --color-nav-text-active: #1a1a1a;
+  --color-nav-hover-bg: rgba(0, 77, 159, 0.06);
+
+  /* Content / Typography */
+  --heading-h1-color: #e30613;
+  --heading-h2-color: #004d9f;
+  --blockquote-bg: #f0f0f0;
+  --blockquote-border-color: #004d9f;
+}
+
+/* ── Theme: Copper ── */
+html.copper {
+  --background: #1c1410;
+  --foreground: #d4b896;
+  --card: #28201a;
+  --card-foreground: #d4b896;
+  --popover: #28201a;
+  --popover-foreground: #d4b896;
+  --primary: #e8a87c;
+  --primary-foreground: #1c1410;
+  --secondary: #28201a;
+  --secondary-foreground: #d4b896;
+  --muted: #28201a;
+  --muted-foreground: #9a8470;
+  --accent: #342a22;
+  --accent-foreground: #d4b896;
+  --destructive: #e05555;
+  --border: #44362a;
+  --input: #44362a;
+  --ring: #e8a87c;
+  --color-bg-hover: #28201a;
+  --color-link: #e8a87c;
+  --color-link-hover: #f0c4a0;
+  --color-nav-bg: #1c1410;
+  --color-nav-border: #342a22;
+  --color-nav-text: #9a8470;
+  --color-nav-text-hover: #d4b896;
+  --color-nav-text-active: #d4b896;
+  --color-nav-hover-bg: rgba(232, 168, 124, 0.1);
+
+  /* Content / Typography */
+  --heading-h1-color: #e8a87c;
+  --heading-h2-color: #c49070;
+  --blockquote-bg: #2a1e16;
+  --blockquote-border-color: #e8a87c;
+}
+
+/* ── Theme: Matrix Neo ── */
+html.matrix {
+  --background: hsl(0 0% 0%);
+  --foreground: hsl(120 100% 75%);
+  --card: hsl(120 100% 8%);
+  --card-foreground: hsl(120 100% 75%);
+  --popover: hsl(120 100% 8%);
+  --popover-foreground: hsl(120 100% 75%);
+  --primary: hsl(120 100% 50%);
+  --primary-foreground: hsl(0 0% 0%);
+  --secondary: hsl(120 100% 4%);
+  --secondary-foreground: hsl(120 100% 75%);
+  --muted: hsl(120 100% 4%);
+  --muted-foreground: hsl(120 60% 35%);
+  --accent: hsl(120 100% 8%);
+  --accent-foreground: hsl(120 100% 75%);
+  --destructive: hsl(0 100% 50%);
+  --border: hsl(120 100% 20%);
+  --input: hsl(120 100% 20%);
+  --ring: hsl(120 100% 50%);
+  --color-bg-hover: hsl(120 100% 7%);
+  --color-link: hsl(120 100% 50%);
+  --color-link-hover: hsl(120 100% 68%);
+  --color-nav-bg: hsl(0 0% 0%);
+  --color-nav-border: hsl(120 100% 20%);
+  --color-nav-text: hsl(120 80% 50%);
+  --color-nav-text-hover: hsl(120 100% 75%);
+  --color-nav-text-active: hsl(120 100% 75%);
+  --color-nav-hover-bg: rgba(0, 255, 65, 0.08);
+  --radius: 0px;
+
+  /* Content / Typography */
+  --font-ui: "JetBrains Mono", "SF Mono", "Courier New", monospace;
+  --font-heading: "JetBrains Mono", "SF Mono", "Courier New", monospace;
+  --font-code: "JetBrains Mono", "SF Mono", "Courier New", monospace;
+  --heading-h1-color: hsl(120 100% 78%);
+  --heading-h2-color: hsl(120 100% 58%);
+  --heading-h3-color: hsl(100 100% 60%);
+  --strong-color: hsl(120 100% 80%);
+  --blockquote-bg: hsl(120 100% 6%);
+  --blockquote-border-color: hsl(120 100% 50%);
+  --blockquote-border-radius: 0;
+  --code-border-radius: 0;
+  --pre-border-radius: 0;
+  --image-border-radius: 0;
+  --theme-effect: matrix;
+  --theme-glow-color: hsl(120 100% 50%);
+}
+
+/* ── Theme: Black Mirror ── */
+html.blackmirror {
+  --background: hsl(220 4% 4%);
+  --foreground: hsl(210 12% 82%);
+  --card: hsl(220 3% 9%);
+  --card-foreground: hsl(210 12% 82%);
+  --popover: hsl(220 3% 9%);
+  --popover-foreground: hsl(210 12% 82%);
+  --primary: hsl(210 5% 72%);
+  --primary-foreground: hsl(220 4% 4%);
+  --secondary: hsl(220 3% 7%);
+  --secondary-foreground: hsl(210 12% 82%);
+  --muted: hsl(220 3% 7%);
+  --muted-foreground: hsl(210 4% 42%);
+  --accent: hsl(220 3% 9%);
+  --accent-foreground: hsl(210 12% 82%);
+  --destructive: hsl(0 40% 50%);
+  --border: hsl(210 4% 18%);
+  --input: hsl(210 4% 18%);
+  --ring: hsl(210 5% 72%);
+  --color-bg-hover: hsl(220 3% 11%);
+  --color-link: hsl(210 10% 84%);
+  --color-link-hover: hsl(210 16% 92%);
+  --color-nav-bg: hsl(220 4% 4%);
+  --color-nav-border: hsl(210 4% 18%);
+  --color-nav-text: hsl(210 5% 64%);
+  --color-nav-text-hover: hsl(210 12% 88%);
+  --color-nav-text-active: hsl(210 12% 88%);
+  --color-nav-hover-bg: rgba(255, 255, 255, 0.04);
+  --radius: 0.375rem;
+
+  /* Content / Typography */
+  --font-ui: "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-heading: "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --heading-h1-color: hsl(210 14% 88%);
+  --heading-h2-color: hsl(210 9% 80%);
+  --heading-h3-color: hsl(210 7% 72%);
+  --blockquote-bg: hsl(220 3% 9%);
+  --blockquote-border-color: hsl(210 5% 72%);
+  --blockquote-border-radius: 6px;
+  --pre-border-radius: 8px;
+  --image-border-radius: 8px;
+  --theme-effect: surveillance;
+  --theme-glow-color: hsl(210 5% 72%);
+}
+
+/* ── Theme: Evolution Network ── */
+html.evolution {
+  --background: #050b18;
+  --foreground: #e7eef9;
+  --card: #091223;
+  --card-foreground: #e7eef9;
+  --popover: #091223;
+  --popover-foreground: #e7eef9;
+  --primary: #69aefc;
+  --primary-foreground: #020617;
+  --secondary: #0c1628;
+  --secondary-foreground: #e7eef9;
+  --muted: #0b1425;
+  --muted-foreground: #91a3bb;
+  --accent: #101a2d;
+  --accent-foreground: #e7eef9;
+  --destructive: #fb7185;
+  --border: #18263d;
+  --input: #18263d;
+  --ring: #69aefc;
+  --color-bg-hover: #0d1728;
+  --color-link: #78b7ff;
+  --color-link-hover: #d9e8ff;
+  --color-nav-bg: #07101d;
+  --color-nav-border: #18263d;
+  --color-nav-text: #a0b1c8;
+  --color-nav-text-hover: #f8fafc;
+  --color-nav-text-active: #f8fafc;
+  --color-nav-hover-bg: rgba(105, 174, 252, 0.08);
+  --radius: 1rem;
+
+  /* Content / Typography */
+  --font-heading: "Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
+  --font-ui: "Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
+  --font-code: "SF Mono", "JetBrains Mono", monospace;
+  --heading-h1-color: #f8fbff;
+  --heading-h2-color: #8bc5ff;
+  --heading-h3-color: #9ed9f8;
+  --blockquote-bg: #0c1628;
+  --blockquote-border-color: #69aefc;
+  --blockquote-border-radius: 16px;
+  --pre-border-radius: 16px;
+  --image-border-radius: 18px;
+  --theme-effect: network;
+  --theme-glow-color: #69aefc;
+}
+
+/* ── Theme: StarCraft Protoss ── */
+html.protoss {
+  --background: hsl(235 35% 6%);
+  --foreground: hsl(205 36% 90%);
+  --card: hsl(237 22% 10%);
+  --card-foreground: hsl(205 36% 90%);
+  --popover: hsl(237 22% 10%);
+  --popover-foreground: hsl(205 36% 90%);
+  --primary: hsl(44 84% 66%);
+  --primary-foreground: hsl(235 35% 6%);
+  --secondary: hsl(236 20% 8%);
+  --secondary-foreground: hsl(205 36% 90%);
+  --muted: hsl(236 20% 8%);
+  --muted-foreground: hsl(213 16% 66%);
+  --accent: hsl(236 20% 8%);
+  --accent-foreground: hsl(205 36% 90%);
+  --destructive: hsl(0 70% 50%);
+  --border: hsl(43 54% 36%);
+  --input: hsl(43 54% 36%);
+  --ring: hsl(196 72% 60%);
+  --color-bg-hover: hsl(236 18% 14%);
+  --color-link: hsl(44 84% 66%);
+  --color-link-hover: hsl(48 94% 78%);
+  --color-nav-bg: hsl(235 35% 6%);
+  --color-nav-border: hsl(43 54% 36%);
+  --color-nav-text: hsl(205 18% 74%);
+  --color-nav-text-hover: hsl(205 40% 94%);
+  --color-nav-text-active: hsl(205 40% 94%);
+  --color-nav-hover-bg: rgba(225, 183, 92, 0.06);
+  --radius: 0.5rem;
+
+  /* Content / Typography */
+  --font-ui: "Cinzel", "Bricolage Grotesque", Georgia, serif;
+  --font-heading: "Cinzel", "Bricolage Grotesque", Georgia, serif;
+  --font-code: "SF Mono", "JetBrains Mono", "Share Tech Mono", monospace;
+  --heading-h1-color: hsl(205 40% 94%);
+  --heading-h2-color: hsl(44 84% 70%);
+  --heading-h3-color: hsl(205 28% 84%);
+  --strong-color: hsl(44 84% 68%);
+  --blockquote-bg: hsl(237 22% 10%);
+  --blockquote-border-color: hsl(43 54% 36%);
+  --blockquote-border-radius: 12px;
+  --pre-border-radius: 12px;
+  --image-border-radius: 14px;
+  --theme-effect: energy;
+  --theme-glow-color: hsl(196 72% 60%);
+}
+
+/* ── Theme: StarCraft Zerg ── */
+html.zerg {
+  --background: hsl(276 28% 4%);
+  --foreground: hsl(278 16% 80%);
+  --card: hsl(276 18% 8%);
+  --card-foreground: hsl(278 16% 80%);
+  --popover: hsl(276 18% 8%);
+  --popover-foreground: hsl(278 16% 80%);
+  --primary: hsl(281 54% 60%);
+  --primary-foreground: hsl(276 30% 4%);
+  --secondary: hsl(276 18% 6%);
+  --secondary-foreground: hsl(278 16% 80%);
+  --muted: hsl(276 18% 6%);
+  --muted-foreground: hsl(280 10% 44%);
+  --accent: hsl(276 18% 8%);
+  --accent-foreground: hsl(278 16% 80%);
+  --destructive: hsl(0 70% 50%);
+  --border: hsl(278 26% 18%);
+  --input: hsl(278 26% 18%);
+  --ring: hsl(281 54% 60%);
+  --color-bg-hover: hsl(276 18% 12%);
+  --color-link: hsl(281 54% 60%);
+  --color-link-hover: hsl(287 52% 70%);
+  --color-nav-bg: hsl(276 28% 4%);
+  --color-nav-border: hsl(278 26% 18%);
+  --color-nav-text: hsl(280 14% 58%);
+  --color-nav-text-hover: hsl(280 20% 84%);
+  --color-nav-text-active: hsl(280 20% 84%);
+  --color-nav-hover-bg: rgba(145, 102, 184, 0.06);
+  --radius: 1rem;
+
+  /* Content / Typography */
+  --font-ui: "Bricolage Grotesque", system-ui, sans-serif;
+  --font-heading: "Bricolage Grotesque", system-ui, sans-serif;
+  --heading-h1-color: hsl(278 18% 86%);
+  --heading-h2-color: hsl(281 56% 64%);
+  --heading-h3-color: hsl(278 18% 78%);
+  --strong-color: hsl(302 40% 58%);
+  --blockquote-bg: hsl(276 18% 8%);
+  --blockquote-border-color: hsl(281 54% 60%);
+  --blockquote-border-radius: 16px;
+  --theme-effect: organic;
+  --theme-glow-color: hsl(281 54% 60%);
+}
+
+/* ── Theme: StarCraft Terran ── */
+html.terran {
+  --background: hsl(102 16% 4%);
+  --foreground: hsl(90 16% 76%);
+  --card: hsl(100 12% 8%);
+  --card-foreground: hsl(90 16% 76%);
+  --popover: hsl(100 12% 8%);
+  --popover-foreground: hsl(90 16% 76%);
+  --primary: hsl(98 34% 64%);
+  --primary-foreground: hsl(102 20% 5%);
+  --secondary: hsl(102 12% 6%);
+  --secondary-foreground: hsl(90 16% 76%);
+  --muted: hsl(102 12% 6%);
+  --muted-foreground: hsl(94 10% 42%);
+  --accent: hsl(100 12% 8%);
+  --accent-foreground: hsl(90 16% 76%);
+  --destructive: hsl(0 80% 50%);
+  --border: hsl(95 22% 18%);
+  --input: hsl(95 22% 18%);
+  --ring: hsl(98 34% 64%);
+  --color-bg-hover: hsl(96 12% 11%);
+  --color-link: hsl(98 34% 64%);
+  --color-link-hover: hsl(98 40% 72%);
+  --color-nav-bg: hsl(102 16% 4%);
+  --color-nav-border: hsl(95 22% 18%);
+  --color-nav-text: hsl(92 12% 58%);
+  --color-nav-text-hover: hsl(90 18% 82%);
+  --color-nav-text-active: hsl(90 18% 82%);
+  --color-nav-hover-bg: rgba(126, 150, 110, 0.06);
+  --radius: 0.25rem;
+
+  /* Content / Typography */
+  --font-ui: "SF Pro Display", "Segoe UI", sans-serif;
+  --font-heading: "SF Mono", "JetBrains Mono", "Share Tech Mono", monospace;
+  --font-code: "SF Mono", "JetBrains Mono", "Share Tech Mono", monospace;
+  --heading-h1-color: hsl(92 18% 82%);
+  --heading-h2-color: hsl(45 36% 58%);
+  --heading-h3-color: hsl(90 16% 76%);
+  --blockquote-bg: hsl(100 12% 8%);
+  --blockquote-border-color: hsl(98 34% 64%);
+  --blockquote-border-radius: 6px;
+  --theme-effect: scanline;
+  --theme-glow-color: hsl(98 34% 64%);
+}
+
+/* ── Theme: Warhammer 40K Mechanicus ── */
+html.mechanicus {
+  --background: hsl(30 20% 4%);
+  --foreground: hsl(40 30% 85%);
+  --card: hsl(20 12% 11%);
+  --card-foreground: hsl(40 30% 85%);
+  --popover: hsl(20 12% 11%);
+  --popover-foreground: hsl(40 30% 85%);
+  --primary: hsl(0 80% 45%);
+  --primary-foreground: hsl(40 30% 90%);
+  --secondary: hsl(25 15% 7%);
+  --secondary-foreground: hsl(40 30% 85%);
+  --muted: hsl(25 15% 7%);
+  --muted-foreground: hsl(30 15% 40%);
+  --accent: hsl(20 12% 11%);
+  --accent-foreground: hsl(40 30% 85%);
+  --destructive: hsl(0 90% 40%);
+  --border: hsl(45 50% 25%);
+  --input: hsl(45 50% 25%);
+  --ring: hsl(0 80% 45%);
+  --color-bg-hover: hsl(20 12% 13%);
+  --color-link: hsl(0 80% 52%);
+  --color-link-hover: hsl(12 65% 62%);
+  --color-nav-bg: hsl(30 20% 4%);
+  --color-nav-border: hsl(45 50% 25%);
+  --color-nav-text: hsl(35 20% 60%);
+  --color-nav-text-hover: hsl(40 30% 85%);
+  --color-nav-text-active: hsl(40 30% 85%);
+  --color-nav-hover-bg: rgba(204, 26, 26, 0.08);
+  --radius: 0.375rem;
+
+  /* Content / Typography */
+  --font-ui: "Cinzel", "Bricolage Grotesque", serif;
+  --font-heading: "Cinzel", "Bricolage Grotesque", serif;
+  --font-code: "SF Mono", "JetBrains Mono", "Share Tech Mono", monospace;
+  --heading-h1-color: hsl(0 80% 52%);
+  --heading-h2-color: hsl(45 60% 56%);
+  --heading-h3-color: hsl(40 30% 85%);
+  --blockquote-bg: hsl(20 12% 11%);
+  --blockquote-border-color: hsl(0 80% 45%);
+  --blockquote-border-radius: 8px;
+  --theme-effect: cog;
+  --theme-glow-color: hsl(0 80% 45%);
+}
+
+/* ── Theme: Three-Body ── */
+html.threebody {
+  --background: hsl(0 0% 2%);
+  --foreground: hsl(210 10% 90%);
+  --card: hsl(0 15% 10%);
+  --card-foreground: hsl(210 10% 90%);
+  --popover: hsl(0 15% 10%);
+  --popover-foreground: hsl(210 10% 90%);
+  --primary: hsl(15 90% 55%);
+  --primary-foreground: hsl(0 0% 5%);
+  --secondary: hsl(0 10% 6%);
+  --secondary-foreground: hsl(210 10% 90%);
+  --muted: hsl(0 10% 6%);
+  --muted-foreground: hsl(210 5% 45%);
+  --accent: hsl(0 15% 10%);
+  --accent-foreground: hsl(210 10% 90%);
+  --destructive: hsl(0 100% 50%);
+  --border: hsl(210 10% 30%);
+  --input: hsl(210 10% 30%);
+  --ring: hsl(15 90% 55%);
+  --color-bg-hover: hsl(0 12% 12%);
+  --color-link: hsl(15 90% 55%);
+  --color-link-hover: hsl(25 100% 64%);
+  --color-nav-bg: hsl(0 0% 2%);
+  --color-nav-border: hsl(210 10% 30%);
+  --color-nav-text: hsl(210 5% 65%);
+  --color-nav-text-hover: hsl(210 10% 90%);
+  --color-nav-text-active: hsl(210 10% 90%);
+  --color-nav-hover-bg: rgba(255, 93, 46, 0.06);
+  --radius: 0.5rem;
+
+  /* Content / Typography */
+  --font-ui: "Inter", "Bricolage Grotesque", system-ui, sans-serif;
+  --font-heading: "Inter", "Bricolage Grotesque", system-ui, sans-serif;
+  --font-code: "SF Mono", "JetBrains Mono", "Share Tech Mono", monospace;
+  --heading-h1-color: hsl(15 90% 60%);
+  --heading-h2-color: hsl(210 10% 90%);
+  --heading-h3-color: hsl(210 10% 82%);
+  --blockquote-bg: hsl(0 15% 10%);
+  --blockquote-border-color: hsl(15 90% 55%);
+  --blockquote-border-radius: 10px;
+  --theme-effect: stars;
+  --theme-glow-color: hsl(15 90% 55%);
+}
+
+/* ── Theme: Zima Blue ── */
+html.zimablue {
+  --background: hsl(215 65% 3%);
+  --foreground: hsl(200 25% 88%);
+  --card: hsl(210 40% 10%);
+  --card-foreground: hsl(200 25% 88%);
+  --popover: hsl(210 40% 10%);
+  --popover-foreground: hsl(200 25% 88%);
+  --primary: hsl(197 91% 59%);
+  --primary-foreground: hsl(215 65% 3%);
+  --secondary: hsl(210 50% 6%);
+  --secondary-foreground: hsl(200 25% 88%);
+  --muted: hsl(210 50% 6%);
+  --muted-foreground: hsl(200 10% 35%);
+  --accent: hsl(210 40% 10%);
+  --accent-foreground: hsl(200 25% 88%);
+  --destructive: hsl(0 60% 48%);
+  --border: hsl(200 25% 14%);
+  --input: hsl(200 25% 14%);
+  --ring: hsl(197 91% 59%);
+  --color-bg-hover: hsl(210 38% 12%);
+  --color-link: hsl(197 91% 59%);
+  --color-link-hover: hsl(200 85% 70%);
+  --color-nav-bg: hsl(215 65% 3%);
+  --color-nav-border: hsl(200 25% 14%);
+  --color-nav-text: hsl(200 15% 55%);
+  --color-nav-text-hover: hsl(200 25% 88%);
+  --color-nav-text-active: hsl(200 25% 88%);
+  --color-nav-hover-bg: rgba(55, 192, 246, 0.08);
+  --radius: 0.5rem;
+
+  /* Content / Typography */
+  --font-ui: "Inter", "Bricolage Grotesque", system-ui, sans-serif;
+  --font-heading: "Inter", "Bricolage Grotesque", system-ui, sans-serif;
+  --font-code: "JetBrains Mono", "SF Mono", Menlo, monospace;
+  --heading-h1-color: hsl(197 91% 63%);
+  --heading-h2-color: hsl(200 25% 88%);
+  --heading-h3-color: hsl(200 25% 80%);
+  --blockquote-bg: hsl(210 40% 10%);
+  --blockquote-border-color: hsl(197 91% 59%);
+  --blockquote-border-radius: 8px;
+  --theme-effect: gradient;
+  --theme-glow-color: hsl(197 91% 59%);
+}
+
+/* ── Theme: Westworld ── */
+html.westworld {
+  color-scheme: light;
+  --background: hsl(220 20% 96%);
+  --foreground: hsl(220 15% 12%);
+  --card: hsl(0 0% 100%);
+  --card-foreground: hsl(220 15% 12%);
+  --popover: hsl(0 0% 100%);
+  --popover-foreground: hsl(220 15% 12%);
+  --primary: hsl(195 55% 42%);
+  --primary-foreground: hsl(0 0% 100%);
+  --secondary: hsl(220 15% 92%);
+  --secondary-foreground: hsl(220 15% 12%);
+  --muted: hsl(220 15% 92%);
+  --muted-foreground: hsl(220 8% 58%);
+  --accent: hsl(220 15% 92%);
+  --accent-foreground: hsl(220 15% 12%);
+  --destructive: hsl(0 70% 50%);
+  --border: hsl(220 12% 86%);
+  --input: hsl(220 12% 86%);
+  --ring: hsl(195 55% 42%);
+  --color-bg-hover: hsl(220 15% 93%);
+  --color-link: hsl(195 55% 42%);
+  --color-link-hover: hsl(195 45% 32%);
+  --color-nav-bg: hsl(0 0% 100%);
+  --color-nav-border: hsl(220 12% 86%);
+  --color-nav-text: hsl(220 10% 38%);
+  --color-nav-text-hover: hsl(220 15% 12%);
+  --color-nav-text-active: hsl(220 15% 12%);
+  --color-nav-hover-bg: rgba(0, 30, 60, 0.04);
+  --radius: 0.625rem;
+
+  /* Content / Typography */
+  --font-ui: "Inter", "Bricolage Grotesque", system-ui, sans-serif;
+  --font-heading: "Inter", "Bricolage Grotesque", system-ui, sans-serif;
+  --font-code: "JetBrains Mono", "SF Mono", Menlo, monospace;
+  --heading-h1-color: hsl(220 15% 12%);
+  --heading-h2-color: hsl(195 55% 42%);
+  --heading-h3-color: hsl(220 10% 38%);
+  --blockquote-bg: hsl(220 15% 92%);
+  --blockquote-border-color: hsl(195 55% 42%);
+  --blockquote-border-radius: 10px;
+  --theme-effect: grid;
+  --theme-glow-color: hsl(195 55% 42%);
+}
+
+/* ── Theme: Person of Interest ── */
+html.poi {
+  --background: hsl(0 0% 0%);
+  --foreground: hsl(0 0% 62%);
+  --card: hsl(0 0% 0%);
+  --card-foreground: hsl(0 0% 62%);
+  --popover: hsl(0 0% 0%);
+  --popover-foreground: hsl(0 0% 62%);
+  --primary: hsl(46 46% 34%);
+  --primary-foreground: hsl(0 0% 0%);
+  --secondary: hsl(0 0% 0%);
+  --secondary-foreground: hsl(0 0% 62%);
+  --muted: hsl(0 0% 0%);
+  --muted-foreground: hsl(0 0% 23%);
+  --accent: hsl(0 0% 0%);
+  --accent-foreground: hsl(0 0% 62%);
+  --destructive: hsl(0 50% 30%);
+  --border: hsl(0 0% 9%);
+  --input: hsl(0 0% 9%);
+  --ring: hsl(46 46% 34%);
+  --color-bg-hover: hsl(0 0% 4%);
+  --color-link: hsl(46 46% 34%);
+  --color-link-hover: hsl(46 56% 42%);
+  --color-nav-bg: hsl(0 0% 0%);
+  --color-nav-border: hsl(0 0% 9%);
+  --color-nav-text: hsl(0 0% 38%);
+  --color-nav-text-hover: hsl(0 0% 62%);
+  --color-nav-text-active: hsl(0 0% 62%);
+  --color-nav-hover-bg: rgba(196, 163, 74, 0.035);
+  --radius: 0;
+
+  /* Content / Typography */
+  --font-ui: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-heading: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-code: "SF Mono", "OCR A Std", "Share Tech Mono", "Courier New", monospace;
+  --heading-h1-color: hsl(0 0% 70%);
+  --heading-h2-color: hsl(46 46% 34%);
+  --heading-h3-color: hsl(0 0% 54%);
+  --blockquote-bg: hsl(0 0% 0%);
+  --blockquote-border-color: hsl(46 46% 34%);
+  --blockquote-border-radius: 0;
+  --code-border-radius: 0;
+  --pre-border-radius: 0;
+  --image-border-radius: 0;
+  --theme-effect: surveillance;
+  --theme-glow-color: hsl(46 46% 34%);
+}

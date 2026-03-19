@@ -1,0 +1,4056 @@
+---
+/**
+ * Theme scene layer — dedicated full-page backgrounds + atmospheric overlays.
+ * Uses CSS for most themes and dedicated canvas passes where the public
+ * reference implementation is animation-driven.
+ */
+---
+
+<div class="theme-scene" aria-hidden="true">
+  <div class="theme-scene-base"></div>
+  <div class="theme-scene-pattern"></div>
+  <canvas class="theme-scene-canvas theme-scene-matrix-canvas" aria-hidden="true"></canvas>
+  <canvas class="theme-scene-canvas theme-scene-blackmirror-canvas" aria-hidden="true"></canvas>
+  <canvas class="theme-scene-canvas theme-scene-protoss-canvas" aria-hidden="true"></canvas>
+  <canvas class="theme-scene-canvas theme-scene-evomap-canvas" aria-hidden="true"></canvas>
+  <div class="theme-scene-network theme-scene-network-a">
+    <svg viewBox="0 0 1600 1200" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <path class="network-line network-line--soft" d="M46 42 L168 112 L332 52" />
+      <path class="network-line network-line--soft" d="M118 172 L292 286 L468 166 L648 264" />
+      <path class="network-line network-line--bright" d="M292 286 L360 458 L548 428 L648 264" />
+      <path class="network-line network-line--bright" d="M822 34 L972 118 L1118 38" />
+      <path class="network-line network-line--soft" d="M1028 118 L1162 246 L1338 174 L1492 296" />
+      <path class="network-line network-line--bright" d="M1162 246 L1238 420 L1428 358 L1492 296" />
+      <path class="network-line network-line--soft" d="M84 918 L210 772 L364 858 L528 714" />
+      <path class="network-line network-line--bright" d="M364 858 L460 1008 L614 924 L528 714" />
+      <path class="network-line network-line--soft" d="M918 958 L1088 846 L1268 930" />
+      <path class="network-line network-line--soft" d="M1068 790 L1194 646 L1386 728 L1514 616" />
+      <path class="network-line network-line--bright" d="M1194 646 L1282 822 L1468 758 L1514 616" />
+
+      <circle class="network-node network-node--dim" cx="46" cy="42" r="2.1" style="animation-delay:-0.2s" />
+      <circle class="network-node network-node--cool" cx="168" cy="112" r="2.9" style="animation-delay:-1.3s" />
+      <circle class="network-node network-node--dim" cx="332" cy="52" r="2.1" style="animation-delay:-2.3s" />
+      <circle class="network-node network-node--cool" cx="118" cy="172" r="3.2" style="animation-delay:-0.4s" />
+      <circle class="network-node" cx="292" cy="286" r="2.9" style="animation-delay:-1.1s" />
+      <circle class="network-node network-node--dim" cx="468" cy="166" r="2.3" style="animation-delay:-2.2s" />
+      <circle class="network-node network-node--cool" cx="648" cy="264" r="3.1" style="animation-delay:-1.8s" />
+      <circle class="network-node" cx="360" cy="458" r="2.7" style="animation-delay:-3.1s" />
+      <circle class="network-node network-node--dim" cx="548" cy="428" r="2.4" style="animation-delay:-2.7s" />
+
+      <circle class="network-node network-node--cool" cx="822" cy="34" r="2.8" style="animation-delay:-0.7s" />
+      <circle class="network-node" cx="972" cy="118" r="2.7" style="animation-delay:-1.5s" />
+      <circle class="network-node network-node--dim" cx="1118" cy="38" r="2.1" style="animation-delay:-2.1s" />
+      <circle class="network-node network-node--cool" cx="1028" cy="118" r="3.1" style="animation-delay:-0.8s" />
+      <circle class="network-node" cx="1162" cy="246" r="2.8" style="animation-delay:-1.7s" />
+      <circle class="network-node network-node--dim" cx="1338" cy="174" r="2.2" style="animation-delay:-2.8s" />
+      <circle class="network-node" cx="1492" cy="296" r="2.9" style="animation-delay:-1.4s" />
+      <circle class="network-node network-node--cool" cx="1238" cy="420" r="2.8" style="animation-delay:-3.6s" />
+      <circle class="network-node network-node--dim" cx="1428" cy="358" r="2.3" style="animation-delay:-2.9s" />
+
+      <circle class="network-node network-node--cool" cx="84" cy="918" r="2.8" style="animation-delay:-1.2s" />
+      <circle class="network-node" cx="210" cy="772" r="2.7" style="animation-delay:-2.4s" />
+      <circle class="network-node network-node--dim" cx="364" cy="858" r="2.2" style="animation-delay:-3.2s" />
+      <circle class="network-node" cx="528" cy="714" r="3" style="animation-delay:-0.9s" />
+      <circle class="network-node network-node--cool" cx="460" cy="1008" r="2.8" style="animation-delay:-4.1s" />
+      <circle class="network-node network-node--dim" cx="614" cy="924" r="2.2" style="animation-delay:-2.6s" />
+
+      <circle class="network-node network-node--cool" cx="918" cy="958" r="2.8" style="animation-delay:-2.2s" />
+      <circle class="network-node" cx="1088" cy="846" r="2.7" style="animation-delay:-1.9s" />
+      <circle class="network-node network-node--dim" cx="1268" cy="930" r="2.2" style="animation-delay:-3.6s" />
+      <circle class="network-node" cx="1068" cy="790" r="2.8" style="animation-delay:-1.6s" />
+      <circle class="network-node network-node--cool" cx="1194" cy="646" r="3" style="animation-delay:-0.5s" />
+      <circle class="network-node network-node--dim" cx="1386" cy="728" r="2.3" style="animation-delay:-3.4s" />
+      <circle class="network-node" cx="1514" cy="616" r="2.8" style="animation-delay:-2.1s" />
+      <circle class="network-node network-node--cool" cx="1282" cy="822" r="2.9" style="animation-delay:-4.3s" />
+      <circle class="network-node network-node--dim" cx="1468" cy="758" r="2.2" style="animation-delay:-3.8s" />
+    </svg>
+  </div>
+  <div class="theme-scene-network theme-scene-network-b">
+    <svg viewBox="0 0 1600 1200" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <path class="network-line network-line--soft" d="M612 92 L770 208 L926 102" />
+      <path class="network-line network-line--bright" d="M770 208 L834 370 L980 302" />
+      <path class="network-line network-line--soft" d="M672 538 L846 646 L1024 560" />
+      <path class="network-line network-line--bright" d="M846 646 L932 824 L1086 756" />
+      <path class="network-line network-line--soft" d="M1252 888 L1390 986 L1516 876" />
+      <path class="network-line network-line--bright" d="M1390 986 L1452 1124 L1556 1034" />
+
+      <circle class="network-node network-node--cool" cx="612" cy="92" r="2.7" style="animation-delay:-0.9s" />
+      <circle class="network-node" cx="770" cy="208" r="2.8" style="animation-delay:-1.7s" />
+      <circle class="network-node network-node--dim" cx="926" cy="102" r="2.1" style="animation-delay:-2.5s" />
+      <circle class="network-node network-node--cool" cx="834" cy="370" r="2.7" style="animation-delay:-3.3s" />
+      <circle class="network-node network-node--dim" cx="980" cy="302" r="2.2" style="animation-delay:-1.4s" />
+
+      <circle class="network-node" cx="672" cy="538" r="2.6" style="animation-delay:-0.6s" />
+      <circle class="network-node network-node--cool" cx="846" cy="646" r="2.9" style="animation-delay:-2.8s" />
+      <circle class="network-node network-node--dim" cx="1024" cy="560" r="2.1" style="animation-delay:-3.7s" />
+      <circle class="network-node" cx="932" cy="824" r="2.7" style="animation-delay:-1.9s" />
+      <circle class="network-node network-node--cool" cx="1086" cy="756" r="2.9" style="animation-delay:-4.4s" />
+
+      <circle class="network-node network-node--cool" cx="1252" cy="888" r="2.8" style="animation-delay:-1.3s" />
+      <circle class="network-node" cx="1390" cy="986" r="2.7" style="animation-delay:-2.6s" />
+      <circle class="network-node network-node--dim" cx="1516" cy="876" r="2.2" style="animation-delay:-3.2s" />
+      <circle class="network-node" cx="1452" cy="1124" r="2.6" style="animation-delay:-4.1s" />
+      <circle class="network-node network-node--cool" cx="1556" cy="1034" r="2.8" style="animation-delay:-2.2s" />
+    </svg>
+  </div>
+  <div class="theme-scene-glow"></div>
+  <div class="theme-scene-motion"></div>
+</div>
+
+<style is:global>
+  .theme-scene {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .theme-scene-base,
+  .theme-scene-pattern,
+  .theme-scene-canvas,
+  .theme-scene-network,
+  .theme-scene-glow,
+  .theme-scene-motion {
+    position: absolute;
+    inset: 0;
+    transform: translateZ(0);
+    will-change: transform, opacity, background-position, filter;
+  }
+
+  .theme-scene-pattern,
+  .theme-scene-canvas,
+  .theme-scene-network,
+  .theme-scene-glow,
+  .theme-scene-motion {
+    opacity: 0;
+  }
+
+  .theme-scene-canvas {
+    width: 100%;
+    height: 100%;
+  }
+
+  .theme-scene-pattern {
+    background-repeat: repeat;
+  }
+
+  .theme-scene-glow,
+  .theme-scene-motion {
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+
+  .theme-scene-network {
+    inset: -6%;
+    overflow: visible;
+  }
+
+  .theme-scene-network svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  .theme-scene-network .network-line {
+    fill: none;
+    stroke: rgba(115, 223, 255, 0.24);
+    stroke-width: 1.35;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+    filter: drop-shadow(0 0 5px rgba(84, 162, 255, 0.14));
+  }
+
+  .theme-scene-network .network-line--soft {
+    stroke: rgba(98, 186, 255, 0.2);
+  }
+
+  .theme-scene-network .network-line--bright {
+    stroke: rgba(157, 246, 232, 0.36);
+  }
+
+  .theme-scene-network .network-node {
+    fill: rgba(157, 246, 232, 0.82);
+    opacity: 0.7;
+    filter: drop-shadow(0 0 8px rgba(105, 174, 252, 0.44));
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  .theme-scene-network .network-node--cool {
+    fill: rgba(105, 174, 252, 0.88);
+  }
+
+  .theme-scene-network .network-node--dim {
+    fill: rgba(223, 237, 255, 0.42);
+    opacity: 0.42;
+    filter: none;
+  }
+
+  .theme-scene-pattern::before,
+  .theme-scene-pattern::after,
+  .theme-scene-glow::before,
+  .theme-scene-glow::after,
+  .theme-scene-motion::before,
+  .theme-scene-motion::after {
+    content: '';
+    position: absolute;
+    inset: -12%;
+    opacity: 0;
+    pointer-events: none;
+    background-repeat: no-repeat;
+    background-size: cover;
+    transform: translateZ(0);
+    will-change: transform, opacity, background-position, filter;
+  }
+
+  /* ── Cyberpunk ── */
+  html:is(.cyberpunk, [data-theme='cyberpunk']) .theme-scene-base {
+    background:
+      radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.16) 0%, transparent 20%),
+      radial-gradient(circle at 82% 82%, rgba(246, 51, 154, 0.14) 0%, transparent 22%),
+      linear-gradient(180deg, #ffe100 0%, #ffd500 52%, #ffc800 100%);
+  }
+  html:is(.cyberpunk, [data-theme='cyberpunk']) .theme-scene-pattern {
+    opacity: 1;
+    background:
+      repeating-linear-gradient(
+        90deg,
+        rgba(0, 0, 0, 0.07) 0,
+        rgba(0, 0, 0, 0.07) 1px,
+        transparent 1px,
+        transparent 64px
+      ),
+      repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.06) 0,
+        rgba(0, 0, 0, 0.06) 1px,
+        transparent 1px,
+        transparent 64px
+      );
+    background-size: 64px 64px, 64px 64px;
+  }
+  html:is(.cyberpunk, [data-theme='cyberpunk']) .theme-scene-pattern::before {
+    opacity: 0.46;
+    background:
+      repeating-linear-gradient(
+        135deg,
+        transparent 0 28px,
+        rgba(0, 0, 0, 0.08) 28px 32px,
+        transparent 32px 72px
+      );
+  }
+  html:is(.cyberpunk, [data-theme='cyberpunk']) .theme-scene-glow {
+    opacity: 1;
+    background:
+      radial-gradient(circle at 20% 75%, rgba(0, 210, 239, 0.14) 0%, transparent 28%),
+      radial-gradient(circle at 80% 20%, rgba(246, 51, 154, 0.14) 0%, transparent 24%);
+    animation: cyberpunk-pulse 7s ease-in-out infinite alternate;
+  }
+  html:is(.cyberpunk, [data-theme='cyberpunk']) .theme-scene-motion {
+    opacity: 1;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.14) 0%, transparent 18%, transparent 82%, rgba(0, 0, 0, 0.06) 100%);
+    animation: cyberpunk-scan 10s linear infinite;
+  }
+  html:is(.cyberpunk, [data-theme='cyberpunk']) .theme-scene-motion::before {
+    opacity: 0.32;
+    background:
+      linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.12) 52%, transparent 100%);
+    animation: cyberpunk-scan 14s linear infinite reverse;
+  }
+
+  /* ── Matrix ── */
+  html:is(.matrix, [data-theme='matrix']) .theme-scene-base {
+    background:
+      radial-gradient(circle at 50% 0%, rgba(0, 64, 24, 0.42) 0%, transparent 30%),
+      radial-gradient(circle at 50% 100%, rgba(0, 255, 65, 0.08) 0%, transparent 40%),
+      linear-gradient(180deg, #041108 0%, #010602 45%, #000000 100%);
+  }
+  html:is(.matrix, [data-theme='matrix']) .theme-scene-pattern {
+    opacity: 0;
+    background: none;
+  }
+  html:is(.matrix, [data-theme='matrix']) .theme-scene-matrix-canvas {
+    opacity: 0.6;
+  }
+  html:is(.matrix, [data-theme='matrix']) .theme-scene-pattern::before {
+    opacity: 0;
+    background: none;
+    filter: none;
+  }
+  html:is(.matrix, [data-theme='matrix']) .theme-scene-glow {
+    opacity: 0;
+    background: none;
+  }
+  html:is(.matrix, [data-theme='matrix']) .theme-scene-glow::before {
+    opacity: 0;
+    background: none;
+    filter: none;
+  }
+  html:is(.matrix, [data-theme='matrix']) .theme-scene-motion {
+    opacity: 0;
+    background: none;
+  }
+  html:is(.matrix, [data-theme='matrix']) .theme-scene-motion::before {
+    opacity: 0;
+    background: none;
+    filter: none;
+  }
+
+  /* ── Black Mirror ── */
+  html:is(.blackmirror, [data-theme='blackmirror']) .theme-scene-base {
+    background:
+      radial-gradient(circle at 50% 16%, rgba(255, 255, 255, 0.04) 0%, transparent 26%),
+      linear-gradient(180deg, #131415 0%, #0a0a0b 100%);
+  }
+  html:is(.blackmirror, [data-theme='blackmirror']) .theme-scene-pattern {
+    opacity: 0;
+    background: none;
+  }
+  html:is(.blackmirror, [data-theme='blackmirror']) .theme-scene-pattern::before {
+    opacity: 0;
+    background: none;
+    animation: none;
+  }
+  html:is(.blackmirror, [data-theme='blackmirror']) .theme-scene-blackmirror-canvas {
+    opacity: 1;
+    mix-blend-mode: screen;
+  }
+  html:is(.blackmirror, [data-theme='blackmirror']) .theme-scene-glow {
+    opacity: 0;
+    background: none;
+    mix-blend-mode: normal;
+  }
+  html:is(.blackmirror, [data-theme='blackmirror']) .theme-scene-glow::before {
+    opacity: 0;
+    background: none;
+    filter: none;
+    animation: none;
+  }
+  html:is(.blackmirror, [data-theme='blackmirror']) .theme-scene-motion {
+    opacity: 0;
+    background: none;
+    animation: none;
+  }
+  html:is(.blackmirror, [data-theme='blackmirror']) .theme-scene-motion::before {
+    opacity: 0;
+    background: none;
+    animation: none;
+  }
+
+  /* ── Evolution ── */
+  html:is(.evolution, [data-theme='evolution']) .theme-scene-base {
+    background:
+      radial-gradient(circle at 12% 16%, rgba(56, 189, 248, 0.16) 0%, transparent 24%),
+      radial-gradient(circle at 85% 10%, rgba(45, 212, 191, 0.1) 0%, transparent 18%),
+      radial-gradient(circle at 24% 88%, rgba(37, 99, 235, 0.1) 0%, transparent 24%),
+      linear-gradient(180deg, #091121 0%, #050a15 58%, #030711 100%);
+  }
+  html:is(.evolution, [data-theme='evolution']) .theme-scene-pattern {
+    opacity: 0.72;
+    background-repeat: no-repeat;
+    background-image:
+      radial-gradient(circle at 50% -12%, rgba(226, 232, 240, 0.05) 0%, transparent 38%),
+      linear-gradient(180deg, rgba(148, 163, 184, 0.055) 0%, rgba(148, 163, 184, 0.018) 10%, transparent 26%, transparent 100%),
+      radial-gradient(circle at 22% 22%, rgba(84, 162, 255, 0.08) 0%, transparent 18%),
+      radial-gradient(circle at 78% 16%, rgba(45, 212, 191, 0.06) 0%, transparent 16%);
+    animation: evo-network-float 28s ease-in-out infinite alternate;
+  }
+  html:is(.evolution, [data-theme='evolution']) .theme-scene-network {
+    opacity: 1;
+  }
+  html:is(.evolution, [data-theme='evolution']) .theme-scene-network-a {
+    animation: evo-svg-drift-a 30s ease-in-out infinite alternate;
+  }
+  html:is(.evolution, [data-theme='evolution']) .theme-scene-network-b {
+    animation: evo-svg-drift-b 36s ease-in-out infinite alternate;
+  }
+  html:is(.evolution, [data-theme='evolution']) .theme-scene-network-a .network-line {
+    animation: evo-line-fade 10s ease-in-out infinite alternate;
+  }
+  html:is(.evolution, [data-theme='evolution']) .theme-scene-network-b .network-line {
+    animation: evo-line-fade 12s ease-in-out infinite alternate;
+  }
+  html:is(.evolution, [data-theme='evolution']) .theme-scene-network .network-node {
+    animation: evo-node-pulse 5.8s ease-in-out infinite;
+  }
+  html:is(.evolution, [data-theme='evolution']) .theme-scene-pattern::before {
+    opacity: 0.62;
+    background-image:
+      linear-gradient(60deg, transparent 49.1%, rgba(115, 223, 255, 0.16) 49.6%, rgba(115, 223, 255, 0.16) 50.2%, transparent 50.7%),
+      linear-gradient(122deg, transparent 49.1%, rgba(86, 177, 255, 0.13) 49.6%, rgba(86, 177, 255, 0.13) 50.2%, transparent 50.7%),
+      radial-gradient(circle, rgba(157, 246, 232, 0.95) 0 1.2px, transparent 1.9px),
+      radial-gradient(circle, rgba(91, 192, 255, 0.8) 0 1.15px, transparent 1.8px),
+      linear-gradient(51deg, transparent 49.2%, rgba(82, 195, 255, 0.11) 49.7%, rgba(82, 195, 255, 0.11) 50.2%, transparent 50.7%),
+      linear-gradient(104deg, transparent 49.2%, rgba(148, 244, 227, 0.1) 49.7%, rgba(148, 244, 227, 0.1) 50.2%, transparent 50.7%),
+      radial-gradient(circle, rgba(148, 244, 227, 0.78) 0 1.2px, transparent 1.8px),
+      radial-gradient(circle, rgba(84, 162, 255, 0.72) 0 1.1px, transparent 1.7px),
+      linear-gradient(72deg, transparent 49.2%, rgba(84, 162, 255, 0.1) 49.7%, rgba(84, 162, 255, 0.1) 50.2%, transparent 50.7%),
+      radial-gradient(circle, rgba(157, 246, 232, 0.72) 0 1.2px, transparent 1.8px),
+      radial-gradient(circle, rgba(84, 162, 255, 0.62) 0 1.1px, transparent 1.7px);
+    background-size:
+      18rem 13rem,
+      18rem 13rem,
+      18rem 13rem,
+      18rem 13rem,
+      16rem 12rem,
+      16rem 12rem,
+      16rem 12rem,
+      16rem 12rem,
+      22rem 16rem,
+      22rem 16rem,
+      22rem 16rem;
+    background-position:
+      73% 2%,
+      73% 2%,
+      72% 2%,
+      81% 10%,
+      6% 55%,
+      6% 55%,
+      10% 63%,
+      16% 52%,
+      67% 70%,
+      73% 79%,
+      84% 68%;
+    animation: evo-network-drift 24s ease-in-out infinite alternate;
+  }
+  html:is(.evolution, [data-theme='evolution']) .theme-scene-pattern::after {
+    opacity: 0.34;
+    background-image:
+      linear-gradient(114deg, transparent 49.3%, rgba(148, 244, 227, 0.08) 49.75%, rgba(148, 244, 227, 0.08) 50.25%, transparent 50.7%),
+      linear-gradient(132deg, transparent 49.3%, rgba(84, 162, 255, 0.07) 49.75%, rgba(84, 162, 255, 0.07) 50.25%, transparent 50.7%),
+      radial-gradient(circle, rgba(157, 246, 232, 0.5) 0 1px, transparent 1.5px),
+      radial-gradient(circle, rgba(84, 162, 255, 0.46) 0 1px, transparent 1.5px),
+      radial-gradient(circle, rgba(223, 237, 255, 0.3) 0 1px, transparent 1.5px);
+    background-size:
+      24rem 18rem,
+      24rem 18rem,
+      24rem 18rem,
+      24rem 18rem,
+      24rem 18rem;
+    background-position:
+      32% 20%,
+      48% 24%,
+      28% 26%,
+      44% 38%,
+      58% 24%;
+    filter: blur(0.15px);
+    animation: evo-orbit 30s ease-in-out infinite alternate;
+  }
+  html:is(.evolution, [data-theme='evolution']) .theme-scene-glow {
+    opacity: 1;
+    background:
+      radial-gradient(circle at 18% 76%, rgba(34, 197, 94, 0.14) 0%, transparent 28%),
+      radial-gradient(circle at 84% 16%, rgba(84, 162, 255, 0.2) 0%, transparent 30%),
+      radial-gradient(circle at 48% 40%, rgba(56, 189, 248, 0.05) 0%, transparent 22%);
+    mix-blend-mode: screen;
+    animation: evo-drift 18s ease-in-out infinite alternate;
+  }
+  html:is(.evolution, [data-theme='evolution']) .theme-scene-glow::before {
+    opacity: 0.78;
+    background:
+      radial-gradient(circle at 20% 70%, rgba(16, 185, 129, 0.16) 0%, transparent 16%),
+      radial-gradient(circle at 84% 20%, rgba(59, 130, 246, 0.2) 0%, transparent 18%),
+      radial-gradient(circle at 52% 12%, rgba(226, 232, 240, 0.06) 0%, transparent 14%);
+    filter: blur(42px);
+    animation: evo-orbit 20s ease-in-out infinite alternate;
+  }
+  html:is(.evolution, [data-theme='evolution']) .theme-scene-motion {
+    opacity: 1;
+    background:
+      linear-gradient(180deg, rgba(148, 163, 184, 0.04) 0%, transparent 22%, transparent 78%, rgba(56, 189, 248, 0.055) 100%),
+      radial-gradient(circle at 50% -24%, rgba(255, 255, 255, 0.045) 0%, transparent 40%);
+    animation: evo-pulse 8s ease-in-out infinite alternate;
+  }
+  html:is(.evolution, [data-theme='evolution']) .theme-scene-motion::before {
+    opacity: 0.38;
+    background:
+      linear-gradient(108deg, transparent 12%, rgba(94, 234, 212, 0.065) 35%, transparent 52%),
+      linear-gradient(128deg, transparent 54%, rgba(56, 189, 248, 0.085) 70%, transparent 84%);
+    background-size: 180% 180%;
+    animation: evo-sweep 13s ease-in-out infinite;
+  }
+  html:is(.evolution, [data-theme='evolution']) .theme-scene-motion::after {
+    opacity: 0.2;
+    background:
+      radial-gradient(circle at 12% 16%, rgba(148, 244, 227, 0.28) 0 1px, transparent 1.4px),
+      radial-gradient(circle at 52% 18%, rgba(82, 195, 255, 0.22) 0 1px, transparent 1.4px),
+      radial-gradient(circle at 78% 10%, rgba(148, 244, 227, 0.22) 0 1px, transparent 1.4px),
+      radial-gradient(circle at 24% 72%, rgba(16, 185, 129, 0.18) 0 1px, transparent 1.4px),
+      radial-gradient(circle at 68% 60%, rgba(82, 195, 255, 0.2) 0 1px, transparent 1.4px);
+    filter: blur(0.4px);
+    animation: evo-twinkle 7s ease-in-out infinite alternate;
+  }
+
+  /* ── Protoss ── */
+  html:is(.protoss, [data-theme='protoss']) .theme-scene-base {
+    background: linear-gradient(180deg, #0b0d1b 0%, #02030a 100%);
+  }
+  html:is(.protoss, [data-theme='protoss']) .theme-scene-pattern {
+    opacity: 0;
+    background: none;
+  }
+  html:is(.protoss, [data-theme='protoss']) .theme-scene-pattern::before {
+    opacity: 0;
+    background: none;
+    animation: none;
+  }
+  html:is(.protoss, [data-theme='protoss']) .theme-scene-protoss-canvas {
+    opacity: 0.8;
+    mix-blend-mode: screen;
+    background: radial-gradient(circle at 50% 50%, #1a237e 0%, #000000 100%);
+  }
+  html:is(.protoss, [data-theme='protoss']) .theme-scene-glow {
+    opacity: 0;
+    background: none;
+    mix-blend-mode: normal;
+  }
+  html:is(.protoss, [data-theme='protoss']) .theme-scene-glow::before {
+    opacity: 0;
+    background: none;
+    filter: none;
+    animation: none;
+  }
+  html:is(.protoss, [data-theme='protoss']) .theme-scene-motion {
+    opacity: 0;
+    background: none;
+    animation: none;
+  }
+  html:is(.protoss, [data-theme='protoss']) .theme-scene-motion::before {
+    opacity: 0;
+    background: none;
+    border: 0;
+    box-shadow: none;
+    animation: none;
+  }
+
+  /* ── Zerg ── */
+  html:is(.zerg, [data-theme='zerg']) .theme-scene-base {
+    background:
+      radial-gradient(circle at 30% 80%, rgba(156, 39, 176, 0.22) 0%, transparent 28%),
+      radial-gradient(circle at 70% 12%, rgba(124, 179, 66, 0.14) 0%, transparent 24%),
+      linear-gradient(180deg, #110618 0%, #09040d 56%, #020102 100%);
+  }
+  html:is(.zerg, [data-theme='zerg']) .theme-scene-pattern {
+    opacity: 1;
+    background:
+      radial-gradient(circle at 22% 76%, rgba(156, 39, 176, 0.12) 0 18%, transparent 19%),
+      radial-gradient(circle at 74% 24%, rgba(124, 179, 66, 0.08) 0 14%, transparent 15%);
+    background-size: 420px 320px, 380px 280px;
+  }
+  html:is(.zerg, [data-theme='zerg']) .theme-scene-glow {
+    opacity: 1;
+    background:
+      radial-gradient(circle at 25% 85%, rgba(156, 39, 176, 0.18) 0%, transparent 30%),
+      radial-gradient(circle at 78% 8%, rgba(124, 179, 66, 0.1) 0%, transparent 22%);
+  }
+  html:is(.zerg, [data-theme='zerg']) .theme-scene-motion {
+    opacity: 1;
+    background:
+      radial-gradient(circle at 50% 50%, rgba(156, 39, 176, 0.06) 0%, transparent 42%);
+    animation: zerg-creep 10s ease-in-out infinite alternate;
+  }
+
+  /* ── Terran ── */
+  html:is(.terran, [data-theme='terran']) .theme-scene-base {
+    background:
+      radial-gradient(circle at 18% 16%, rgba(57, 255, 20, 0.12) 0%, transparent 18%),
+      radial-gradient(circle at 84% 18%, rgba(255, 166, 0, 0.08) 0%, transparent 16%),
+      linear-gradient(180deg, #091008 0%, #050906 52%, #020302 100%);
+  }
+  html:is(.terran, [data-theme='terran']) .theme-scene-pattern {
+    opacity: 1;
+    background:
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 5px,
+        rgba(87, 255, 125, 0.022) 5px,
+        rgba(87, 255, 125, 0.022) 6px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        rgba(57, 255, 20, 0.018) 0,
+        rgba(57, 255, 20, 0.018) 1px,
+        transparent 1px,
+        transparent 60px
+      ),
+      linear-gradient(90deg, transparent 0%, rgba(255, 166, 0, 0.04) 48%, transparent 100%);
+  }
+  html:is(.terran, [data-theme='terran']) .theme-scene-glow {
+    opacity: 1;
+    background:
+      radial-gradient(circle at 12% 18%, rgba(57, 255, 20, 0.1) 0%, transparent 18%),
+      radial-gradient(circle at 86% 16%, rgba(255, 166, 0, 0.08) 0%, transparent 22%),
+      radial-gradient(circle at 52% 82%, rgba(57, 255, 20, 0.06) 0%, transparent 30%);
+  }
+  html:is(.terran, [data-theme='terran']) .theme-scene-motion {
+    opacity: 1;
+    background:
+      linear-gradient(180deg, transparent 0%, rgba(57, 255, 20, 0.07) 50%, transparent 100%);
+    background-size: 100% 220%;
+    animation: terran-scan 6s linear infinite;
+  }
+  html:is(.terran, [data-theme='terran']) .theme-scene-motion::before {
+    opacity: 0.5;
+    background:
+      linear-gradient(90deg, transparent 0%, rgba(57, 255, 20, 0.08) 52%, transparent 100%);
+    animation: terran-scan 8s linear infinite reverse;
+  }
+
+  /* ── Mechanicus ── */
+  html:is(.mechanicus, [data-theme='mechanicus']) .theme-scene-base {
+    background:
+      radial-gradient(circle at 50% 12%, rgba(183, 28, 28, 0.18) 0%, transparent 26%),
+      radial-gradient(circle at 80% 80%, rgba(181, 166, 66, 0.1) 0%, transparent 20%),
+      linear-gradient(180deg, #140d09 0%, #0b0706 54%, #030202 100%);
+  }
+  html:is(.mechanicus, [data-theme='mechanicus']) .theme-scene-pattern {
+    opacity: 1;
+    background:
+      radial-gradient(circle, rgba(183, 28, 28, 0.05) 1px, transparent 1px),
+      linear-gradient(45deg, rgba(181, 166, 66, 0.02) 25%, transparent 25%, transparent 50%, rgba(181, 166, 66, 0.02) 50%, rgba(181, 166, 66, 0.02) 75%, transparent 75%, transparent);
+    background-size: 24px 24px, 80px 80px;
+  }
+  html:is(.mechanicus, [data-theme='mechanicus']) .theme-scene-glow {
+    opacity: 1;
+    background:
+      radial-gradient(circle at 50% 50%, rgba(183, 28, 28, 0.12) 0%, transparent 32%),
+      radial-gradient(circle at 20% 20%, rgba(181, 166, 66, 0.08) 0%, transparent 22%);
+  }
+  html:is(.mechanicus, [data-theme='mechanicus']) .theme-scene-motion {
+    opacity: 1;
+    background:
+      conic-gradient(from 0deg at 50% 50%, rgba(183, 28, 28, 0.05), transparent 28%, rgba(181, 166, 66, 0.04) 48%, transparent 70%, rgba(183, 28, 28, 0.05));
+    animation: mech-rotate 20s linear infinite;
+  }
+
+  /* ── Three-Body ── */
+  html:is(.threebody, [data-theme='threebody']) .theme-scene-base {
+    background:
+      radial-gradient(circle at 70% 18%, rgba(255, 104, 36, 0.16) 0%, transparent 18%),
+      radial-gradient(circle at 18% 72%, rgba(176, 196, 222, 0.08) 0%, transparent 24%),
+      linear-gradient(180deg, #090707 0%, #050505 56%, #010101 100%);
+  }
+  html:is(.threebody, [data-theme='threebody']) .theme-scene-pattern {
+    opacity: 1;
+    background:
+      radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.45) 0 1px, transparent 1.4px),
+      radial-gradient(circle at 30% 60%, rgba(255, 255, 255, 0.28) 0 1px, transparent 1.4px),
+      radial-gradient(circle at 50% 10%, rgba(255, 255, 255, 0.5) 0 1px, transparent 1.4px),
+      radial-gradient(circle at 70% 40%, rgba(255, 255, 255, 0.24) 0 1px, transparent 1.4px),
+      radial-gradient(circle at 90% 80%, rgba(255, 255, 255, 0.4) 0 1px, transparent 1.4px),
+      radial-gradient(circle at 25% 45%, rgba(186, 196, 208, 0.42) 0 1.6px, transparent 1.8px),
+      radial-gradient(circle at 65% 55%, rgba(255, 104, 36, 0.5) 0 1.6px, transparent 1.8px);
+  }
+  html:is(.threebody, [data-theme='threebody']) .theme-scene-glow {
+    opacity: 1;
+    background:
+      radial-gradient(circle at 72% 18%, rgba(255, 104, 36, 0.14) 0%, transparent 24%),
+      radial-gradient(circle at 18% 74%, rgba(188, 202, 220, 0.06) 0%, transparent 22%);
+  }
+  html:is(.threebody, [data-theme='threebody']) .theme-scene-motion {
+    opacity: 1;
+    background:
+      linear-gradient(180deg, rgba(255, 104, 36, 0.04) 0%, transparent 24%, transparent 76%, rgba(188, 202, 220, 0.04) 100%);
+    animation: stars-twinkle 6s ease-in-out infinite alternate;
+  }
+  html:is(.threebody, [data-theme='threebody']) .theme-scene-motion::before {
+    opacity: 0.34;
+    background:
+      radial-gradient(ellipse at 72% 20%, rgba(255, 104, 36, 0.1) 0%, transparent 24%);
+    filter: blur(18px);
+  }
+
+  /* ── Zima Blue ── */
+  html:is(.zimablue, [data-theme='zimablue']) .theme-scene-base {
+    background: linear-gradient(180deg, #071126 0%, #040a16 56%, #010204 100%);
+  }
+  html:is(.zimablue, [data-theme='zimablue']) .theme-scene-pattern {
+    opacity: 0;
+    background: none;
+  }
+  html:is(.zimablue, [data-theme='zimablue']) .theme-scene-glow {
+    opacity: 0;
+    background: none;
+  }
+  html:is(.zimablue, [data-theme='zimablue']) .theme-scene-motion {
+    opacity: 0;
+    background: none;
+    animation: none;
+  }
+
+  /* ── Westworld ── */
+  html:is(.westworld, [data-theme='westworld']) .theme-scene-base {
+    background: linear-gradient(180deg, #f8fbff 0%, #eff4fa 60%, #e9eef6 100%);
+  }
+  html:is(.westworld, [data-theme='westworld']) .theme-scene-pattern {
+    opacity: 0;
+    background: none;
+    animation: none;
+  }
+  html:is(.westworld, [data-theme='westworld']) .theme-scene-glow {
+    opacity: 0;
+    background: none;
+  }
+  html:is(.westworld, [data-theme='westworld']) .theme-scene-motion {
+    opacity: 0;
+    background: none;
+    animation: none;
+  }
+
+  /* ── POI ── */
+  html:is(.poi, [data-theme='poi']) .theme-scene-base {
+    background:
+      linear-gradient(180deg, #0a0a0a 0%, #050505 58%, #000000 100%);
+  }
+  html:is(.poi, [data-theme='poi']) .theme-scene-pattern {
+    opacity: 1;
+    background:
+      linear-gradient(rgba(255, 204, 0, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 204, 0, 0.03) 1px, transparent 1px),
+      radial-gradient(ellipse at center, transparent 40%, rgba(0, 0, 0, 0.5) 100%);
+    background-size: 68px 68px, 68px 68px, auto;
+  }
+  html:is(.poi, [data-theme='poi']) .theme-scene-glow {
+    opacity: 1;
+    background:
+      radial-gradient(circle at 50% 50%, rgba(255, 204, 0, 0.06) 0%, transparent 34%);
+  }
+  html:is(.poi, [data-theme='poi']) .theme-scene-motion {
+    opacity: 1;
+    border: 1px solid transparent;
+    animation: poi-scan 8s linear infinite;
+  }
+  html:is(.poi, [data-theme='poi']) .theme-scene-motion::before {
+    content: '';
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    width: 60%;
+    height: 60%;
+    transform: translateX(-50%);
+    border: 1px solid rgba(255, 204, 0, 0.1);
+    border-radius: 2px;
+    animation: poi-target 4s ease-in-out infinite alternate;
+  }
+
+  /* ── EvoMap canvas-driven themes ── */
+  html:is(
+    .evolution,
+    .cyberpunk,
+    .zerg,
+    .terran,
+    .mechanicus,
+    .threebody,
+    .zimablue,
+    .westworld,
+    .poi,
+    [data-theme='evolution'],
+    [data-theme='cyberpunk'],
+    [data-theme='zerg'],
+    [data-theme='terran'],
+    [data-theme='mechanicus'],
+    [data-theme='threebody'],
+    [data-theme='zimablue'],
+    [data-theme='westworld'],
+    [data-theme='poi']
+  ) .theme-scene-pattern,
+  html:is(
+    .evolution,
+    .cyberpunk,
+    .zerg,
+    .terran,
+    .mechanicus,
+    .threebody,
+    .zimablue,
+    .westworld,
+    .poi,
+    [data-theme='evolution'],
+    [data-theme='cyberpunk'],
+    [data-theme='zerg'],
+    [data-theme='terran'],
+    [data-theme='mechanicus'],
+    [data-theme='threebody'],
+    [data-theme='zimablue'],
+    [data-theme='westworld'],
+    [data-theme='poi']
+  ) .theme-scene-glow,
+  html:is(
+    .evolution,
+    .cyberpunk,
+    .zerg,
+    .terran,
+    .mechanicus,
+    .threebody,
+    .zimablue,
+    .westworld,
+    .poi,
+    [data-theme='evolution'],
+    [data-theme='cyberpunk'],
+    [data-theme='zerg'],
+    [data-theme='terran'],
+    [data-theme='mechanicus'],
+    [data-theme='threebody'],
+    [data-theme='zimablue'],
+    [data-theme='westworld'],
+    [data-theme='poi']
+  ) .theme-scene-motion {
+    opacity: 0;
+    background: none;
+    animation: none;
+  }
+
+  html:is(
+    .evolution,
+    .cyberpunk,
+    .zerg,
+    .terran,
+    .mechanicus,
+    .threebody,
+    .zimablue,
+    .westworld,
+    .poi,
+    [data-theme='evolution'],
+    [data-theme='cyberpunk'],
+    [data-theme='zerg'],
+    [data-theme='terran'],
+    [data-theme='mechanicus'],
+    [data-theme='threebody'],
+    [data-theme='zimablue'],
+    [data-theme='westworld'],
+    [data-theme='poi']
+  ) .theme-scene-pattern::before,
+  html:is(
+    .evolution,
+    .cyberpunk,
+    .zerg,
+    .terran,
+    .mechanicus,
+    .threebody,
+    .zimablue,
+    .westworld,
+    .poi,
+    [data-theme='evolution'],
+    [data-theme='cyberpunk'],
+    [data-theme='zerg'],
+    [data-theme='terran'],
+    [data-theme='mechanicus'],
+    [data-theme='threebody'],
+    [data-theme='zimablue'],
+    [data-theme='westworld'],
+    [data-theme='poi']
+  ) .theme-scene-pattern::after,
+  html:is(
+    .evolution,
+    .cyberpunk,
+    .zerg,
+    .terran,
+    .mechanicus,
+    .threebody,
+    .zimablue,
+    .westworld,
+    .poi,
+    [data-theme='evolution'],
+    [data-theme='cyberpunk'],
+    [data-theme='zerg'],
+    [data-theme='terran'],
+    [data-theme='mechanicus'],
+    [data-theme='threebody'],
+    [data-theme='zimablue'],
+    [data-theme='westworld'],
+    [data-theme='poi']
+  ) .theme-scene-glow::before,
+  html:is(
+    .evolution,
+    .cyberpunk,
+    .zerg,
+    .terran,
+    .mechanicus,
+    .threebody,
+    .zimablue,
+    .westworld,
+    .poi,
+    [data-theme='evolution'],
+    [data-theme='cyberpunk'],
+    [data-theme='zerg'],
+    [data-theme='terran'],
+    [data-theme='mechanicus'],
+    [data-theme='threebody'],
+    [data-theme='zimablue'],
+    [data-theme='westworld'],
+    [data-theme='poi']
+  ) .theme-scene-glow::after,
+  html:is(
+    .evolution,
+    .cyberpunk,
+    .zerg,
+    .terran,
+    .mechanicus,
+    .threebody,
+    .zimablue,
+    .westworld,
+    .poi,
+    [data-theme='evolution'],
+    [data-theme='cyberpunk'],
+    [data-theme='zerg'],
+    [data-theme='terran'],
+    [data-theme='mechanicus'],
+    [data-theme='threebody'],
+    [data-theme='zimablue'],
+    [data-theme='westworld'],
+    [data-theme='poi']
+  ) .theme-scene-motion::before,
+  html:is(
+    .evolution,
+    .cyberpunk,
+    .zerg,
+    .terran,
+    .mechanicus,
+    .threebody,
+    .zimablue,
+    .westworld,
+    .poi,
+    [data-theme='evolution'],
+    [data-theme='cyberpunk'],
+    [data-theme='zerg'],
+    [data-theme='terran'],
+    [data-theme='mechanicus'],
+    [data-theme='threebody'],
+    [data-theme='zimablue'],
+    [data-theme='westworld'],
+    [data-theme='poi']
+  ) .theme-scene-motion::after {
+    opacity: 0;
+    background: none;
+    filter: none;
+    animation: none;
+    border: 0;
+    box-shadow: none;
+  }
+
+  html:is(.evolution, [data-theme='evolution']) .theme-scene-network {
+    opacity: 0;
+    animation: none;
+  }
+
+  html:is(.cyberpunk, [data-theme='cyberpunk']) .theme-scene-base {
+    background: linear-gradient(180deg, #ffe600 0%, #ffd100 100%);
+  }
+
+  html:is(.evolution, [data-theme='evolution']) .theme-scene-base {
+    background: linear-gradient(180deg, #091121 0%, #030711 100%);
+  }
+
+  html:is(.zerg, [data-theme='zerg']) .theme-scene-base {
+    background: linear-gradient(180deg, #12041b 0%, #020102 100%);
+  }
+
+  html:is(.terran, [data-theme='terran']) .theme-scene-base {
+    background: linear-gradient(180deg, #020a02 0%, #010301 100%);
+  }
+
+  html:is(.mechanicus, [data-theme='mechanicus']) .theme-scene-base {
+    background: linear-gradient(180deg, #100907 0%, #030202 100%);
+  }
+
+  html:is(.threebody, [data-theme='threebody']) .theme-scene-base {
+    background: linear-gradient(180deg, #090303 0%, #010101 100%);
+  }
+
+  html:is(.zimablue, [data-theme='zimablue']) .theme-scene-base {
+    background: linear-gradient(180deg, #071126 0%, #010204 100%);
+  }
+
+  html:is(.westworld, [data-theme='westworld']) .theme-scene-base {
+    background: linear-gradient(180deg, #f8fbff 0%, #e9eef6 100%);
+  }
+
+  html:is(.poi, [data-theme='poi']) .theme-scene-base {
+    background: linear-gradient(180deg, #050505 0%, #000000 100%);
+  }
+
+  html:is(.evolution, [data-theme='evolution']) .theme-scene-evomap-canvas {
+    opacity: 0.6;
+    mix-blend-mode: screen;
+  }
+
+  html:is(.cyberpunk, [data-theme='cyberpunk']) .theme-scene-evomap-canvas,
+  html:is(.threebody, [data-theme='threebody']) .theme-scene-evomap-canvas,
+  html:is(.zimablue, [data-theme='zimablue']) .theme-scene-evomap-canvas,
+  html:is(.westworld, [data-theme='westworld']) .theme-scene-evomap-canvas,
+  html:is(.poi, [data-theme='poi']) .theme-scene-evomap-canvas {
+    opacity: 1;
+    mix-blend-mode: normal;
+  }
+
+  html:is(.zerg, [data-theme='zerg']) .theme-scene-evomap-canvas {
+    opacity: 0.8;
+    mix-blend-mode: screen;
+    background: radial-gradient(circle at 50% 50%, #2e1065 0%, #020617 100%);
+  }
+
+  html:is(.terran, [data-theme='terran']) .theme-scene-evomap-canvas {
+    opacity: 0.7;
+    mix-blend-mode: screen;
+    background: #020a02;
+  }
+
+  html:is(.mechanicus, [data-theme='mechanicus']) .theme-scene-evomap-canvas {
+    opacity: 0.75;
+    mix-blend-mode: screen;
+    background: #0a0806;
+  }
+
+  @keyframes cyberpunk-pulse {
+    0% { opacity: 0.5; }
+    50% { opacity: 0.95; }
+    100% { opacity: 0.55; }
+  }
+
+  @keyframes cyberpunk-scan {
+    0% { transform: translateY(-6%); }
+    100% { transform: translateY(6%); }
+  }
+
+  @keyframes evo-drift {
+    0% { transform: translate3d(-1.5%, -1%, 0) scale(1); }
+    100% { transform: translate3d(1.5%, 1%, 0) scale(1.04); }
+  }
+
+  @keyframes evo-svg-drift-a {
+    0% { transform: translate3d(-1.2%, -1%, 0) scale(1); opacity: 0.82; }
+    100% { transform: translate3d(1.4%, 1.1%, 0) scale(1.02); opacity: 1; }
+  }
+
+  @keyframes evo-svg-drift-b {
+    0% { transform: translate3d(1%, -0.8%, 0) scale(0.995); opacity: 0.64; }
+    100% { transform: translate3d(-1.25%, 1.25%, 0) scale(1.025); opacity: 0.92; }
+  }
+
+  @keyframes evo-pulse {
+    0% { opacity: 0.5; }
+    100% { opacity: 0.95; }
+  }
+
+  @keyframes evo-dash {
+    0% { stroke-dashoffset: 0; }
+    100% { stroke-dashoffset: -240; }
+  }
+
+  @keyframes evo-dash-reverse {
+    0% { stroke-dashoffset: 0; }
+    100% { stroke-dashoffset: 240; }
+  }
+
+  @keyframes evo-line-fade {
+    0% { opacity: 0.18; }
+    50% { opacity: 0.6; }
+    100% { opacity: 0.26; }
+  }
+
+  @keyframes evo-grid-shift {
+    0% { background-position: 0 0, 0 0, 0 0, 0 0; }
+    100% { background-position: 44px 44px, -44px 44px, 8px -6px, -10px 12px; }
+  }
+
+  @keyframes evo-lattice {
+    0% { transform: translate3d(-1%, -1%, 0); opacity: 0.34; }
+    50% { opacity: 0.68; }
+    100% { transform: translate3d(1.5%, 1.5%, 0); opacity: 0.42; }
+  }
+
+  @keyframes evo-network-drift {
+    0% { transform: translate3d(-1.5%, -1%, 0); opacity: 0.28; }
+    50% { opacity: 0.58; }
+    100% { transform: translate3d(1.75%, 1.2%, 0); opacity: 0.36; }
+  }
+
+  @keyframes evo-network-float {
+    0% { transform: translate3d(-1%, 0.5%, 0) scale(1); opacity: 0.22; }
+    100% { transform: translate3d(1.5%, -1.2%, 0) scale(1.03); opacity: 0.48; }
+  }
+
+  @keyframes evo-orbit {
+    0% { transform: translate3d(-2%, -1%, 0) scale(0.98); opacity: 0.42; }
+    100% { transform: translate3d(2%, 1.5%, 0) scale(1.08); opacity: 0.78; }
+  }
+
+  @keyframes evo-sweep {
+    0% { background-position: 0% 0%, 100% 100%; opacity: 0.2; }
+    50% { opacity: 0.62; }
+    100% { background-position: 100% 100%, 0% 0%; opacity: 0.28; }
+  }
+
+  @keyframes evo-twinkle {
+    0% { opacity: 0.12; }
+    50% { opacity: 0.32; }
+    100% { opacity: 0.18; }
+  }
+
+  @keyframes evo-node-pulse {
+    0% { transform: scale(0.92); opacity: 0.44; }
+    35% { transform: scale(1.28); opacity: 1; }
+    100% { transform: scale(0.96); opacity: 0.56; }
+  }
+
+  @keyframes zerg-creep {
+    0% { transform: scale(1); opacity: 0.6; }
+    50% { transform: scale(1.04); opacity: 0.95; }
+    100% { transform: scale(1.01); opacity: 0.72; }
+  }
+
+  @keyframes terran-scan {
+    0% { background-position: 0% 0%; }
+    100% { background-position: 0% 220%; }
+  }
+
+  @keyframes mech-rotate {
+    0% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(180deg) scale(1.06); }
+    100% { transform: rotate(360deg) scale(1); }
+  }
+
+  @keyframes stars-twinkle {
+    0% { opacity: 0.55; }
+    25% { opacity: 1; }
+    50% { opacity: 0.7; }
+    75% { opacity: 0.92; }
+    100% { opacity: 0.6; }
+  }
+
+  @keyframes zima-breathe {
+    0% { opacity: 0.45; transform: scaleY(0.985); }
+    100% { opacity: 1; transform: scaleY(1.02); }
+  }
+
+  @keyframes westworld-drift {
+    0% { background-position: 0 0; }
+    100% { background-position: 60px 60px; }
+  }
+
+  @keyframes poi-scan {
+    0% { box-shadow: inset 0 -2px 0 rgba(244, 67, 54, 0.05); }
+    50% { box-shadow: inset 0 2px 0 rgba(244, 67, 54, 0.05); }
+    100% { box-shadow: inset 0 -2px 0 rgba(244, 67, 54, 0.05); }
+  }
+
+  @keyframes poi-target {
+    0% { opacity: 0.3; transform: translateX(-50%) scale(0.98); }
+    100% { opacity: 0.65; transform: translateX(-50%) scale(1.02); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .theme-scene-pattern,
+    .theme-scene-network,
+    .theme-scene-glow,
+    .theme-scene-motion,
+    .theme-scene-pattern::before,
+    .theme-scene-pattern::after,
+    .theme-scene-glow::before,
+    .theme-scene-glow::after,
+    .theme-scene-motion::before,
+    .theme-scene-motion::after {
+      animation: none !important;
+      transform: none !important;
+    }
+
+    .theme-scene-network .network-line,
+    .theme-scene-network .network-node {
+      animation: none !important;
+      transform: none !important;
+    }
+  }
+
+  /* ── Glow effects on headings ── */
+  html:is(.matrix, [data-theme='matrix']) .prose-content.prose h2,
+  html:is(.matrix, [data-theme='matrix']) .prose-content.prose h3 {
+    text-shadow: 0 0 15px rgba(0, 255, 65, 0.4);
+  }
+  html:is(.cyberpunk, [data-theme='cyberpunk']) .prose-content.prose h2 {
+    text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);
+  }
+  html:is(.protoss, [data-theme='protoss']) .prose-content.prose h1,
+  html:is(.protoss, [data-theme='protoss']) .prose-content.prose h2 {
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+  }
+  html:is(.zimablue, [data-theme='zimablue']) .prose-content.prose h2 {
+    text-shadow: 0 0 25px rgba(41, 121, 255, 0.4);
+  }
+  html:is(.threebody, [data-theme='threebody']) .prose-content.prose h2 {
+    text-shadow: 0 0 20px rgba(30, 136, 229, 0.3);
+  }
+  html:is(.zerg, [data-theme='zerg']) .prose-content.prose h1 {
+    text-shadow: 0 0 15px rgba(156, 39, 176, 0.4);
+  }
+  html:is(.mechanicus, [data-theme='mechanicus']) .prose-content.prose h1 {
+    text-shadow: 0 0 15px rgba(183, 28, 28, 0.3);
+  }
+  html:is(.poi, [data-theme='poi']) .prose-content.prose h2 {
+    text-shadow: 0 0 10px rgba(244, 67, 54, 0.3);
+  }
+
+  /* ── Link hover glow ── */
+  html:is(.matrix, [data-theme='matrix']) .prose-content.prose a:hover {
+    text-shadow: 0 0 8px rgba(0, 255, 65, 0.5);
+  }
+  html:is(.cyberpunk, [data-theme='cyberpunk']) .prose-content.prose a:hover {
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.12);
+  }
+  html:is(.protoss, [data-theme='protoss']) .prose-content.prose a:hover {
+    text-shadow: 0 0 8px rgba(77, 171, 247, 0.5);
+  }
+  html:is(.threebody, [data-theme='threebody']) .prose-content.prose a:hover {
+    text-shadow: 0 0 8px rgba(30, 136, 229, 0.5);
+  }
+
+  /* ── Navbar accents for sci-fi themes ── */
+  html:is(.matrix, [data-theme='matrix']) .site-nav { border-color: rgba(0, 255, 65, 0.15); }
+  html:is(.cyberpunk, [data-theme='cyberpunk']) .site-nav { border-color: rgba(5, 217, 232, 0.15); }
+  html:is(.protoss, [data-theme='protoss']) .site-nav { border-color: rgba(255, 215, 0, 0.15); }
+  html:is(.zerg, [data-theme='zerg']) .site-nav { border-color: rgba(156, 39, 176, 0.15); }
+  html:is(.threebody, [data-theme='threebody']) .site-nav { border-color: rgba(30, 136, 229, 0.15); }
+  html:is(.zimablue, [data-theme='zimablue']) .site-nav { border-color: rgba(41, 121, 255, 0.15); }
+  html:is(.mechanicus, [data-theme='mechanicus']) .site-nav { border-color: rgba(183, 28, 28, 0.15); }
+  html:is(.poi, [data-theme='poi']) .site-nav { border-color: rgba(244, 67, 54, 0.1); }
+
+  /* ── EvoMap-like surface treatment for Cyberpunk ── */
+  html:is(.cyberpunk, [data-theme='cyberpunk']) .site-nav {
+    background: rgba(255, 221, 0, 0.96);
+    border-color: rgba(0, 0, 0, 0.9);
+    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.95);
+    backdrop-filter: none;
+  }
+
+  html:is(.cyberpunk, [data-theme='cyberpunk']) .site-brand,
+  html:is(.cyberpunk, [data-theme='cyberpunk']) .site-nav .nav-item,
+  html:is(.cyberpunk, [data-theme='cyberpunk']) .nav-panel-link,
+  html:is(.cyberpunk, [data-theme='cyberpunk']) .blog-card-title,
+  html:is(.cyberpunk, [data-theme='cyberpunk']) .blog-pagination-link,
+  html:is(.cyberpunk, [data-theme='cyberpunk']) .built-with-button,
+  html:is(.cyberpunk, [data-theme='cyberpunk']) .site-footer-brand,
+  html:is(.cyberpunk, [data-theme='cyberpunk']) .site-footer-heading {
+    font-family: var(--font-ui);
+  }
+
+  html:is(.cyberpunk, [data-theme='cyberpunk']) .site-brand,
+  html:is(.cyberpunk, [data-theme='cyberpunk']) .site-nav .nav-item {
+    letter-spacing: 0.03em;
+    font-weight: 700;
+  }
+
+  html:is(.cyberpunk, [data-theme='cyberpunk']) .nav-utility-button {
+    color: #ffe100;
+    background: #050505;
+    border: 2px solid #050505;
+    border-radius: 0;
+    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.95);
+    backdrop-filter: none;
+  }
+
+  html:is(.cyberpunk, [data-theme='cyberpunk']) .nav-utility-button:hover {
+    color: #050505;
+    background: #ffffff;
+    border-color: #050505;
+    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.95);
+  }
+
+  html:is(.cyberpunk, [data-theme='cyberpunk']) .nav-panel,
+  html:is(.cyberpunk, [data-theme='cyberpunk']) .blog-grid,
+  html:is(.cyberpunk, [data-theme='cyberpunk']) .site-footer,
+  html:is(.cyberpunk, [data-theme='cyberpunk']) [data-theme-panel],
+  html:is(.cyberpunk, [data-theme='cyberpunk']) [data-themes-panel],
+  html:is(.cyberpunk, [data-theme='cyberpunk']) [data-language-panel],
+  html:is(.cyberpunk, [data-theme='cyberpunk']) .built-with-button {
+    background: #ffffff;
+    border-color: rgba(0, 0, 0, 0.95);
+    border-radius: 0;
+    box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.95);
+    backdrop-filter: none;
+  }
+
+  html:is(.cyberpunk, [data-theme='cyberpunk']) .blog-grid {
+    overflow: visible;
+  }
+
+  html:is(.cyberpunk, [data-theme='cyberpunk']) .blog-card {
+    background: rgba(255, 255, 255, 0.92);
+    border-color: rgba(0, 0, 0, 0.82);
+  }
+
+  html:is(.cyberpunk, [data-theme='cyberpunk']) .blog-card::before {
+    background: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.03) 100%);
+  }
+
+  html:is(.cyberpunk, [data-theme='cyberpunk']) .blog-card-meta {
+    color: rgba(0, 0, 0, 0.55);
+    letter-spacing: 0.08em;
+  }
+
+  html:is(.cyberpunk, [data-theme='cyberpunk']) .blog-card-title {
+    color: #050505;
+    font-weight: 700;
+  }
+
+  html:is(.cyberpunk, [data-theme='cyberpunk']) .blog-card:hover {
+    background: rgba(255, 240, 120, 0.9);
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.92);
+    transform: translate(-2px, -2px);
+  }
+
+  html:is(.cyberpunk, [data-theme='cyberpunk']) .blog-card:hover .blog-card-title {
+    color: #050505;
+  }
+
+  html:is(.cyberpunk, [data-theme='cyberpunk']) .site-footer-tagline,
+  html:is(.cyberpunk, [data-theme='cyberpunk']) .site-footer-link,
+  html:is(.cyberpunk, [data-theme='cyberpunk']) .site-footer-aux-link {
+    color: rgba(0, 0, 0, 0.68);
+  }
+
+  html:is(.cyberpunk, [data-theme='cyberpunk']) .site-footer-social-link,
+  html:is(.cyberpunk, [data-theme='cyberpunk']) .blog-pagination-link {
+    background: #ffffff;
+    border-color: rgba(0, 0, 0, 0.95);
+    border-radius: 0;
+    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.95);
+  }
+
+  html:is(.cyberpunk, [data-theme='cyberpunk']) .blog-pagination-current {
+    background: #050505;
+    color: #ffe100;
+    border: 1px solid #050505;
+    border-radius: 0;
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.95);
+  }
+
+  html:is(.cyberpunk, [data-theme='cyberpunk']) .site-nav .nav-link-active {
+    box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.95);
+  }
+
+  /* ── Shared EvoMap-like surfaces for overlapping public themes ── */
+  html:is(
+    .matrix,
+    .blackmirror,
+    .protoss,
+    .zerg,
+    .terran,
+    .mechanicus,
+    .threebody,
+    .zimablue,
+    .westworld,
+    .poi,
+    [data-theme='matrix'],
+    [data-theme='blackmirror'],
+    [data-theme='protoss'],
+    [data-theme='zerg'],
+    [data-theme='terran'],
+    [data-theme='mechanicus'],
+    [data-theme='threebody'],
+    [data-theme='zimablue'],
+    [data-theme='westworld'],
+    [data-theme='poi']
+  ) .site-brand,
+  html:is(
+    .matrix,
+    .blackmirror,
+    .protoss,
+    .zerg,
+    .terran,
+    .mechanicus,
+    .threebody,
+    .zimablue,
+    .westworld,
+    .poi,
+    [data-theme='matrix'],
+    [data-theme='blackmirror'],
+    [data-theme='protoss'],
+    [data-theme='zerg'],
+    [data-theme='terran'],
+    [data-theme='mechanicus'],
+    [data-theme='threebody'],
+    [data-theme='zimablue'],
+    [data-theme='westworld'],
+    [data-theme='poi']
+  ) .site-nav .nav-item,
+  html:is(
+    .matrix,
+    .blackmirror,
+    .protoss,
+    .zerg,
+    .terran,
+    .mechanicus,
+    .threebody,
+    .zimablue,
+    .westworld,
+    .poi,
+    [data-theme='matrix'],
+    [data-theme='blackmirror'],
+    [data-theme='protoss'],
+    [data-theme='zerg'],
+    [data-theme='terran'],
+    [data-theme='mechanicus'],
+    [data-theme='threebody'],
+    [data-theme='zimablue'],
+    [data-theme='westworld'],
+    [data-theme='poi']
+  ) .nav-panel-link,
+  html:is(
+    .matrix,
+    .blackmirror,
+    .protoss,
+    .zerg,
+    .terran,
+    .mechanicus,
+    .threebody,
+    .zimablue,
+    .westworld,
+    .poi,
+    [data-theme='matrix'],
+    [data-theme='blackmirror'],
+    [data-theme='protoss'],
+    [data-theme='zerg'],
+    [data-theme='terran'],
+    [data-theme='mechanicus'],
+    [data-theme='threebody'],
+    [data-theme='zimablue'],
+    [data-theme='westworld'],
+    [data-theme='poi']
+  ) .blog-card-title,
+  html:is(
+    .matrix,
+    .blackmirror,
+    .protoss,
+    .zerg,
+    .terran,
+    .mechanicus,
+    .threebody,
+    .zimablue,
+    .westworld,
+    .poi,
+    [data-theme='matrix'],
+    [data-theme='blackmirror'],
+    [data-theme='protoss'],
+    [data-theme='zerg'],
+    [data-theme='terran'],
+    [data-theme='mechanicus'],
+    [data-theme='threebody'],
+    [data-theme='zimablue'],
+    [data-theme='westworld'],
+    [data-theme='poi']
+  ) .blog-pagination-link,
+  html:is(
+    .matrix,
+    .blackmirror,
+    .protoss,
+    .zerg,
+    .terran,
+    .mechanicus,
+    .threebody,
+    .zimablue,
+    .westworld,
+    .poi,
+    [data-theme='matrix'],
+    [data-theme='blackmirror'],
+    [data-theme='protoss'],
+    [data-theme='zerg'],
+    [data-theme='terran'],
+    [data-theme='mechanicus'],
+    [data-theme='threebody'],
+    [data-theme='zimablue'],
+    [data-theme='westworld'],
+    [data-theme='poi']
+  ) .built-with-button,
+  html:is(
+    .matrix,
+    .blackmirror,
+    .protoss,
+    .zerg,
+    .terran,
+    .mechanicus,
+    .threebody,
+    .zimablue,
+    .westworld,
+    .poi,
+    [data-theme='matrix'],
+    [data-theme='blackmirror'],
+    [data-theme='protoss'],
+    [data-theme='zerg'],
+    [data-theme='terran'],
+    [data-theme='mechanicus'],
+    [data-theme='threebody'],
+    [data-theme='zimablue'],
+    [data-theme='westworld'],
+    [data-theme='poi']
+  ) .site-footer-brand,
+  html:is(
+    .matrix,
+    .blackmirror,
+    .protoss,
+    .zerg,
+    .terran,
+    .mechanicus,
+    .threebody,
+    .zimablue,
+    .westworld,
+    .poi,
+    [data-theme='matrix'],
+    [data-theme='blackmirror'],
+    [data-theme='protoss'],
+    [data-theme='zerg'],
+    [data-theme='terran'],
+    [data-theme='mechanicus'],
+    [data-theme='threebody'],
+    [data-theme='zimablue'],
+    [data-theme='westworld'],
+    [data-theme='poi']
+  ) .site-footer-heading {
+    font-family: var(--font-ui);
+  }
+
+  html:is(
+    .matrix,
+    .blackmirror,
+    .protoss,
+    .zerg,
+    .terran,
+    .mechanicus,
+    .threebody,
+    .zimablue,
+    .westworld,
+    .poi,
+    [data-theme='matrix'],
+    [data-theme='blackmirror'],
+    [data-theme='protoss'],
+    [data-theme='zerg'],
+    [data-theme='terran'],
+    [data-theme='mechanicus'],
+    [data-theme='threebody'],
+    [data-theme='zimablue'],
+    [data-theme='westworld'],
+    [data-theme='poi']
+  ) .site-nav,
+  html:is(
+    .matrix,
+    .blackmirror,
+    .protoss,
+    .zerg,
+    .terran,
+    .mechanicus,
+    .threebody,
+    .zimablue,
+    .westworld,
+    .poi,
+    [data-theme='matrix'],
+    [data-theme='blackmirror'],
+    [data-theme='protoss'],
+    [data-theme='zerg'],
+    [data-theme='terran'],
+    [data-theme='mechanicus'],
+    [data-theme='threebody'],
+    [data-theme='zimablue'],
+    [data-theme='westworld'],
+    [data-theme='poi']
+  ) .nav-panel,
+  html:is(
+    .matrix,
+    .blackmirror,
+    .protoss,
+    .zerg,
+    .terran,
+    .mechanicus,
+    .threebody,
+    .zimablue,
+    .westworld,
+    .poi,
+    [data-theme='matrix'],
+    [data-theme='blackmirror'],
+    [data-theme='protoss'],
+    [data-theme='zerg'],
+    [data-theme='terran'],
+    [data-theme='mechanicus'],
+    [data-theme='threebody'],
+    [data-theme='zimablue'],
+    [data-theme='westworld'],
+    [data-theme='poi']
+  ) .blog-grid,
+  html:is(
+    .matrix,
+    .blackmirror,
+    .protoss,
+    .zerg,
+    .terran,
+    .mechanicus,
+    .threebody,
+    .zimablue,
+    .westworld,
+    .poi,
+    [data-theme='matrix'],
+    [data-theme='blackmirror'],
+    [data-theme='protoss'],
+    [data-theme='zerg'],
+    [data-theme='terran'],
+    [data-theme='mechanicus'],
+    [data-theme='threebody'],
+    [data-theme='zimablue'],
+    [data-theme='westworld'],
+    [data-theme='poi']
+  ) .site-footer,
+  html:is(
+    .matrix,
+    .blackmirror,
+    .protoss,
+    .zerg,
+    .terran,
+    .mechanicus,
+    .threebody,
+    .zimablue,
+    .westworld,
+    .poi,
+    [data-theme='matrix'],
+    [data-theme='blackmirror'],
+    [data-theme='protoss'],
+    [data-theme='zerg'],
+    [data-theme='terran'],
+    [data-theme='mechanicus'],
+    [data-theme='threebody'],
+    [data-theme='zimablue'],
+    [data-theme='westworld'],
+    [data-theme='poi']
+  ) [data-theme-panel],
+  html:is(
+    .matrix,
+    .blackmirror,
+    .protoss,
+    .zerg,
+    .terran,
+    .mechanicus,
+    .threebody,
+    .zimablue,
+    .westworld,
+    .poi,
+    [data-theme='matrix'],
+    [data-theme='blackmirror'],
+    [data-theme='protoss'],
+    [data-theme='zerg'],
+    [data-theme='terran'],
+    [data-theme='mechanicus'],
+    [data-theme='threebody'],
+    [data-theme='zimablue'],
+    [data-theme='westworld'],
+    [data-theme='poi']
+  ) [data-themes-panel],
+  html:is(
+    .matrix,
+    .blackmirror,
+    .protoss,
+    .zerg,
+    .terran,
+    .mechanicus,
+    .threebody,
+    .zimablue,
+    .westworld,
+    .poi,
+    [data-theme='matrix'],
+    [data-theme='blackmirror'],
+    [data-theme='protoss'],
+    [data-theme='zerg'],
+    [data-theme='terran'],
+    [data-theme='mechanicus'],
+    [data-theme='threebody'],
+    [data-theme='zimablue'],
+    [data-theme='westworld'],
+    [data-theme='poi']
+  ) [data-language-panel],
+  html:is(
+    .matrix,
+    .blackmirror,
+    .protoss,
+    .zerg,
+    .terran,
+    .mechanicus,
+    .threebody,
+    .zimablue,
+    .westworld,
+    .poi,
+    [data-theme='matrix'],
+    [data-theme='blackmirror'],
+    [data-theme='protoss'],
+    [data-theme='zerg'],
+    [data-theme='terran'],
+    [data-theme='mechanicus'],
+    [data-theme='threebody'],
+    [data-theme='zimablue'],
+    [data-theme='westworld'],
+    [data-theme='poi']
+  ) .built-with-button {
+    background: color-mix(in srgb, var(--card) 86%, transparent);
+    border-color: color-mix(in srgb, var(--border) 84%, transparent);
+    border-radius: var(--radius);
+    box-shadow:
+      inset 0 1px 0 color-mix(in srgb, var(--foreground) 4%, transparent),
+      0 16px 36px color-mix(in srgb, var(--background) 76%, transparent);
+    backdrop-filter: blur(16px) saturate(125%);
+  }
+
+  html:is(.matrix, [data-theme='matrix']) .blog-grid,
+  html:is(.matrix, [data-theme='matrix']) .site-footer,
+  html:is(.matrix, [data-theme='matrix']) [data-theme-panel],
+  html:is(.matrix, [data-theme='matrix']) [data-themes-panel],
+  html:is(.matrix, [data-theme='matrix']) [data-language-panel],
+  html:is(.matrix, [data-theme='matrix']) .built-with-button {
+    background: color-mix(in srgb, var(--card) 68%, transparent);
+    border-color: color-mix(in srgb, var(--border) 72%, transparent);
+    box-shadow:
+      inset 0 1px 0 color-mix(in srgb, var(--foreground) 5%, transparent),
+      0 10px 26px color-mix(in srgb, var(--background) 78%, transparent);
+    backdrop-filter: blur(10px) saturate(112%);
+  }
+
+  html:is(.blackmirror, [data-theme='blackmirror']) .blog-grid,
+  html:is(.blackmirror, [data-theme='blackmirror']) .site-footer,
+  html:is(.blackmirror, [data-theme='blackmirror']) [data-theme-panel],
+  html:is(.blackmirror, [data-theme='blackmirror']) [data-themes-panel],
+  html:is(.blackmirror, [data-theme='blackmirror']) [data-language-panel],
+  html:is(.blackmirror, [data-theme='blackmirror']) .built-with-button {
+    background: color-mix(in srgb, var(--card) 42%, transparent);
+    border-color: color-mix(in srgb, var(--border) 56%, transparent);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.03),
+      0 16px 36px rgba(0, 0, 0, 0.42);
+    backdrop-filter: blur(10px) saturate(102%);
+  }
+
+  html:is(.blackmirror, [data-theme='blackmirror']) .blog-card {
+    background: rgba(17, 18, 20, 0.52);
+    border-color: rgba(214, 226, 242, 0.08);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.028),
+      0 12px 28px rgba(0, 0, 0, 0.28);
+  }
+
+  html:is(.blackmirror, [data-theme='blackmirror']) .blog-card:hover {
+    background: rgba(20, 22, 25, 0.66);
+    border-color: rgba(214, 226, 242, 0.14);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.04),
+      0 18px 32px rgba(0, 0, 0, 0.34);
+  }
+
+  html:is(.blackmirror, [data-theme='blackmirror']) .blog-card-title,
+  html:is(.blackmirror, [data-theme='blackmirror']) .site-footer-link:hover,
+  html:is(.blackmirror, [data-theme='blackmirror']) .site-footer-aux-link:hover,
+  html:is(.blackmirror, [data-theme='blackmirror']) .site-nav .nav-item:hover {
+    color: rgba(235, 240, 246, 0.94);
+  }
+
+  html:is(
+    .matrix,
+    .blackmirror,
+    .protoss,
+    .zerg,
+    .terran,
+    .mechanicus,
+    .threebody,
+    .zimablue,
+    .westworld,
+    .poi,
+    [data-theme='matrix'],
+    [data-theme='blackmirror'],
+    [data-theme='protoss'],
+    [data-theme='zerg'],
+    [data-theme='terran'],
+    [data-theme='mechanicus'],
+    [data-theme='threebody'],
+    [data-theme='zimablue'],
+    [data-theme='westworld'],
+    [data-theme='poi']
+  ) .nav-utility-button,
+  html:is(
+    .matrix,
+    .blackmirror,
+    .protoss,
+    .zerg,
+    .terran,
+    .mechanicus,
+    .threebody,
+    .zimablue,
+    .westworld,
+    .poi,
+    [data-theme='matrix'],
+    [data-theme='blackmirror'],
+    [data-theme='protoss'],
+    [data-theme='zerg'],
+    [data-theme='terran'],
+    [data-theme='mechanicus'],
+    [data-theme='threebody'],
+    [data-theme='zimablue'],
+    [data-theme='westworld'],
+    [data-theme='poi']
+  ) .blog-pagination-link,
+  html:is(
+    .matrix,
+    .blackmirror,
+    .protoss,
+    .zerg,
+    .terran,
+    .mechanicus,
+    .threebody,
+    .zimablue,
+    .westworld,
+    .poi,
+    [data-theme='matrix'],
+    [data-theme='blackmirror'],
+    [data-theme='protoss'],
+    [data-theme='zerg'],
+    [data-theme='terran'],
+    [data-theme='mechanicus'],
+    [data-theme='threebody'],
+    [data-theme='zimablue'],
+    [data-theme='westworld'],
+    [data-theme='poi']
+  ) .site-footer-social-link {
+    background: color-mix(in srgb, var(--background) 82%, var(--card));
+    border-color: color-mix(in srgb, var(--border) 82%, transparent);
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--foreground) 4%, transparent);
+  }
+
+  html:is(
+    .matrix,
+    .blackmirror,
+    .protoss,
+    .zerg,
+    .terran,
+    .mechanicus,
+    .threebody,
+    .zimablue,
+    .westworld,
+    .poi,
+    [data-theme='matrix'],
+    [data-theme='blackmirror'],
+    [data-theme='protoss'],
+    [data-theme='zerg'],
+    [data-theme='terran'],
+    [data-theme='mechanicus'],
+    [data-theme='threebody'],
+    [data-theme='zimablue'],
+    [data-theme='westworld'],
+    [data-theme='poi']
+  ) .site-nav .nav-link-active {
+    box-shadow:
+      inset 0 -2px 0 color-mix(in srgb, var(--primary) 92%, white 8%),
+      0 10px 18px -14px color-mix(in srgb, var(--primary) 36%, transparent);
+  }
+
+  /* ── EvoMap-like surface treatment for Evolution ── */
+  html:is(.evolution, [data-theme='evolution']) .site-nav {
+    background:
+      linear-gradient(180deg, rgba(5, 10, 23, 0.86) 0%, rgba(4, 10, 22, 0.68) 100%);
+    border-color: rgba(116, 170, 236, 0.1);
+    box-shadow:
+      inset 0 -1px 0 rgba(148, 163, 184, 0.05),
+      0 12px 32px rgba(2, 6, 23, 0.24);
+    backdrop-filter: blur(20px) saturate(135%);
+  }
+
+  html:is(.evolution, [data-theme='evolution']) .site-brand {
+    color: #f8fbff;
+    font-family: var(--font-ui);
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    text-shadow: 0 0 16px rgba(84, 162, 255, 0.08);
+  }
+
+  html:is(.evolution, [data-theme='evolution']) .site-nav .nav-item {
+    font-family: var(--font-ui);
+    letter-spacing: 0.012em;
+    font-weight: 500;
+  }
+
+  html:is(.evolution, [data-theme='evolution']) .nav-utility-button {
+    color: #9aaec7;
+    background: rgba(7, 15, 29, 0.32);
+    border: 1px solid transparent;
+    border-radius: 999px;
+    backdrop-filter: blur(12px) saturate(130%);
+  }
+
+  html:is(.evolution, [data-theme='evolution']) .nav-utility-button:hover {
+    color: #f8fbff;
+    background: rgba(10, 21, 38, 0.7);
+    border-color: rgba(105, 174, 252, 0.08);
+  }
+
+  html:is(.evolution, [data-theme='evolution']) .nav-panel {
+    background:
+      linear-gradient(180deg, rgba(8, 16, 30, 0.92) 0%, rgba(5, 12, 24, 0.86) 100%);
+    border-color: rgba(105, 174, 252, 0.08);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.025),
+      0 20px 48px rgba(2, 6, 23, 0.34);
+    backdrop-filter: blur(22px) saturate(135%);
+  }
+
+  html:is(.evolution, [data-theme='evolution']) .nav-panel-link {
+    font-family: var(--font-ui);
+    letter-spacing: 0.01em;
+  }
+
+  html:is(.evolution, [data-theme='evolution']) .nav-panel-link[data-active='true'] {
+    box-shadow: inset 0 0 0 1px rgba(105, 174, 252, 0.08);
+  }
+
+  html:is(.evolution, [data-theme='evolution']) .site-nav .nav-link-active {
+    box-shadow:
+      inset 0 -2px 0 rgba(105, 174, 252, 0.92),
+      0 10px 18px -14px rgba(105, 174, 252, 0.72);
+  }
+
+  html:is(.evolution, [data-theme='evolution']) .blog-grid,
+  html:is(.evolution, [data-theme='evolution']) .site-footer,
+  html:is(.evolution, [data-theme='evolution']) [data-theme-panel],
+  html:is(.evolution, [data-theme='evolution']) [data-themes-panel],
+  html:is(.evolution, [data-theme='evolution']) [data-language-panel],
+  html:is(.evolution, [data-theme='evolution']) .built-with-button {
+    background:
+      linear-gradient(180deg, rgba(9, 17, 33, 0.76) 0%, rgba(5, 11, 22, 0.62) 100%);
+    border-color: rgba(116, 170, 236, 0.12);
+    box-shadow:
+      inset 0 1px 0 rgba(226, 232, 240, 0.03),
+      0 18px 42px rgba(2, 6, 23, 0.22);
+    backdrop-filter: blur(20px) saturate(128%);
+  }
+
+  html:is(.evolution, [data-theme='evolution']) .blog-grid {
+    position: relative;
+    border-radius: 1.45rem;
+    overflow: hidden;
+  }
+
+  html:is(.evolution, [data-theme='evolution']) .blog-grid::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.018) 0%, transparent 14%),
+      radial-gradient(circle at 18% 0%, rgba(105, 174, 252, 0.08) 0%, transparent 26%);
+    pointer-events: none;
+  }
+
+  html:is(.evolution, [data-theme='evolution']) .blog-card {
+    position: relative;
+    background: rgba(6, 12, 25, 0.06);
+    border-color: rgba(116, 170, 236, 0.1);
+    transition:
+      background-color 0.18s ease,
+      border-color 0.18s ease,
+      box-shadow 0.18s ease,
+      transform 0.18s ease;
+  }
+
+  html:is(.evolution, [data-theme='evolution']) .blog-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent 0%, rgba(105, 174, 252, 0.025) 100%);
+    pointer-events: none;
+  }
+
+  html:is(.evolution, [data-theme='evolution']) .blog-card-meta {
+    color: #8093ad;
+    letter-spacing: 0.06em;
+  }
+
+  html:is(.evolution, [data-theme='evolution']) .blog-card-title {
+    color: #edf4ff;
+    font-family: var(--font-ui);
+    font-weight: 600;
+    letter-spacing: -0.032em;
+    text-shadow: 0 0 14px rgba(105, 174, 252, 0.04);
+  }
+
+  html:is(.evolution, [data-theme='evolution']) .blog-card:hover {
+    background:
+      linear-gradient(90deg, rgba(105, 174, 252, 0.055) 0%, rgba(45, 212, 191, 0.038) 100%);
+    border-color: rgba(116, 170, 236, 0.14);
+    box-shadow:
+      inset 0 1px 0 rgba(226, 232, 240, 0.02),
+      inset 3px 0 0 rgba(105, 174, 252, 0.18);
+  }
+
+  html:is(.evolution, [data-theme='evolution']) .blog-card:hover .blog-card-title {
+    color: #ffffff;
+    text-shadow: 0 0 20px rgba(105, 174, 252, 0.14);
+  }
+
+  html:is(.evolution, [data-theme='evolution']) .site-footer {
+    background:
+      linear-gradient(180deg, rgba(5, 11, 22, 0.72) 0%, rgba(3, 8, 18, 0.9) 100%);
+    position: relative;
+  }
+
+  html:is(.evolution, [data-theme='evolution']) .site-footer::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.012) 0%, transparent 16%),
+      radial-gradient(circle at 78% 0%, rgba(105, 174, 252, 0.07) 0%, transparent 24%);
+    pointer-events: none;
+  }
+
+  html:is(.evolution, [data-theme='evolution']) .site-footer-brand,
+  html:is(.evolution, [data-theme='evolution']) .site-footer-heading {
+    color: #f8fbff;
+    font-family: var(--font-ui);
+  }
+
+  html:is(.evolution, [data-theme='evolution']) .site-footer-main {
+    padding-top: 1.45rem;
+    padding-bottom: 1.35rem;
+  }
+
+  html:is(.evolution, [data-theme='evolution']) .site-footer-bottom {
+    padding-top: 2.1rem;
+    padding-bottom: 1.8rem;
+  }
+
+  html:is(.evolution, [data-theme='evolution']) .site-footer-heading {
+    letter-spacing: 0.11em;
+    font-size: 0.72rem;
+  }
+
+  html:is(.evolution, [data-theme='evolution']) .site-footer-tagline {
+    color: #9aabc2;
+    line-height: 1.58;
+  }
+
+  html:is(.evolution, [data-theme='evolution']) .site-footer-link {
+    letter-spacing: 0.012em;
+  }
+
+  html:is(.evolution, [data-theme='evolution']) .site-footer-social-link {
+    background: rgba(8, 16, 30, 0.56);
+    border-color: rgba(105, 174, 252, 0.1);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+    width: 2.55rem;
+    height: 2.55rem;
+  }
+
+  html:is(.evolution, [data-theme='evolution']) .site-footer-social-link:hover {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.025),
+      0 10px 22px rgba(2, 6, 23, 0.22);
+  }
+
+  html:is(.evolution, [data-theme='evolution']) .site-footer-aux-link {
+    color: #90a3bd;
+    letter-spacing: 0.03em;
+  }
+
+  html:is(.evolution, [data-theme='evolution']) .blog-pagination-link {
+    background: rgba(8, 16, 30, 0.52);
+    border: 1px solid rgba(105, 174, 252, 0.08);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+  }
+
+  html:is(.evolution, [data-theme='evolution']) .blog-pagination-link:hover {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.025),
+      0 12px 24px rgba(2, 6, 23, 0.2);
+  }
+
+  html:is(.evolution, [data-theme='evolution']) .blog-pagination-current {
+    background: linear-gradient(180deg, rgba(122, 183, 255, 0.96) 0%, rgba(92, 156, 238, 0.96) 100%);
+    color: #04101f;
+    font-family: var(--font-ui);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.22),
+      0 10px 24px rgba(84, 162, 255, 0.22);
+  }
+
+  html:is(.evolution, [data-theme='evolution']) .blog-pagination-link,
+  html:is(.evolution, [data-theme='evolution']) .built-with-button {
+    font-family: var(--font-ui);
+  }
+
+  html:is(.evolution, [data-theme='evolution']) .built-with-button:hover,
+  html:is(.evolution, [data-theme='evolution']) [data-theme-panel] button:hover,
+  html:is(.evolution, [data-theme='evolution']) [data-themes-panel] button:hover,
+  html:is(.evolution, [data-theme='evolution']) [data-language-panel] a:hover {
+    box-shadow: inset 0 0 0 1px rgba(84, 162, 255, 0.08);
+  }
+
+  html:is(.protoss, [data-theme='protoss']) .blog-grid,
+  html:is(.protoss, [data-theme='protoss']) .site-footer,
+  html:is(.protoss, [data-theme='protoss']) [data-theme-panel],
+  html:is(.protoss, [data-theme='protoss']) [data-themes-panel],
+  html:is(.protoss, [data-theme='protoss']) [data-language-panel],
+  html:is(.protoss, [data-theme='protoss']) .built-with-button {
+    background: linear-gradient(180deg, rgba(8, 11, 28, 0.68) 0%, rgba(6, 8, 20, 0.58) 100%);
+    border-color: rgba(200, 169, 92, 0.11);
+    backdrop-filter: blur(14px) saturate(112%);
+  }
+
+  html:is(.protoss, [data-theme='protoss']) .blog-card {
+    background: rgba(10, 12, 28, 0.34);
+    border-color: rgba(200, 169, 92, 0.08);
+  }
+
+  html:is(.protoss, [data-theme='protoss']) .blog-card:hover {
+    background: rgba(11, 14, 30, 0.46);
+    border-color: rgba(200, 169, 92, 0.13);
+  }
+
+  html:is(.zerg, [data-theme='zerg']) .blog-grid,
+  html:is(.zerg, [data-theme='zerg']) .site-footer,
+  html:is(.zerg, [data-theme='zerg']) [data-theme-panel],
+  html:is(.zerg, [data-theme='zerg']) [data-themes-panel],
+  html:is(.zerg, [data-theme='zerg']) [data-language-panel],
+  html:is(.zerg, [data-theme='zerg']) .built-with-button {
+    background: linear-gradient(180deg, rgba(18, 10, 24, 0.58) 0%, rgba(11, 6, 16, 0.52) 100%);
+    border-color: rgba(148, 103, 182, 0.08);
+    backdrop-filter: blur(12px) saturate(108%);
+  }
+
+  html:is(.zerg, [data-theme='zerg']) .blog-card {
+    background: rgba(18, 10, 24, 0.32);
+    border-color: rgba(148, 103, 182, 0.06);
+  }
+
+  html:is(.zerg, [data-theme='zerg']) .blog-card:hover {
+    background: rgba(20, 11, 27, 0.44);
+    border-color: rgba(148, 103, 182, 0.1);
+  }
+
+  html:is(.protoss, [data-theme='protoss']) .blog-card-title {
+    color: rgba(234, 238, 245, 0.92);
+  }
+
+  html:is(.protoss, [data-theme='protoss']) .blog-card:hover .blog-card-title {
+    color: rgba(235, 205, 122, 0.96);
+  }
+
+  html:is(.zerg, [data-theme='zerg']) .blog-card-title {
+    color: rgba(198, 184, 210, 0.9);
+  }
+
+  html:is(.zerg, [data-theme='zerg']) .blog-card:hover .blog-card-title {
+    color: rgba(214, 194, 232, 0.94);
+  }
+
+  html:is(.terran, [data-theme='terran']) .blog-grid,
+  html:is(.terran, [data-theme='terran']) .site-footer,
+  html:is(.terran, [data-theme='terran']) [data-theme-panel],
+  html:is(.terran, [data-theme='terran']) [data-themes-panel],
+  html:is(.terran, [data-theme='terran']) [data-language-panel],
+  html:is(.terran, [data-theme='terran']) .built-with-button {
+    background: linear-gradient(180deg, rgba(7, 10, 5, 0.72) 0%, rgba(5, 8, 4, 0.64) 100%);
+    border-color: rgba(146, 171, 123, 0.1);
+    backdrop-filter: blur(14px) saturate(110%);
+  }
+
+  html:is(.terran, [data-theme='terran']) .blog-card {
+    background: rgba(7, 10, 5, 0.34);
+    border-color: rgba(146, 171, 123, 0.08);
+  }
+
+  html:is(.terran, [data-theme='terran']) .blog-card:hover {
+    background: rgba(8, 11, 6, 0.48);
+    border-color: rgba(146, 171, 123, 0.13);
+  }
+
+  html:is(.terran, [data-theme='terran']) .blog-card-title {
+    color: rgba(176, 188, 164, 0.9);
+  }
+
+  html:is(.terran, [data-theme='terran']) .blog-card:hover .blog-card-title {
+    color: rgba(196, 208, 181, 0.94);
+  }
+
+  html:is(.westworld, [data-theme='westworld']) .blog-grid,
+  html:is(.westworld, [data-theme='westworld']) .site-footer,
+  html:is(.westworld, [data-theme='westworld']) [data-theme-panel],
+  html:is(.westworld, [data-theme='westworld']) [data-themes-panel],
+  html:is(.westworld, [data-theme='westworld']) [data-language-panel],
+  html:is(.westworld, [data-theme='westworld']) .built-with-button {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.6) 0%, rgba(247, 250, 255, 0.48) 100%);
+    border-color: rgba(82, 110, 130, 0.16);
+    backdrop-filter: blur(10px) saturate(108%);
+  }
+
+  html:is(.westworld, [data-theme='westworld']) .blog-card {
+    background: rgba(255, 255, 255, 0.32);
+    border-color: rgba(82, 110, 130, 0.18);
+  }
+
+  html:is(.westworld, [data-theme='westworld']) .blog-card:hover {
+    background: rgba(255, 255, 255, 0.46);
+    border-color: rgba(82, 110, 130, 0.24);
+  }
+
+  html:is(.westworld, [data-theme='westworld']) .blog-card-title {
+    color: rgba(64, 82, 94, 0.88);
+  }
+
+  html:is(.westworld, [data-theme='westworld']) .blog-card:hover .blog-card-title {
+    color: rgba(39, 86, 110, 0.95);
+  }
+
+  html:is(.poi, [data-theme='poi']) .blog-grid,
+  html:is(.poi, [data-theme='poi']) .site-footer,
+  html:is(.poi, [data-theme='poi']) [data-theme-panel],
+  html:is(.poi, [data-theme='poi']) [data-themes-panel],
+  html:is(.poi, [data-theme='poi']) [data-language-panel],
+  html:is(.poi, [data-theme='poi']) .built-with-button {
+    background: linear-gradient(180deg, rgba(2, 2, 2, 0.78) 0%, rgba(1, 1, 1, 0.7) 100%);
+    border-color: rgba(194, 164, 82, 0.09);
+    backdrop-filter: blur(12px) saturate(102%);
+  }
+
+  html:is(.poi, [data-theme='poi']) .blog-card {
+    background: rgba(2, 2, 2, 0.46);
+    border-color: rgba(194, 164, 82, 0.06);
+  }
+
+  html:is(.poi, [data-theme='poi']) .blog-card:hover {
+    background: rgba(2, 2, 2, 0.58);
+    border-color: rgba(194, 164, 82, 0.1);
+  }
+
+  html:is(.poi, [data-theme='poi']) .blog-card-title {
+    color: rgba(148, 148, 148, 0.82);
+  }
+
+  html:is(.poi, [data-theme='poi']) .blog-card:hover .blog-card-title {
+    color: rgba(194, 164, 82, 0.9);
+  }
+
+  html:is(.mechanicus, [data-theme='mechanicus']) .blog-card-title {
+    color: rgba(194, 182, 170, 0.9);
+  }
+
+  html:is(.mechanicus, [data-theme='mechanicus']) .blog-card:hover .blog-card-title {
+    color: rgba(214, 108, 88, 0.95);
+  }
+
+  html:is(.threebody, [data-theme='threebody']) .blog-card-title {
+    color: rgba(206, 210, 216, 0.92);
+  }
+
+  html:is(.threebody, [data-theme='threebody']) .blog-card:hover .blog-card-title {
+    color: rgba(255, 119, 62, 0.95);
+  }
+
+  html:is(.zimablue, [data-theme='zimablue']) .blog-card-title {
+    color: rgba(168, 180, 192, 0.92);
+  }
+
+  html:is(.zimablue, [data-theme='zimablue']) .blog-card:hover .blog-card-title {
+    color: rgba(92, 186, 233, 0.96);
+  }
+</style>
+
+<script is:inline>
+  (() => {
+    const canvas = document.querySelector('.theme-scene-matrix-canvas');
+    if (!(canvas instanceof HTMLCanvasElement)) return;
+
+    const context = canvas.getContext('2d', { alpha: true });
+    if (!context) return;
+
+    const root = document.documentElement;
+    const media = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const glyphs = '0123456789ABCDEF';
+    const cellWidth = 20;
+    const cellHeight = 20;
+
+    let width = 0;
+    let height = 0;
+    let rafId = 0;
+    let drops = [];
+
+    const isMatrixTheme = () =>
+      root.classList.contains('matrix') || root.getAttribute('data-theme') === 'matrix';
+
+    const resetDrops = () => {
+      const columns = Math.max(1, Math.ceil(width / cellWidth));
+      drops = Array(columns).fill(1);
+    };
+
+    const resizeCanvas = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      width = Math.max(window.innerWidth, document.documentElement.clientWidth);
+      height = Math.max(window.innerHeight, document.documentElement.clientHeight);
+      canvas.width = Math.floor(width * dpr);
+      canvas.height = Math.floor(height * dpr);
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      context.setTransform(dpr, 0, 0, dpr, 0, 0);
+      context.font = '15px monospace';
+      context.textBaseline = 'top';
+      resetDrops();
+    };
+
+    const clearCanvas = () => {
+      context.setTransform(1, 0, 0, 1, 0, 0);
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      context.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+
+    const drawFrame = () => {
+      if (!isMatrixTheme()) {
+        rafId = 0;
+        clearCanvas();
+        return;
+      }
+
+      context.fillStyle = 'rgba(0, 0, 0, 0.05)';
+      context.fillRect(0, 0, width, height);
+      context.font = '15px monospace';
+
+      for (let index = 0; index < drops.length; index += 1) {
+        const x = index * cellWidth;
+        const y = drops[index] * cellHeight;
+        const glyph = glyphs[(Math.random() * glyphs.length) | 0];
+        context.fillStyle = '#0F0';
+        context.fillText(glyph, x, y);
+
+        if (y > height && Math.random() > 0.975) {
+          drops[index] = 0;
+        } else {
+          drops[index] += 1;
+        }
+      }
+
+      rafId = window.requestAnimationFrame(drawFrame);
+    };
+
+    const renderStaticWall = () => {
+      clearCanvas();
+      context.fillStyle = 'rgba(0, 0, 0, 0.82)';
+      context.fillRect(0, 0, width, height);
+
+      for (let pass = 0; pass < 18; pass += 1) {
+        for (let index = 0; index < drops.length; index += 1) {
+          const rowCount = Math.max(1, Math.ceil(height / cellHeight));
+          const x = index * cellWidth;
+          const y = ((drops[index] + pass * 2) % rowCount) * cellHeight;
+          const glyph = glyphs[(Math.random() * glyphs.length) | 0];
+          const alpha = 0.22 + Math.random() * 0.18;
+          context.fillStyle = `rgba(86, 255, 132, ${alpha})`;
+          context.fillText(glyph, x, y);
+        }
+      }
+    };
+
+    const syncMatrixScene = () => {
+      if (rafId) {
+        window.cancelAnimationFrame(rafId);
+        rafId = 0;
+      }
+
+      if (!isMatrixTheme()) {
+        clearCanvas();
+        return;
+      }
+
+      resizeCanvas();
+
+      clearCanvas();
+
+      if (media.matches) {
+        renderStaticWall();
+        return;
+      }
+
+      drawFrame();
+    };
+
+    resizeCanvas();
+    syncMatrixScene();
+
+    const observer = new MutationObserver(syncMatrixScene);
+    observer.observe(root, {
+      attributes: true,
+      attributeFilter: ['class', 'data-theme'],
+    });
+
+    window.addEventListener('resize', syncMatrixScene);
+    media.addEventListener('change', syncMatrixScene);
+  })();
+</script>
+
+<script is:inline>
+  (() => {
+    const canvas = document.querySelector('.theme-scene-blackmirror-canvas');
+    if (!(canvas instanceof HTMLCanvasElement)) return;
+
+    const context = canvas.getContext('2d', { alpha: true });
+    if (!context) return;
+
+    const root = document.documentElement;
+    const media = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    class BlackMirrorShard {
+      constructor(width, height) {
+        this.width = width;
+        this.height = height;
+        this.reset();
+      }
+
+      reset() {
+        this.x = Math.random() * this.width;
+        this.y = Math.random() * this.height;
+        this.z = Math.random() * 2 + 0.5;
+        this.size = Math.random() * 56 + 34;
+        this.vx = (Math.random() - 0.5) * 0.22;
+        this.vy = (Math.random() - 0.5) * 0.22;
+        this.angle = Math.random() * Math.PI * 2;
+        this.rotationSpeed = (Math.random() - 0.5) * 0.015;
+        this.opacity = Math.random() * 0.22 + 0.16;
+      }
+
+      update(width, height) {
+        this.width = width;
+        this.height = height;
+        this.x += this.vx * this.z;
+        this.y += this.vy * this.z;
+        this.angle += this.rotationSpeed;
+
+        if (this.x < -150 || this.x > this.width + 150 || this.y < -150 || this.y > this.height + 150) {
+          this.reset();
+        }
+      }
+
+      draw(time) {
+        context.save();
+        context.translate(this.x, this.y);
+        context.rotate(this.angle);
+        context.globalAlpha = this.opacity;
+        context.beginPath();
+        context.moveTo(0, -this.size);
+        context.lineTo(this.size * 0.6, this.size * 0.8);
+        context.lineTo(-(this.size * 0.5), this.size * 0.4);
+        context.closePath();
+
+        const pulse = Math.pow(Math.abs(Math.sin(0.3 * time + this.x * 0.005 + this.y * 0.005)), 4);
+        context.fillStyle = `rgba(214, 226, 242, ${0.08 + 0.28 * pulse})`;
+        context.fill();
+        context.strokeStyle = `rgba(255, 255, 255, ${0.24 + 0.56 * pulse})`;
+        context.lineWidth = 1;
+        context.stroke();
+        context.restore();
+      }
+    }
+
+    let width = 0;
+    let height = 0;
+    let rafId = 0;
+    let time = 0;
+    let shards = [];
+
+    const isBlackMirrorTheme = () =>
+      root.classList.contains('blackmirror') || root.getAttribute('data-theme') === 'blackmirror';
+
+    const resizeCanvas = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      width = Math.max(window.innerWidth, document.documentElement.clientWidth);
+      height = Math.max(window.innerHeight, document.documentElement.clientHeight);
+      canvas.width = Math.floor(width * dpr);
+      canvas.height = Math.floor(height * dpr);
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      context.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      if (!shards.length) {
+        shards = Array.from({ length: 34 }, () => new BlackMirrorShard(width, height));
+        return;
+      }
+
+      shards.forEach((shard) => {
+        shard.width = width;
+        shard.height = height;
+      });
+    };
+
+    const clearCanvas = () => {
+      context.setTransform(1, 0, 0, 1, 0, 0);
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      context.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+
+    const drawOverlay = () => {
+      const radius = Math.max(width, height);
+      const vignette = context.createRadialGradient(width / 2, height / 2, width / 3, width / 2, height / 2, radius);
+      vignette.addColorStop(0, 'rgba(0, 0, 0, 0)');
+      vignette.addColorStop(1, 'rgba(0, 0, 0, 0.42)');
+      context.fillStyle = vignette;
+      context.fillRect(0, 0, width, height);
+
+      const recAlpha = Math.sin(3 * time) > 0 ? 0.8 : 0.2;
+      context.fillStyle = `rgba(200, 0, 0, ${recAlpha})`;
+      context.beginPath();
+      context.arc(30, 30, 4, 0, Math.PI * 2);
+      context.fill();
+      context.fillStyle = 'rgba(255, 255, 255, 0.4)';
+      context.font = '10px sans-serif';
+      context.fillText('REC', 42, 33);
+    };
+
+    const drawFrame = () => {
+      if (!isBlackMirrorTheme()) {
+        rafId = 0;
+        clearCanvas();
+        return;
+      }
+
+      time += 0.01;
+      clearCanvas();
+      shards.forEach((shard) => {
+        shard.update(width, height);
+        shard.draw(time);
+      });
+      drawOverlay();
+      rafId = window.requestAnimationFrame(drawFrame);
+    };
+
+    const renderStaticFrame = () => {
+      clearCanvas();
+      shards.forEach((shard) => shard.draw(0));
+      drawOverlay();
+    };
+
+    const syncBlackMirrorScene = () => {
+      if (rafId) {
+        window.cancelAnimationFrame(rafId);
+        rafId = 0;
+      }
+
+      if (!isBlackMirrorTheme()) {
+        clearCanvas();
+        return;
+      }
+
+      resizeCanvas();
+      time = 0;
+
+      if (media.matches) {
+        renderStaticFrame();
+        return;
+      }
+
+      drawFrame();
+    };
+
+    resizeCanvas();
+    syncBlackMirrorScene();
+
+    const observer = new MutationObserver(syncBlackMirrorScene);
+    observer.observe(root, {
+      attributes: true,
+      attributeFilter: ['class', 'data-theme'],
+    });
+
+    window.addEventListener('resize', syncBlackMirrorScene);
+    media.addEventListener('change', syncBlackMirrorScene);
+  })();
+</script>
+
+<script is:inline>
+  (() => {
+    const canvas = document.querySelector('.theme-scene-protoss-canvas');
+    if (!(canvas instanceof HTMLCanvasElement)) return;
+
+    const context = canvas.getContext('2d', { alpha: true });
+    if (!context) return;
+
+    const root = document.documentElement;
+    const media = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const cyan = '108, 214, 255';
+    const blue = '74, 144, 226';
+
+    class ProtossNode {
+      constructor(width, height) {
+        this.width = width;
+        this.height = height;
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+        this.size = Math.random() * 3 + 4;
+        this.fieldRadius = Math.random() * 100 + 150;
+        this.phase = Math.random() * Math.PI * 2;
+      }
+
+      draw(time) {
+        const fieldScale = 0.9 + Math.sin(time * 2 + this.phase) * 0.1;
+        const aura = context.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.fieldRadius * fieldScale);
+        aura.addColorStop(0, `rgba(${cyan}, 0.036)`);
+        aura.addColorStop(0.5, `rgba(${blue}, 0.014)`);
+        aura.addColorStop(1, `rgba(${blue}, 0)`);
+        context.beginPath();
+        context.arc(this.x, this.y, this.fieldRadius * fieldScale, 0, Math.PI * 2);
+        context.fillStyle = aura;
+        context.fill();
+
+        context.save();
+        context.translate(this.x, this.y);
+        context.rotate(time * 0.5);
+        context.beginPath();
+        context.moveTo(0, -this.size * 1.5);
+        context.lineTo(this.size, 0);
+        context.lineTo(0, this.size * 1.5);
+        context.lineTo(-this.size, 0);
+        context.closePath();
+        context.fillStyle = 'rgba(228, 190, 89, 0.82)';
+        context.shadowColor = `rgba(${cyan}, 0.5)`;
+        context.shadowBlur = 8;
+        context.fill();
+        context.restore();
+      }
+    }
+
+    class ProtossBeam {
+      constructor(width, height) {
+        this.width = width;
+        this.height = height;
+        this.reset();
+      }
+
+      reset() {
+        this.x = Math.random() * this.width;
+        this.y = Math.random() * this.height;
+        this.heightValue = 0;
+        this.maxHeight = Math.random() * 300 + 100;
+        this.widthValue = Math.random() * 2 + 1;
+        this.life = 0;
+        this.maxLife = Math.random() * 60 + 60;
+        this.stage = 'growing';
+        this.color = Math.random() > 0.3 ? cyan : blue;
+      }
+
+      update() {
+        this.life += 1;
+
+        if (this.stage === 'growing') {
+          this.heightValue += 15;
+          if (this.heightValue >= this.maxHeight) this.stage = 'holding';
+          return;
+        }
+
+        if (this.stage === 'holding') {
+          if (this.life > this.maxLife - 20) this.stage = 'shrinking';
+          return;
+        }
+
+        this.heightValue -= 15;
+        if (this.heightValue <= 0) this.reset();
+      }
+
+      draw() {
+        if (this.heightValue <= 0) return;
+
+        const fade = 0.44 * Math.min(1, this.life / 20, (this.maxLife - this.life) / 20);
+        const shaft = context.createLinearGradient(this.x, this.y, this.x, this.y - this.heightValue);
+        shaft.addColorStop(0, `rgba(${this.color}, 0)`);
+        shaft.addColorStop(0.5, `rgba(${this.color}, ${fade})`);
+        shaft.addColorStop(1, `rgba(${this.color}, 0)`);
+
+        context.beginPath();
+        context.rect(
+          this.x - this.widthValue / 2,
+          this.y - this.heightValue,
+          this.widthValue,
+          this.heightValue * 2,
+        );
+        context.fillStyle = shaft;
+        context.fill();
+
+        context.beginPath();
+        context.moveTo(this.x, this.y + this.heightValue / 2);
+        context.lineTo(this.x, this.y - this.heightValue / 2);
+        context.strokeStyle = `rgba(255, 255, 255, ${fade * 0.55})`;
+        context.lineWidth = 0.5;
+        context.stroke();
+      }
+    }
+
+    let width = 0;
+    let height = 0;
+    let rafId = 0;
+    let time = 0;
+    let nodes = [];
+    let beams = [];
+
+    const isProtossTheme = () =>
+      root.classList.contains('protoss') || root.getAttribute('data-theme') === 'protoss';
+
+    const resizeCanvas = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      width = Math.max(window.innerWidth, document.documentElement.clientWidth);
+      height = Math.max(window.innerHeight, document.documentElement.clientHeight);
+      canvas.width = Math.floor(width * dpr);
+      canvas.height = Math.floor(height * dpr);
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      context.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+
+    const rebuildScene = () => {
+      const nodeCount = Math.max(Math.floor((width * height) / 150000), 4);
+      nodes = Array.from({ length: nodeCount }, () => new ProtossNode(width, height));
+      beams = Array.from({ length: 11 }, () => new ProtossBeam(width, height));
+    };
+
+    const clearCanvas = () => {
+      context.setTransform(1, 0, 0, 1, 0, 0);
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      context.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+
+    const drawLinks = () => {
+      context.beginPath();
+      for (let i = 0; i < nodes.length; i += 1) {
+        for (let j = i + 1; j < nodes.length; j += 1) {
+          const dx = nodes[i].x - nodes[j].x;
+          const dy = nodes[i].y - nodes[j].y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          if (distance >= 400) continue;
+
+          const alpha = (1 - distance / 400) * 0.3;
+          context.moveTo(nodes[i].x, nodes[i].y);
+          context.lineTo(nodes[j].x, nodes[j].y);
+          context.strokeStyle = `rgba(${cyan}, ${alpha})`;
+          context.lineWidth = 1;
+        }
+      }
+      context.stroke();
+    };
+
+    const drawStaticFrame = () => {
+      clearCanvas();
+      nodes.forEach((node) => node.draw(0));
+      drawLinks();
+      beams.forEach((beam) => {
+        beam.heightValue = beam.maxHeight * 0.7;
+        beam.life = beam.maxLife * 0.5;
+        beam.draw();
+      });
+    };
+
+    const drawFrame = () => {
+      if (!isProtossTheme()) {
+        rafId = 0;
+        clearCanvas();
+        return;
+      }
+
+      time += 0.01;
+      clearCanvas();
+      nodes.forEach((node) => node.draw(time));
+      drawLinks();
+      beams.forEach((beam) => {
+        beam.update();
+        beam.draw();
+      });
+      rafId = window.requestAnimationFrame(drawFrame);
+    };
+
+    const syncProtossScene = () => {
+      if (rafId) {
+        window.cancelAnimationFrame(rafId);
+        rafId = 0;
+      }
+
+      if (!isProtossTheme()) {
+        clearCanvas();
+        return;
+      }
+
+      resizeCanvas();
+      rebuildScene();
+      time = 0;
+
+      if (media.matches) {
+        drawStaticFrame();
+        return;
+      }
+
+      drawFrame();
+    };
+
+    resizeCanvas();
+    syncProtossScene();
+
+    const observer = new MutationObserver(syncProtossScene);
+    observer.observe(root, {
+      attributes: true,
+      attributeFilter: ['class', 'data-theme'],
+    });
+
+    window.addEventListener('resize', syncProtossScene);
+    media.addEventListener('change', syncProtossScene);
+  })();
+</script>
+
+<script is:inline>
+  (() => {
+    const canvas = document.querySelector('.theme-scene-evomap-canvas');
+    if (!(canvas instanceof HTMLCanvasElement)) return;
+
+    const context = canvas.getContext('2d', { alpha: true });
+    if (!context) return;
+
+    const root = document.documentElement;
+    const media = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const supportedThemes = new Set([
+      'evolution',
+      'cyberpunk',
+      'zerg',
+      'terran',
+      'mechanicus',
+      'threebody',
+      'zimablue',
+      'westworld',
+      'poi',
+    ]);
+
+    const pick = (items) => items[Math.floor(Math.random() * items.length)];
+    const rand = (min, max) => min + Math.random() * (max - min);
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+    const randEdgePoint = (inset = 92, band = 120) => {
+      const side = Math.floor(rand(0, 4));
+      switch (side) {
+        case 0:
+          return { x: rand(-band, width + band), y: rand(-band, inset) };
+        case 1:
+          return { x: rand(width - inset, width + band), y: rand(-band, height + band) };
+        case 2:
+          return { x: rand(-band, width + band), y: rand(height - inset, height + band) };
+        default:
+          return { x: rand(-band, inset), y: rand(-band, height + band) };
+      }
+    };
+    let width = 0;
+    let height = 0;
+    let dpr = 1;
+    let rafId = 0;
+    let state = null;
+    let currentTheme = '';
+    let time = 0;
+
+    const getCurrentTheme = () => {
+      const explicit = root.getAttribute('data-theme');
+      if (explicit && supportedThemes.has(explicit)) return explicit;
+      for (const theme of supportedThemes) {
+        if (root.classList.contains(theme)) return theme;
+      }
+      return '';
+    };
+
+    const resizeCanvas = () => {
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      width = Math.max(window.innerWidth, document.documentElement.clientWidth);
+      height = Math.max(window.innerHeight, document.documentElement.clientHeight);
+      canvas.width = Math.floor(width * dpr);
+      canvas.height = Math.floor(height * dpr);
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      context.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+
+    const clearCanvas = () => {
+      context.setTransform(1, 0, 0, 1, 0, 0);
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      context.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+
+    const drawGrid = (stepX, stepY, color, offsetX = 0, offsetY = 0) => {
+      context.beginPath();
+      for (let x = (-offsetX % stepX) - stepX; x <= width + stepX; x += stepX) {
+        context.moveTo(x, 0);
+        context.lineTo(x, height);
+      }
+      for (let y = (-offsetY % stepY) - stepY; y <= height + stepY; y += stepY) {
+        context.moveTo(0, y);
+        context.lineTo(width, y);
+      }
+      context.strokeStyle = color;
+      context.lineWidth = 1;
+      context.stroke();
+    };
+
+    const drawHexGrid = (size, color, alpha, drift = 0) => {
+      const hexHeight = Math.sqrt(3) * size;
+      const hexWidth = size * 2;
+      const verticalStep = hexHeight;
+      const horizontalStep = size * 1.5;
+      context.beginPath();
+      for (let row = -1; row <= Math.ceil(height / verticalStep) + 1; row += 1) {
+        const y = row * verticalStep + (drift % verticalStep);
+        const rowOffset = row % 2 === 0 ? 0 : horizontalStep / 2;
+        for (let col = -1; col <= Math.ceil(width / horizontalStep) + 1; col += 1) {
+          const x = col * horizontalStep + rowOffset;
+          context.moveTo(x + size * 0.5, y);
+          context.lineTo(x + size * 1.5, y);
+          context.lineTo(x + hexWidth, y + hexHeight / 2);
+          context.lineTo(x + size * 1.5, y + hexHeight);
+          context.lineTo(x + size * 0.5, y + hexHeight);
+          context.lineTo(x, y + hexHeight / 2);
+          context.closePath();
+        }
+      }
+      context.strokeStyle = color;
+      context.globalAlpha = alpha;
+      context.lineWidth = 1;
+      context.stroke();
+      context.globalAlpha = 1;
+    };
+
+    const drawBracketRect = (x, y, w, h, color, alpha = 1) => {
+      const arm = Math.max(10, Math.min(w, h) * 0.22);
+      context.save();
+      context.strokeStyle = color;
+      context.globalAlpha = alpha;
+      context.lineWidth = 1.2;
+      context.beginPath();
+      context.moveTo(x, y + arm);
+      context.lineTo(x, y);
+      context.lineTo(x + arm, y);
+      context.moveTo(x + w - arm, y);
+      context.lineTo(x + w, y);
+      context.lineTo(x + w, y + arm);
+      context.moveTo(x + w, y + h - arm);
+      context.lineTo(x + w, y + h);
+      context.lineTo(x + w - arm, y + h);
+      context.moveTo(x + arm, y + h);
+      context.lineTo(x, y + h);
+      context.lineTo(x, y + h - arm);
+      context.stroke();
+      context.restore();
+    };
+
+    const drawReticle = (x, y, radius, color, alpha = 1) => {
+      context.save();
+      context.strokeStyle = color;
+      context.globalAlpha = alpha;
+      context.lineWidth = 1;
+      context.beginPath();
+      context.arc(x, y, radius, 0, Math.PI * 2);
+      context.moveTo(x - radius - 10, y);
+      context.lineTo(x - radius / 2, y);
+      context.moveTo(x + radius / 2, y);
+      context.lineTo(x + radius + 10, y);
+      context.moveTo(x, y - radius - 10);
+      context.lineTo(x, y - radius / 2);
+      context.moveTo(x, y + radius / 2);
+      context.lineTo(x, y + radius + 10);
+      context.stroke();
+      context.restore();
+    };
+
+    const drawLabel = (text, x, y, color, align = 'left', alpha = 1, size = 12) => {
+      context.save();
+      context.fillStyle = color;
+      context.globalAlpha = alpha;
+      context.font = `${size}px "JetBrains Mono", "SF Mono", monospace`;
+      context.textAlign = align;
+      context.textBaseline = 'middle';
+      context.fillText(text, x, y);
+      context.restore();
+    };
+
+    const drawGlow = (x, y, radius, innerColor, outerColor = 'rgba(0, 0, 0, 0)') => {
+      const gradient = context.createRadialGradient(x, y, 0, x, y, radius);
+      gradient.addColorStop(0, innerColor);
+      gradient.addColorStop(1, outerColor);
+      context.beginPath();
+      context.arc(x, y, radius, 0, Math.PI * 2);
+      context.fillStyle = gradient;
+      context.fill();
+    };
+
+    const drawGear = (x, y, radius, teeth, rotation, stroke, fillAlpha = 0) => {
+      context.save();
+      context.translate(x, y);
+      context.rotate(rotation);
+      context.beginPath();
+      for (let i = 0; i < teeth * 2; i += 1) {
+        const angle = (Math.PI * i) / teeth;
+        const r = i % 2 === 0 ? radius : radius * 0.8;
+        const px = Math.cos(angle) * r;
+        const py = Math.sin(angle) * r;
+        if (i === 0) {
+          context.moveTo(px, py);
+        } else {
+          context.lineTo(px, py);
+        }
+      }
+      context.closePath();
+      context.strokeStyle = stroke;
+      context.fillStyle = `rgba(255, 255, 255, ${fillAlpha})`;
+      context.lineWidth = 1.2;
+      if (fillAlpha > 0) context.fill();
+      context.stroke();
+
+      context.beginPath();
+      context.arc(0, 0, radius * 0.38, 0, Math.PI * 2);
+      context.stroke();
+      context.restore();
+    };
+
+    const makeEvolutionState = () => ({
+      particles: Array.from(
+        { length: Math.max(44, Math.round((width * height) / 76000)) },
+        () => ({
+          x: rand(0, width),
+          y: rand(0, height),
+          vx: rand(-0.16, 0.16),
+          vy: rand(-0.14, 0.14),
+          radius: rand(2, 4.8),
+          color: pick([
+            [105, 174, 252],
+            [45, 212, 191],
+            [244, 114, 182],
+            [129, 140, 248],
+          ]),
+        }),
+      ),
+    });
+
+    const makeCyberpunkState = () => ({
+      markers: Array.from({ length: 30 }, () => ({
+        x: rand(60, Math.max(100, width - 160)),
+        y: rand(60, Math.max(100, height - 180)),
+        w: rand(46, 120),
+        h: rand(24, 64),
+        type: pick(['solid', 'cross', 'bracket']),
+      })),
+    });
+
+    const makeZergState = () => ({
+      blobs: Array.from({ length: Math.max(12, Math.round(width / 140)) }, () => {
+        const point = randEdgePoint(120, 90);
+        return {
+        x: point.x,
+        y: point.y,
+        radius: rand(42, 96),
+        speed: rand(0.45, 1.2),
+        drift: rand(-0.16, 0.16),
+        phase: rand(0, Math.PI * 2),
+        color: pick([
+          '219, 39, 119',
+          '192, 38, 211',
+          '168, 85, 247',
+          '244, 114, 182',
+        ]),
+        trail: [],
+      };
+      }),
+    });
+
+    const makeTerranState = () => ({
+      reticles: Array.from({ length: 12 }, () => {
+        const point = randEdgePoint(140, 80);
+        return {
+        x: clamp(point.x, 72, Math.max(72, width - 72)),
+        y: clamp(point.y, 72, Math.max(72, height - 72)),
+        radius: rand(18, 42),
+        pulse: rand(0, Math.PI * 2),
+      };
+      }),
+    });
+
+    const makeMechanicusState = () => ({
+      gears: [
+        { x: width * 0.18, y: height * 0.24, radius: 44, teeth: 12, speed: 0.34, phase: 0.2 },
+        { x: width * 0.78, y: height * 0.2, radius: 58, teeth: 14, speed: -0.22, phase: 1.2 },
+        { x: width * 0.72, y: height * 0.72, radius: 78, teeth: 18, speed: 0.12, phase: 2.3 },
+        { x: width * 0.24, y: height * 0.76, radius: 32, teeth: 10, speed: -0.28, phase: 0.6 },
+      ],
+      columns: Array.from({ length: Math.max(18, Math.floor(width / 32)) }, (_, index) => ({
+        x: index * (width / Math.max(18, Math.floor(width / 32))) + rand(-6, 6),
+        y: rand(-height, height),
+        speed: rand(0.8, 1.8),
+      })),
+    });
+
+    const makeThreeBodyState = () => ({
+      stars: Array.from({ length: 84 }, () => ({
+        x: rand(0, width),
+        y: rand(0, height),
+        radius: rand(0.5, 1.8),
+        alpha: rand(0.24, 0.8),
+      })),
+      trails: [[], [], []],
+    });
+
+    const makeZimaBlueState = () => ({
+      particles: Array.from({ length: Math.min(Math.floor((width * height) / 2600), 260) }, () => {
+        const size = Math.random();
+        const angle = rand(0, Math.PI * 2);
+        const speed = (1.05 - size) * 0.12 + 0.02;
+        return {
+          x: rand(0, width),
+          y: rand(0, height),
+          size,
+          radius: size < 0.7 ? rand(0.2, 1.0) : size < 0.95 ? rand(0.8, 2.0) : rand(1.2, 3.0),
+          alpha: size < 0.7 ? rand(0.1, 0.4) : size < 0.95 ? rand(0.3, 0.7) : rand(0.55, 0.9),
+          phase: rand(0, Math.PI * 2),
+          speed: rand(0.15, 0.65),
+          isBright: size > 0.92,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+        };
+      }),
+      beams: Array.from({ length: 12 }, (_, index) => ({
+        angle: (index / 12) * Math.PI * 2,
+        offset: rand(0.7, 1.3),
+        width: rand(7, 12),
+      })),
+      orbs: Array.from({ length: 8 }, (_, index) => ({
+        angle: (index / 8) * Math.PI * 2,
+        radius: rand(52, 88),
+        spread: rand(74, 108),
+        phase: rand(0, Math.PI * 2),
+      })),
+    });
+
+    const makeWestworldState = () => ({
+      dots: Array.from({ length: Math.min(Math.floor((width * height) / 9000), 120) }, () => ({
+        x: rand(0, width),
+        y: rand(0, height),
+        vx: rand(-0.16, 0.16),
+        vy: rand(-0.16, 0.16),
+        radius: rand(0.8, 2.4),
+        alpha: rand(0.15, 0.45),
+        phase: rand(0, Math.PI * 2),
+      })),
+    });
+
+    const makePoiState = () => ({
+      tracks: Array.from({ length: 12 }, () => {
+        const w = rand(68, 130);
+        const h = rand(42, 92);
+        const point = randEdgePoint(150, 110);
+        return {
+        x: clamp(point.x, 20, Math.max(20, width - w - 20)),
+        y: clamp(point.y, 60, Math.max(60, height - h - 20)),
+        w,
+        h,
+        vx: rand(-0.45, 0.45),
+        vy: rand(-0.32, 0.32),
+        status: pick(['IRRELEVANT', 'RELEVANT', 'THREAT']),
+      };
+      }),
+    });
+
+    const createState = (theme) => {
+      switch (theme) {
+        case 'evolution':
+          return makeEvolutionState();
+        case 'cyberpunk':
+          return makeCyberpunkState();
+        case 'zerg':
+          return makeZergState();
+        case 'terran':
+          return makeTerranState();
+        case 'mechanicus':
+          return makeMechanicusState();
+        case 'threebody':
+          return makeThreeBodyState();
+        case 'zimablue':
+          return makeZimaBlueState();
+        case 'westworld':
+          return makeWestworldState();
+        case 'poi':
+          return makePoiState();
+        default:
+          return null;
+      }
+    };
+
+    const drawEvolution = (scene, phase, animate) => {
+      drawGlow(width * 0.14, height * 0.14, 220, 'rgba(84, 162, 255, 0.14)');
+      drawGlow(width * 0.84, height * 0.18, 250, 'rgba(45, 212, 191, 0.11)');
+      drawGlow(width * 0.58, height * 0.08, 280, 'rgba(244, 114, 182, 0.06)');
+      drawGlow(width * 0.56, height * 0.72, 260, 'rgba(99, 102, 241, 0.045)');
+      drawGlow(width * 0.48, height * 0.26, 380, 'rgba(84, 162, 255, 0.065)');
+      drawGlow(width * 0.72, height * 0.46, 320, 'rgba(45, 212, 191, 0.045)');
+      const anchors = [
+        { x: width * 0.08, y: height * 0.22, color: '84, 162, 255' },
+        { x: width * 0.9, y: height * 0.18, color: '45, 212, 191' },
+        { x: width * 0.88, y: height * 0.58, color: '244, 114, 182' },
+        { x: width * 0.14, y: height * 0.76, color: '129, 140, 248' },
+        { x: width * 0.54, y: height * 0.9, color: '84, 162, 255' },
+      ];
+
+      if (animate) {
+        scene.particles.forEach((particle) => {
+          particle.x += particle.vx;
+          particle.y += particle.vy;
+
+          if (particle.x < -20) particle.x = width + 20;
+          if (particle.x > width + 20) particle.x = -20;
+          if (particle.y < -20) particle.y = height + 20;
+          if (particle.y > height + 20) particle.y = -20;
+        });
+      }
+
+      for (let i = 0; i < scene.particles.length; i += 1) {
+        for (let j = i + 1; j < scene.particles.length; j += 1) {
+          const a = scene.particles[i];
+          const b = scene.particles[j];
+          const dx = a.x - b.x;
+          const dy = a.y - b.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          if (distance > 260) continue;
+          const alpha = (1 - distance / 260) * 0.26;
+          context.beginPath();
+          context.moveTo(a.x, a.y);
+          context.lineTo(b.x, b.y);
+          context.strokeStyle = `rgba(126, 220, 255, ${alpha})`;
+          context.lineWidth = distance < 120 ? 1.3 : 1;
+          context.stroke();
+        }
+      }
+
+      scene.particles.forEach((particle, index) => {
+        const pulse = 0.72 + Math.sin(phase * 2.6 + particle.radius) * 0.16;
+        const [r, g, b] = particle.color;
+        drawGlow(
+          particle.x,
+          particle.y,
+          particle.radius * 8,
+          `rgba(${r}, ${g}, ${b}, 0.18)`,
+        );
+        context.beginPath();
+        context.arc(particle.x, particle.y, particle.radius * pulse, 0, Math.PI * 2);
+        context.fillStyle = `rgba(${r}, ${g}, ${b}, 0.92)`;
+        context.fill();
+
+        if (index % 7 === 0) {
+          context.beginPath();
+          context.arc(particle.x, particle.y, particle.radius * 3.6, 0, Math.PI * 2);
+          context.strokeStyle = `rgba(${r}, ${g}, ${b}, 0.18)`;
+          context.lineWidth = 1;
+          context.stroke();
+        }
+      });
+
+      anchors.forEach((anchor) => {
+        let nearest = null;
+        let bestDistance = Infinity;
+        scene.particles.forEach((particle) => {
+          const dx = particle.x - anchor.x;
+          const dy = particle.y - anchor.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          if (distance < bestDistance) {
+            bestDistance = distance;
+            nearest = particle;
+          }
+        });
+
+        if (nearest) {
+          context.beginPath();
+          context.moveTo(anchor.x, anchor.y);
+          context.lineTo(nearest.x, nearest.y);
+          context.strokeStyle = `rgba(${anchor.color}, 0.18)`;
+          context.lineWidth = 1.1;
+          context.stroke();
+        }
+
+        drawGlow(anchor.x, anchor.y, 16, `rgba(${anchor.color}, 0.16)`);
+        context.beginPath();
+        context.arc(anchor.x, anchor.y, 2.8, 0, Math.PI * 2);
+        context.fillStyle = `rgba(${anchor.color}, 0.92)`;
+        context.fill();
+      });
+
+      context.beginPath();
+      context.moveTo(width * 0.1, height * 0.12);
+      context.lineTo(width * 0.32, height * 0.08);
+      context.lineTo(width * 0.54, height * 0.16);
+      context.lineTo(width * 0.76, height * 0.1);
+      context.lineTo(width * 0.92, height * 0.2);
+      context.strokeStyle = 'rgba(126, 220, 255, 0.06)';
+      context.lineWidth = 1.1;
+      context.stroke();
+    };
+
+    const drawCyberpunk = (scene, phase) => {
+      context.fillStyle = '#ffd100';
+      context.fillRect(0, 0, width, height);
+
+      context.fillStyle = 'rgba(255, 255, 255, 0.12)';
+      context.fillRect(0, 0, width, 80);
+
+      drawGrid(64, 64, 'rgba(0, 0, 0, 0.08)', phase * 28, phase * 14);
+
+      for (let x = 0; x < width; x += 160) {
+        context.fillStyle = 'rgba(0, 0, 0, 0.08)';
+        context.fillRect(x, 0, 1, height);
+      }
+
+      for (let y = 112; y < height; y += 148) {
+        context.fillStyle = 'rgba(255, 255, 255, 0.06)';
+        context.fillRect(0, y, width, 1);
+      }
+
+      scene.markers.forEach((marker, index) => {
+        const accent = index % 3 === 0 ? '#00d7ff' : index % 3 === 1 ? '#ff4ca3' : '#000000';
+        if (marker.type === 'solid') {
+          context.fillStyle = 'rgba(0, 0, 0, 0.78)';
+          context.fillRect(marker.x, marker.y, marker.w, marker.h);
+          context.strokeStyle = accent;
+          context.lineWidth = 1;
+          context.strokeRect(marker.x + 2, marker.y + 2, marker.w - 4, marker.h - 4);
+          return;
+        }
+
+        if (marker.type === 'cross') {
+          context.strokeStyle = 'rgba(0, 0, 0, 0.86)';
+          context.lineWidth = 1.2;
+          context.beginPath();
+          context.moveTo(marker.x, marker.y + marker.h / 2);
+          context.lineTo(marker.x + marker.w, marker.y + marker.h / 2);
+          context.moveTo(marker.x + marker.w / 2, marker.y);
+          context.lineTo(marker.x + marker.w / 2, marker.y + marker.h);
+          context.stroke();
+          context.strokeStyle = accent;
+          context.strokeRect(marker.x + marker.w * 0.3, marker.y + marker.h * 0.3, marker.w * 0.4, marker.h * 0.4);
+          return;
+        }
+
+        drawBracketRect(marker.x, marker.y, marker.w, marker.h, 'rgba(0, 0, 0, 0.88)', 1);
+        context.strokeStyle = accent;
+        context.lineWidth = 1;
+        context.beginPath();
+        context.moveTo(marker.x + marker.w * 0.18, marker.y + marker.h * 0.18);
+        context.lineTo(marker.x + marker.w * 0.82, marker.y + marker.h * 0.18);
+        context.stroke();
+      });
+
+      drawBracketRect(36, 92, Math.min(width * 0.24, 340), 138, 'rgba(0, 0, 0, 0.82)', 1);
+      drawBracketRect(width - Math.min(width * 0.22, 300) - 42, 108, Math.min(width * 0.22, 300), 122, 'rgba(0, 0, 0, 0.82)', 1);
+      drawLabel('NIGHT CITY // UI FEED', 52, 84, '#111111', 'left', 0.82, 11);
+      drawLabel('PATCH 2.7.7', width - 58, 84, '#111111', 'right', 0.82, 11);
+      drawLabel('NETWATCH', 52, height - 74, '#111111', 'left', 0.78, 11);
+      drawLabel('CHROME READY', width - 58, height - 74, '#111111', 'right', 0.78, 11);
+
+      const tickerY = height - 48;
+      context.fillStyle = 'rgba(0, 0, 0, 0.88)';
+      context.fillRect(0, tickerY, width, 48);
+      context.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+      context.beginPath();
+      context.moveTo(0, tickerY);
+      context.lineTo(width, tickerY);
+      context.stroke();
+
+      const tickerText = ' MULTIPLE UPDATES & IMPROVEMENTS // 2077 ';
+      context.font = '12px "JetBrains Mono", "SF Mono", monospace';
+      const textWidth = context.measureText(tickerText).width;
+      let x = -((phase * 90) % textWidth);
+      while (x < width + textWidth) {
+        drawLabel(tickerText, x, tickerY + 24, '#111111', 'left', 0.92, 12);
+        x += textWidth;
+      }
+
+      if (Math.sin(phase * 7) > 0.95) {
+        context.fillStyle = 'rgba(0, 0, 0, 0.08)';
+        context.fillRect(0, height * 0.24, width, 22);
+        context.fillRect(0, height * 0.56, width, 14);
+      }
+    };
+
+    const drawZerg = (scene, phase, animate) => {
+      drawGlow(width * 0.28, height * 0.84, 220, 'rgba(134, 83, 182, 0.08)');
+      drawGlow(width * 0.74, height * 0.16, 180, 'rgba(185, 112, 166, 0.05)');
+
+      scene.blobs.forEach((blob) => {
+        if (animate) {
+          blob.y -= blob.speed;
+          blob.x += Math.sin(phase * 0.9 + blob.phase) * 0.35 + blob.drift;
+          blob.trail.unshift({ x: blob.x, y: blob.y });
+          blob.trail.length = 16;
+
+          if (blob.y < -blob.radius * 1.5) {
+            blob.y = height + blob.radius * 1.5;
+            blob.x = rand(0, width);
+            blob.trail = [];
+          }
+        }
+
+        if (blob.trail.length > 1) {
+          context.beginPath();
+          context.moveTo(blob.trail[0].x, blob.trail[0].y);
+          for (let index = 1; index < blob.trail.length; index += 1) {
+            context.lineTo(blob.trail[index].x, blob.trail[index].y + index * 5);
+          }
+          context.strokeStyle = `rgba(${blob.color}, 0.12)`;
+          context.lineWidth = blob.radius * 0.12;
+          context.lineCap = 'round';
+          context.stroke();
+        }
+
+        drawGlow(blob.x, blob.y, blob.radius, `rgba(${blob.color}, 0.14)`);
+        context.beginPath();
+        context.arc(blob.x, blob.y, blob.radius * 0.22, 0, Math.PI * 2);
+        context.fillStyle = `rgba(${blob.color}, 0.56)`;
+        context.fill();
+      });
+    };
+
+    const drawTerran = (scene, phase) => {
+      for (let y = 0; y < height; y += 6) {
+        context.fillStyle = y % 12 === 0 ? 'rgba(0, 0, 0, 0.1)' : 'rgba(60, 78, 47, 0.02)';
+        context.fillRect(0, y, width, 1);
+      }
+
+      drawHexGrid(22, 'rgba(146, 171, 123, 0.9)', 0.05, phase * 18);
+
+      for (let x = 36; x < width; x += 220) {
+        drawLabel(`${String(Math.round((x / width) * 100)).padStart(2, '0')}A`, x, 54, '#9fb48b', 'left', 0.3, 10);
+      }
+
+      for (let y = 86; y < height; y += 124) {
+        context.beginPath();
+        context.moveTo(18, y);
+        context.lineTo(58, y);
+        context.strokeStyle = 'rgba(146, 171, 123, 0.12)';
+        context.lineWidth = 1;
+        context.stroke();
+      }
+
+      scene.reticles.forEach((reticle, index) => {
+        const radius = reticle.radius * (0.96 + Math.sin(phase * 2 + reticle.pulse) * 0.06);
+        drawReticle(reticle.x, reticle.y, radius, 'rgba(146, 171, 123, 0.42)', 1);
+        drawBracketRect(
+          reticle.x - radius * 0.9,
+          reticle.y - radius * 0.9,
+          radius * 1.8,
+          radius * 1.8,
+          'rgba(146, 171, 123, 0.24)',
+        );
+        if (index % 2 === 0) {
+          drawLabel(`T-${index + 1}`, reticle.x + radius + 14, reticle.y - radius - 6, '#a7b894', 'left', 0.38, 10);
+          context.beginPath();
+          context.moveTo(reticle.x + radius * 0.56, reticle.y - radius * 0.56);
+          context.lineTo(reticle.x + radius + 10, reticle.y - radius - 6);
+          context.strokeStyle = 'rgba(167, 184, 148, 0.14)';
+          context.stroke();
+        }
+        if (index % 3 === 0) {
+          context.beginPath();
+          context.arc(reticle.x, reticle.y, 2.2, 0, Math.PI * 2);
+          context.fillStyle = 'rgba(203, 167, 99, 0.56)';
+          context.fill();
+        }
+      });
+
+      const scanY = ((phase * 96) % (height + 180)) - 90;
+      const scanGradient = context.createLinearGradient(0, scanY, 0, scanY + 90);
+      scanGradient.addColorStop(0, 'rgba(146, 171, 123, 0)');
+      scanGradient.addColorStop(0.5, 'rgba(146, 171, 123, 0.06)');
+      scanGradient.addColorStop(1, 'rgba(146, 171, 123, 0)');
+      context.fillStyle = scanGradient;
+      context.fillRect(0, scanY, width, 90);
+
+      drawLabel('BATTLECRUISER TELEMETRY', 40, 36, '#a7b894', 'left', 0.48, 11);
+      drawLabel('HUD ONLINE', width - 42, 36, '#c6ab77', 'right', 0.44, 11);
+      drawLabel('VECTOR ACQUIRED', 40, height - 34, '#98ab86', 'left', 0.32, 10);
+      drawLabel('PSI SHIELD // LOW', width - 42, height - 34, '#c6ab77', 'right', 0.32, 10);
+    };
+
+    const drawMechanicus = (scene, phase, animate) => {
+      drawGlow(width * 0.5, height * 0.5, 240, 'rgba(183, 28, 28, 0.12)');
+      drawGlow(width * 0.78, height * 0.22, 120, 'rgba(181, 166, 66, 0.06)');
+
+      for (let y = 0; y < height; y += 5) {
+        context.fillStyle = y % 10 === 0 ? 'rgba(255, 255, 255, 0.018)' : 'rgba(121, 15, 15, 0.03)';
+        context.fillRect(0, y, width, 1);
+      }
+
+      scene.gears.forEach((gear) => {
+        drawGear(
+          gear.x,
+          gear.y,
+          gear.radius,
+          gear.teeth,
+          gear.phase + phase * gear.speed,
+          'rgba(202, 138, 4, 0.45)',
+          0.02,
+        );
+      });
+
+      context.save();
+      context.translate(width * 0.5, height * 0.54);
+      context.rotate(phase * 0.06);
+      context.strokeStyle = 'rgba(220, 38, 38, 0.32)';
+      context.lineWidth = 1.2;
+      for (let ring = 0; ring < 3; ring += 1) {
+        context.beginPath();
+        context.arc(0, 0, 70 + ring * 28, 0, Math.PI * 2);
+        context.stroke();
+      }
+      for (let index = 0; index < 12; index += 1) {
+        const angle = (Math.PI * 2 * index) / 12;
+        context.beginPath();
+        context.moveTo(Math.cos(angle) * 28, Math.sin(angle) * 28);
+        context.lineTo(Math.cos(angle) * 126, Math.sin(angle) * 126);
+        context.stroke();
+      }
+      context.restore();
+
+      scene.columns.forEach((column, index) => {
+        if (animate) {
+          column.y += column.speed;
+          if (column.y > height + 80) column.y = -80;
+        }
+
+        const glyph = index % 2 === 0 ? '0 1 0 1 1' : '1 0 1 0 0';
+        drawLabel(glyph, column.x, column.y, index % 3 === 0 ? '#ca8a04' : '#ef4444', 'left', 0.32, 11);
+      });
+    };
+
+    const drawThreeBody = (scene, phase, animate) => {
+      const background = context.createLinearGradient(0, 0, 0, height);
+      background.addColorStop(0, '#120404');
+      background.addColorStop(1, '#010101');
+      context.fillStyle = background;
+      context.fillRect(0, 0, width, height);
+
+      scene.stars.forEach((star) => {
+        context.beginPath();
+        context.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+        context.fillStyle = `rgba(255, 255, 255, ${star.alpha})`;
+        context.fill();
+      });
+
+      const bodies = [
+        {
+          x: width * 0.5 + Math.cos(phase * 0.8) * width * 0.16,
+          y: height * 0.5 + Math.sin(phase * 1.05) * height * 0.1,
+          radius: 11,
+          color: '255, 121, 58',
+        },
+        {
+          x: width * 0.5 + Math.cos(phase * 1.18 + 1.9) * width * 0.2,
+          y: height * 0.5 + Math.sin(phase * 0.92 + 1.2) * height * 0.16,
+          radius: 9,
+          color: '248, 250, 252',
+        },
+        {
+          x: width * 0.5 + Math.cos(phase * 0.63 + 4) * width * 0.12,
+          y: height * 0.5 + Math.sin(phase * 1.34 + 3.2) * height * 0.22,
+          radius: 12,
+          color: '249, 115, 22',
+        },
+      ];
+
+      if (animate) {
+        bodies.forEach((body, index) => {
+          scene.trails[index].unshift({ x: body.x, y: body.y });
+          scene.trails[index].length = 28;
+        });
+      }
+
+      const step = 72;
+      const sample = 36;
+      context.lineWidth = 1;
+      for (let y = 0; y <= height; y += step) {
+        context.beginPath();
+        for (let x = 0; x <= width; x += sample) {
+          let warpX = x;
+          let warpY = y;
+          bodies.forEach((body) => {
+            const dx = body.x - x;
+            const dy = body.y - y;
+            const distance = Math.max(80, Math.sqrt(dx * dx + dy * dy));
+            const force = 1800 / distance;
+            warpX += (dx / distance) * force;
+            warpY += (dy / distance) * force;
+          });
+          if (x === 0) {
+            context.moveTo(warpX, warpY);
+          } else {
+            context.lineTo(warpX, warpY);
+          }
+        }
+        context.strokeStyle = 'rgba(248, 113, 113, 0.12)';
+        context.stroke();
+      }
+
+      for (let x = 0; x <= width; x += step) {
+        context.beginPath();
+        for (let y = 0; y <= height; y += sample) {
+          let warpX = x;
+          let warpY = y;
+          bodies.forEach((body) => {
+            const dx = body.x - x;
+            const dy = body.y - y;
+            const distance = Math.max(80, Math.sqrt(dx * dx + dy * dy));
+            const force = 1800 / distance;
+            warpX += (dx / distance) * force;
+            warpY += (dy / distance) * force;
+          });
+          if (y === 0) {
+            context.moveTo(warpX, warpY);
+          } else {
+            context.lineTo(warpX, warpY);
+          }
+        }
+        context.strokeStyle = 'rgba(255, 255, 255, 0.06)';
+        context.stroke();
+      }
+
+      context.beginPath();
+      context.moveTo(bodies[0].x, bodies[0].y);
+      context.lineTo(bodies[1].x, bodies[1].y);
+      context.lineTo(bodies[2].x, bodies[2].y);
+      context.closePath();
+      context.strokeStyle = 'rgba(255, 140, 84, 0.35)';
+      context.stroke();
+
+      const barycenter = bodies.reduce(
+        (accumulator, body) => ({
+          x: accumulator.x + body.x / bodies.length,
+          y: accumulator.y + body.y / bodies.length,
+        }),
+        { x: 0, y: 0 },
+      );
+      drawReticle(barycenter.x, barycenter.y, 14, 'rgba(255, 255, 255, 0.28)', 1);
+
+      scene.trails.forEach((trail, index) => {
+        if (trail.length < 2) return;
+        context.beginPath();
+        context.moveTo(trail[0].x, trail[0].y);
+        for (let pointIndex = 1; pointIndex < trail.length; pointIndex += 1) {
+          context.lineTo(trail[pointIndex].x, trail[pointIndex].y);
+        }
+        context.strokeStyle = index === 1 ? 'rgba(255, 255, 255, 0.18)' : 'rgba(255, 121, 58, 0.18)';
+        context.lineWidth = 1.2;
+        context.stroke();
+      });
+
+      bodies.forEach((body) => {
+        drawGlow(body.x, body.y, body.radius * 6, `rgba(${body.color}, 0.18)`);
+        context.beginPath();
+        context.arc(body.x, body.y, body.radius, 0, Math.PI * 2);
+        context.fillStyle = `rgba(${body.color}, 0.92)`;
+        context.fill();
+      });
+    };
+
+    const drawZimaBlue = (scene, phase, animate) => {
+      const background = context.createLinearGradient(0, 0, 0, height);
+      background.addColorStop(0, '#071126');
+      background.addColorStop(1, '#010204');
+      context.fillStyle = background;
+      context.fillRect(0, 0, width, height);
+
+      const centerX = width * 0.5;
+      const centerY = height * 0.48;
+
+      scene.particles.forEach((particle) => {
+        if (animate) {
+          particle.x += particle.vx;
+          particle.y += particle.vy;
+          if (particle.x < -6) particle.x += width + 12;
+          if (particle.x > width + 6) particle.x -= width + 12;
+          if (particle.y < -6) particle.y += height + 12;
+          if (particle.y > height + 6) particle.y -= height + 12;
+        }
+        const pulse = Math.sin(phase * particle.speed + particle.phase);
+        const alpha = particle.alpha + pulse * 0.15;
+        if (alpha <= 0) return;
+        if (particle.isBright) {
+          const glowRadius = particle.radius * 4;
+          const glow = context.createRadialGradient(particle.x, particle.y, 0, particle.x, particle.y, glowRadius);
+          glow.addColorStop(0, `rgba(200, 220, 255, ${alpha * 0.8})`);
+          glow.addColorStop(0.3, `rgba(180, 210, 255, ${alpha * 0.3})`);
+          glow.addColorStop(1, 'rgba(180, 210, 255, 0)');
+          context.fillStyle = glow;
+          context.fillRect(particle.x - glowRadius, particle.y - glowRadius, glowRadius * 2, glowRadius * 2);
+        }
+        context.beginPath();
+        context.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
+        context.fillStyle = `rgba(210, 225, 245, ${alpha})`;
+        context.fill();
+      });
+
+      context.save();
+      context.globalCompositeOperation = 'screen';
+      scene.beams.forEach((beam, index) => {
+        const angle = beam.angle + Math.sin(phase * 0.05 + index * 1.1) * 0.08;
+        const radius = Math.max(width, height) * 0.6;
+        const endX = centerX + Math.cos(angle) * radius;
+        const endY = centerY + Math.sin(angle) * radius;
+        const normalX = Math.cos(angle + Math.PI / 2) * beam.width;
+        const normalY = Math.sin(angle + Math.PI / 2) * beam.width;
+        const alpha = 0.012 + Math.sin(phase * 0.09 + index * 0.6) * 0.006;
+        const gradient = context.createLinearGradient(centerX, centerY, endX, endY);
+        gradient.addColorStop(0, `rgba(55, 192, 246, ${alpha * 2})`);
+        gradient.addColorStop(0.15, `rgba(55, 192, 246, ${alpha})`);
+        gradient.addColorStop(1, 'rgba(55, 192, 246, 0)');
+        context.beginPath();
+        context.moveTo(centerX + normalX * 0.25, centerY + normalY * 0.25);
+        context.lineTo(centerX - normalX * 0.25, centerY - normalY * 0.25);
+        context.lineTo(endX - normalX, endY - normalY);
+        context.lineTo(endX + normalX, endY + normalY);
+        context.closePath();
+        context.fillStyle = gradient;
+        context.fill();
+      });
+      context.restore();
+
+      [
+        { spreadX: 1.6, spreadY: 0.22, alpha: 0.03, color: '20, 60, 120' },
+        { spreadX: 1.2, spreadY: 0.22, alpha: 0.05, color: '30, 100, 160' },
+        { spreadX: 0.85, spreadY: 0.22, alpha: 0.08, color: '55, 192, 246' },
+        { spreadX: 0.5, spreadY: 0.22, alpha: 0.12, color: '55, 192, 246' },
+        { spreadX: 0.25, spreadY: 0.22, alpha: 0.18, color: '100, 210, 250' },
+      ].forEach((layer) => {
+        context.save();
+        context.translate(centerX, centerY);
+        context.scale(width * 0.7 * layer.spreadX, height * layer.spreadY * layer.spreadX);
+        const radial = context.createRadialGradient(0, 0, 0, 0, 0, 1);
+        radial.addColorStop(0, `rgba(${layer.color}, ${layer.alpha})`);
+        radial.addColorStop(0.6, `rgba(${layer.color}, ${layer.alpha * 0.4})`);
+        radial.addColorStop(1, `rgba(${layer.color}, 0)`);
+        context.fillStyle = radial;
+        context.fillRect(-1, -1, 2, 2);
+        context.restore();
+      });
+
+      context.save();
+      context.globalCompositeOperation = 'screen';
+      scene.orbs.forEach((orb, index) => {
+        const angle = orb.angle + phase * 0.02 + orb.phase * 0.05;
+        const x = centerX + Math.cos(angle) * orb.radius * 2.5;
+        const y = centerY + Math.sin(angle) * orb.radius * 0.4;
+        const radius = orb.spread + Math.sin(phase * 0.1 + index) * 20;
+        const alpha = 0.02 + Math.sin(phase * 0.06 + index * 0.7) * 0.01;
+        const radial = context.createRadialGradient(x, y, 0, x, y, radius);
+        radial.addColorStop(0, `rgba(55, 192, 246, ${alpha})`);
+        radial.addColorStop(1, 'rgba(55, 192, 246, 0)');
+        context.fillStyle = radial;
+        context.fillRect(x - radius, y - radius, radius * 2, radius * 2);
+      });
+      context.restore();
+
+      const coreSize = Math.min(width, height) * 0.06 * (1 + Math.sin(phase * 0.25) * 0.03);
+      const haloRadius = coreSize * 2.5;
+      const halo = context.createRadialGradient(centerX, centerY, coreSize * 0.3, centerX, centerY, haloRadius);
+      halo.addColorStop(0, `rgba(55, 192, 246, ${0.16 + Math.sin(phase * 0.25) * 0.05})`);
+      halo.addColorStop(0.5, 'rgba(55, 192, 246, 0.04)');
+      halo.addColorStop(1, 'rgba(55, 192, 246, 0)');
+      context.save();
+      context.globalCompositeOperation = 'screen';
+      context.fillStyle = halo;
+      context.fillRect(centerX - haloRadius, centerY - haloRadius, haloRadius * 2, haloRadius * 2);
+      context.restore();
+
+      context.beginPath();
+      if (typeof context.roundRect === 'function') {
+        context.roundRect(centerX - coreSize / 2, centerY - coreSize / 2, coreSize, coreSize, coreSize * 0.08);
+      } else {
+        context.rect(centerX - coreSize / 2, centerY - coreSize / 2, coreSize, coreSize);
+      }
+      context.fillStyle = 'rgba(55, 192, 246, 0.78)';
+      context.fill();
+      context.strokeStyle = 'rgba(170, 225, 255, 0.95)';
+      context.lineWidth = 1;
+      context.stroke();
+
+      const vignette = context.createRadialGradient(centerX, centerY, width * 0.15, centerX, centerY, width * 0.9);
+      vignette.addColorStop(0, 'rgba(0, 0, 0, 0)');
+      vignette.addColorStop(0.5, 'rgba(0, 0, 0, 0.1)');
+      vignette.addColorStop(1, 'rgba(0, 2, 8, 0.65)');
+      context.fillStyle = vignette;
+      context.fillRect(0, 0, width, height);
+
+      const fade = context.createLinearGradient(0, 0, 0, height);
+      fade.addColorStop(0, 'rgba(0, 2, 10, 0.4)');
+      fade.addColorStop(0.3, 'rgba(0, 0, 0, 0)');
+      fade.addColorStop(0.7, 'rgba(0, 0, 0, 0)');
+      fade.addColorStop(1, 'rgba(0, 2, 10, 0.5)');
+      context.fillStyle = fade;
+      context.fillRect(0, 0, width, height);
+    };
+
+    const drawWestworld = (scene, phase, animate) => {
+      const background = context.createLinearGradient(0, 0, 0, height);
+      background.addColorStop(0, '#f8fbff');
+      background.addColorStop(1, '#e9eef6');
+      context.fillStyle = background;
+      context.fillRect(0, 0, width, height);
+
+      if (animate) {
+        scene.dots.forEach((dot) => {
+          dot.x += dot.vx;
+          dot.y += dot.vy;
+          if (dot.x < 0 || dot.x > width) dot.vx *= -1;
+          if (dot.y < 0 || dot.y > height) dot.vy *= -1;
+        });
+      }
+
+      context.strokeStyle = 'rgba(180, 200, 215, 0.04)';
+      context.lineWidth = 0.5;
+      for (let x = 0; x < width; x += 60) {
+        context.beginPath();
+        context.moveTo(x, 0);
+        context.lineTo(x, height);
+        context.stroke();
+      }
+      for (let y = 0; y < height; y += 60) {
+        context.beginPath();
+        context.moveTo(0, y);
+        context.lineTo(width, y);
+        context.stroke();
+      }
+
+      const centerX = width * 0.5;
+      const centerY = height * 0.45;
+      const scale = Math.min(width, height) * 0.18;
+      const stretch = 1 + Math.sin(phase * 0.2) * 0.02;
+      context.save();
+      context.globalAlpha = 0.03;
+      context.strokeStyle = 'rgba(100, 150, 175, 1)';
+      context.lineWidth = 0.5;
+      const spine = [-1.6, -1.2, -0.8, -0.4, 0, 0.3, 0.6, 0.9, 1.2];
+      context.beginPath();
+      spine.forEach((offset, index) => {
+        const x = centerX;
+        const y = centerY + offset * scale * stretch;
+        if (index === 0) {
+          context.moveTo(x, y);
+        } else {
+          context.lineTo(x, y);
+        }
+      });
+      context.stroke();
+      [
+        [-0.5, -1, 0.5, -1],
+        [-0.7, -0.6, 0.7, -0.6],
+        [-0.8, -0.2, 0.8, -0.2],
+        [-0.7, 0.2, 0.7, 0.2],
+        [-0.4, 0.6, 0.4, 0.6],
+      ].forEach(([x1, y1, x2, y2]) => {
+        context.beginPath();
+        context.moveTo(centerX + x1 * scale, centerY + y1 * scale * stretch);
+        context.lineTo(centerX + x2 * scale, centerY + y2 * scale * stretch);
+        context.stroke();
+      });
+      [
+        { offsetY: -1.6, radiusX: 0.15, radiusY: 0.1 },
+        { offsetY: -0.2, radiusX: 0.4, radiusY: 0.55 },
+      ].forEach(({ offsetY, radiusX, radiusY }) => {
+        context.beginPath();
+        context.ellipse(centerX, centerY + offsetY * scale * stretch, radiusX * scale, radiusY * scale, 0, 0, Math.PI * 2);
+        context.stroke();
+      });
+      context.restore();
+
+      for (let i = 0; i < scene.dots.length; i += 1) {
+        for (let j = i + 1; j < scene.dots.length; j += 1) {
+          const a = scene.dots[i];
+          const b = scene.dots[j];
+          const dx = a.x - b.x;
+          const dy = a.y - b.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          if (distance > 160) continue;
+          context.beginPath();
+          context.moveTo(a.x, a.y);
+          context.lineTo(b.x, b.y);
+          context.strokeStyle = `rgba(160, 185, 205, ${(1 - distance / 160) * 0.08})`;
+          context.lineWidth = 0.5;
+          context.stroke();
+        }
+      }
+
+      scene.dots.forEach((dot) => {
+        const alpha = dot.alpha + Math.sin(phase * 0.4 + dot.phase) * 0.1;
+        if (alpha <= 0) return;
+        context.beginPath();
+        context.arc(dot.x, dot.y, dot.radius, 0, Math.PI * 2);
+        context.fillStyle = `rgba(120, 160, 190, ${alpha})`;
+        context.fill();
+        if (dot.radius > 1.8) {
+          const glowRadius = dot.radius * 5;
+          const glow = context.createRadialGradient(dot.x, dot.y, 0, dot.x, dot.y, glowRadius);
+          glow.addColorStop(0, `rgba(60, 155, 185, ${alpha * 0.3})`);
+          glow.addColorStop(1, 'rgba(60, 155, 185, 0)');
+          context.fillStyle = glow;
+          context.fillRect(dot.x - glowRadius, dot.y - glowRadius, glowRadius * 2, glowRadius * 2);
+        }
+      });
+
+      const scanY = ((phase * 22) % (height + 180)) - 90;
+      const scan = context.createLinearGradient(0, scanY - 40, 0, scanY + 40);
+      scan.addColorStop(0, 'rgba(60, 155, 185, 0)');
+      scan.addColorStop(0.5, 'rgba(60, 155, 185, 0.06)');
+      scan.addColorStop(1, 'rgba(60, 155, 185, 0)');
+      context.fillStyle = scan;
+      context.fillRect(0, scanY - 40, width, 80);
+    };
+
+    const drawPoi = (scene, phase, animate) => {
+      context.fillStyle = '#030303';
+      context.fillRect(0, 0, width, height);
+      drawGrid(68, 68, 'rgba(194, 164, 82, 0.028)');
+      drawGlow(width * 0.5, height * 0.5, 260, 'rgba(194, 164, 82, 0.028)');
+
+      const centerX = width * 0.5;
+      const centerY = height * 0.5;
+      drawReticle(centerX, centerY, 42, 'rgba(194, 164, 82, 0.14)', 1);
+      drawReticle(centerX, centerY, 92, 'rgba(194, 164, 82, 0.055)', 1);
+      drawReticle(centerX, centerY, 148, 'rgba(194, 164, 82, 0.028)', 1);
+
+      drawLabel('YOU ARE BEING WATCHED', 34, 28, '#bfa056', 'left', 0.56, 12);
+      drawLabel('SYSTEM 001', width - 34, 28, '#8c8c8c', 'right', 0.4, 11);
+      drawLabel(`SCAN ${String(Math.floor((phase * 100) % 999)).padStart(3, '0')}`, 34, 50, '#8d8d8d', 'left', 0.42, 11);
+      drawLabel('SOCIAL SECURITY // ACTIVE', width - 34, 50, '#5f5f5f', 'right', 0.38, 11);
+
+      for (let y = 92; y < height; y += 96) {
+        context.beginPath();
+        context.moveTo(width - 72, y);
+        context.lineTo(width - 24, y);
+        context.strokeStyle = 'rgba(194, 164, 82, 0.05)';
+        context.lineWidth = 1;
+        context.stroke();
+      }
+
+      scene.tracks.forEach((track, index) => {
+        if (animate) {
+          track.x += track.vx;
+          track.y += track.vy;
+          if (track.x < 20 || track.x + track.w > width - 20) track.vx *= -1;
+          if (track.y < 60 || track.y + track.h > height - 20) track.vy *= -1;
+        }
+
+        const color =
+          track.status === 'THREAT'
+            ? 'rgba(248, 113, 113, 0.86)'
+            : track.status === 'RELEVANT'
+              ? 'rgba(194, 164, 82, 0.72)'
+              : 'rgba(163, 163, 163, 0.5)';
+
+        drawBracketRect(track.x, track.y, track.w, track.h, color, 1);
+        drawLabel(track.status, track.x, track.y - 10, color.replace('0.86', '1').replace('0.5', '1'), 'left', 0.9, 11);
+        drawLabel(`#${String(index + 1).padStart(2, '0')}`, track.x + track.w, track.y - 10, '#737373', 'right', 0.7, 10);
+
+        if (track.status !== 'IRRELEVANT') {
+          context.beginPath();
+          context.moveTo(track.x + track.w / 2, track.y + track.h / 2);
+          context.lineTo(centerX, centerY);
+          context.strokeStyle = color.replace('0.86', '0.24').replace('0.5', '0.14');
+          context.lineWidth = 1;
+          context.stroke();
+        }
+      });
+
+      context.beginPath();
+      context.moveTo(centerX - 220, centerY);
+      context.lineTo(centerX + 220, centerY);
+      context.moveTo(centerX, centerY - 220);
+      context.lineTo(centerX, centerY + 220);
+      context.strokeStyle = 'rgba(194, 164, 82, 0.04)';
+      context.lineWidth = 1;
+      context.stroke();
+
+      if (Math.sin(phase * 6) > 0.9) {
+        context.fillStyle = 'rgba(194, 164, 82, 0.02)';
+        context.fillRect(0, height * 0.32, width, 18);
+      }
+    };
+
+    const renderScene = (theme, scene, phase, animate) => {
+      switch (theme) {
+        case 'evolution':
+          drawEvolution(scene, phase, animate);
+          break;
+        case 'cyberpunk':
+          drawCyberpunk(scene, phase);
+          break;
+        case 'zerg':
+          drawZerg(scene, phase, animate);
+          break;
+        case 'terran':
+          drawTerran(scene, phase);
+          break;
+        case 'mechanicus':
+          drawMechanicus(scene, phase, animate);
+          break;
+        case 'threebody':
+          drawThreeBody(scene, phase, animate);
+          break;
+        case 'zimablue':
+          drawZimaBlue(scene, phase, animate);
+          break;
+        case 'westworld':
+          drawWestworld(scene, phase, animate);
+          break;
+        case 'poi':
+          drawPoi(scene, phase, animate);
+          break;
+        default:
+          break;
+      }
+    };
+
+    const drawFrame = () => {
+      if (getCurrentTheme() !== currentTheme || !state) {
+        syncScene();
+        return;
+      }
+
+      time += 0.016;
+      clearCanvas();
+      renderScene(currentTheme, state, time, true);
+      rafId = window.requestAnimationFrame(drawFrame);
+    };
+
+    const syncScene = () => {
+      if (rafId) {
+        window.cancelAnimationFrame(rafId);
+        rafId = 0;
+      }
+
+      currentTheme = getCurrentTheme();
+      clearCanvas();
+
+      if (!currentTheme) return;
+
+      resizeCanvas();
+      state = createState(currentTheme);
+      time = 0;
+
+      if (!state) return;
+
+      if (media.matches) {
+        renderScene(currentTheme, state, time, false);
+        return;
+      }
+
+      drawFrame();
+    };
+
+    resizeCanvas();
+    syncScene();
+
+    const observer = new MutationObserver(syncScene);
+    observer.observe(root, {
+      attributes: true,
+      attributeFilter: ['class', 'data-theme'],
+    });
+
+    window.addEventListener('resize', syncScene);
+    media.addEventListener('change', syncScene);
+  })();
+</script>

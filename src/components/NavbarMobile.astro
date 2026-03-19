@@ -1,0 +1,354 @@
+---
+import {
+  IconLanguage,
+  IconMenu,
+  IconMonitor,
+  IconMoon,
+  IconPalette,
+  IconSun,
+  IconX,
+} from '@/components/icons';
+import { themeGroups, type ThemeGroupKey, type ThemeLabels } from '@/config/themes';
+import { getLocalizedPath, localeLabels, locales, type Locale } from '@/i18n';
+import type { ColorMode, ThemeStyle } from '@/lib/theme';
+
+interface NavLink {
+  title: string;
+  href: string;
+}
+
+interface ModeLabels {
+  light: string;
+  dark: string;
+  system: string;
+  moreThemes: string;
+  beta?: string;
+  classic: string;
+  modern: string;
+  extra: string;
+  scifi: string;
+  toggle: string;
+  mainModes: string;
+}
+
+interface Props {
+  locale: Locale;
+  currentPath: string;
+  siteName: string;
+  navLinks: NavLink[];
+  languageLabel?: string;
+  modeLabels?: ModeLabels;
+  themeLabels: ThemeLabels;
+  showThemeControls?: boolean;
+  showMoreThemes?: boolean;
+  defaultMode?: ColorMode;
+  defaultStyle?: ThemeStyle;
+}
+
+const {
+  locale,
+  currentPath,
+  siteName,
+  navLinks,
+  languageLabel = 'Language',
+  modeLabels = {
+    light: 'Light',
+    dark: 'Dark',
+    system: 'System',
+    moreThemes: 'More Themes',
+    beta: 'Beta',
+    classic: 'Classic',
+    modern: 'Modern',
+    extra: 'Extra',
+    scifi: 'Sci-Fi',
+    toggle: 'Toggle theme',
+    mainModes: 'Main Modes',
+  },
+  themeLabels,
+  showThemeControls = true,
+  showMoreThemes = true,
+  defaultMode = 'system',
+  defaultStyle = 'default',
+} = Astro.props;
+---
+
+<div
+  class="lg:hidden"
+  data-mobile-nav
+  data-default-mode={defaultMode}
+  data-default-style={defaultStyle}
+>
+  <div class="flex min-h-[58px] items-center justify-between">
+    <a href={getLocalizedPath('/', locale)} class="flex items-center gap-2 py-3">
+      <span class="flex items-center gap-2 text-[18px] font-semibold">
+        <span aria-hidden="true">✍️</span>
+        <span>{siteName}</span>
+      </span>
+    </a>
+
+    <button
+      type="button"
+      class="inline-flex size-10 items-center justify-center rounded-md border border-border bg-background text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+      data-mobile-trigger
+      aria-expanded="false"
+      aria-controls="mobile-navigation-panel"
+      aria-label="Mobile navigation"
+    >
+      <span data-mobile-trigger-icon="open">
+        <IconMenu className="size-4" />
+      </span>
+      <span data-mobile-trigger-icon="close" hidden>
+        <IconX className="size-4" />
+      </span>
+    </button>
+  </div>
+
+  <div
+    class="fixed inset-0 top-[59px] z-50 hidden bg-background/70 backdrop-blur-sm"
+    data-mobile-backdrop
+  ></div>
+
+  <div
+    id="mobile-navigation-panel"
+    class="fixed inset-0 top-[59px] z-50 hidden overflow-y-auto bg-background"
+    data-mobile-panel
+    role="dialog"
+    aria-modal="true"
+    aria-label="Mobile navigation"
+  >
+    <div class="flex min-h-full flex-col gap-4 p-4">
+      <ul class="w-full space-y-1">
+        {
+          navLinks.map((item) => {
+            const isActive =
+              currentPath === item.href ||
+              (item.href !== '/' && currentPath.startsWith(item.href));
+            return (
+              <li class="py-1">
+                <a
+                  href={item.href}
+                  class:list={[
+                    'flex min-h-[44px] w-full items-center rounded-md px-3 py-3 text-base text-muted-foreground transition-colors duration-150 hover:text-foreground',
+                    isActive ? 'font-semibold text-primary' : '',
+                  ]}
+                  data-mobile-close
+                >
+                  {item.title}
+                </a>
+              </li>
+            );
+          })
+        }
+      </ul>
+
+      <div class="w-full border-t border-border/50 pt-4">
+        <div class="flex items-center gap-2 px-2 pb-2 text-xs font-medium uppercase text-muted-foreground">
+          <IconLanguage className="size-3.5" />
+          {languageLabel}
+        </div>
+        <div class="flex flex-wrap gap-2 px-2">
+          {
+            locales.map((targetLocale) => (
+              <a
+                href={getLocalizedPath(currentPath, targetLocale)}
+                class:list={[
+                  'inline-flex min-h-[44px] items-center rounded-md px-3 py-2 text-sm transition-colors',
+                  targetLocale === locale
+                    ? 'bg-muted font-semibold text-foreground'
+                    : 'text-muted-foreground hover:text-foreground',
+                ]}
+                data-mobile-locale={targetLocale}
+                data-mobile-close
+              >
+                {localeLabels[targetLocale]}
+              </a>
+            ))
+          }
+        </div>
+      </div>
+
+      {showThemeControls && (
+        <Fragment>
+          <div class="w-full border-t border-border/50 pt-4">
+            <div class="flex items-center gap-2 px-2 pb-2 text-xs font-medium uppercase text-muted-foreground">
+              <IconSun className="size-3.5" />
+              {modeLabels.mainModes}
+            </div>
+            <div class="px-2">
+              <div class="inline-flex items-center gap-1 rounded-full border border-border p-1">
+                <button
+                  type="button"
+                  class="rounded-full p-2.5 transition-colors hover:bg-accent data-[active=true]:bg-accent data-[active=true]:text-primary"
+                  data-mobile-mode="light"
+                  data-active="false"
+                  aria-label={modeLabels.light}
+                >
+                  <IconSun className="size-5" />
+                </button>
+                <button
+                  type="button"
+                  class="rounded-full p-2.5 transition-colors hover:bg-accent data-[active=true]:bg-accent data-[active=true]:text-primary"
+                  data-mobile-mode="dark"
+                  data-active="false"
+                  aria-label={modeLabels.dark}
+                >
+                  <IconMoon className="size-5" />
+                </button>
+                <button
+                  type="button"
+                  class="rounded-full p-2.5 transition-colors hover:bg-accent data-[active=true]:bg-accent data-[active=true]:text-primary"
+                  data-mobile-mode="system"
+                  data-active="false"
+                  aria-label={modeLabels.system}
+                >
+                  <IconMonitor className="size-5" />
+                </button>
+              </div>
+            </div>
+          </div>
+
+	          {showMoreThemes && (
+	            <div class="mt-auto w-full border-t border-border/50 pt-4">
+	              <div class="flex items-center gap-2 px-2 pb-2 text-xs font-medium uppercase text-muted-foreground">
+	                <IconPalette className="size-3.5" />
+	                <span>{modeLabels.moreThemes}</span>
+	                <span class="inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-[0.12em] text-primary/85">
+	                  {modeLabels.beta ?? 'Beta'}
+	                </span>
+	              </div>
+              <div class="px-2">
+                <select
+                  class="w-full rounded-md border border-border bg-background px-3 py-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+                  data-mobile-theme-select
+                  aria-label={modeLabels.moreThemes}
+                >
+                  <option value="default">{modeLabels.mainModes}</option>
+                  {
+                    themeGroups.map((group) => (
+                      <optgroup label={modeLabels[group.key as ThemeGroupKey]}>
+                        {group.themes.map((theme) => (
+                          <option value={theme.key}>{themeLabels[theme.key]}</option>
+                        ))}
+                      </optgroup>
+                    ))
+                  }
+                </select>
+              </div>
+            </div>
+          )}
+        </Fragment>
+      )}
+    </div>
+  </div>
+</div>
+
+<script>
+  import {
+    THEME_CHANGE_EVENT,
+    getStoredThemePreferences,
+    isColorMode,
+    isThemeStyle,
+    setThemePreferences,
+    type ColorMode,
+    type ThemeStyle,
+  } from '@/lib/theme';
+
+  document.querySelectorAll('[data-mobile-nav]').forEach((root) => {
+    if (!(root instanceof HTMLElement) || root.dataset.bound === 'true') return;
+    root.dataset.bound = 'true';
+
+    const rawDefaultMode = root.dataset.defaultMode ?? '';
+    const rawDefaultStyle = root.dataset.defaultStyle ?? '';
+    const defaultMode: ColorMode = isColorMode(rawDefaultMode)
+      ? rawDefaultMode
+      : 'system';
+    const defaultStyle: ThemeStyle = isThemeStyle(rawDefaultStyle)
+      ? rawDefaultStyle
+      : 'default';
+    const trigger = root.querySelector('[data-mobile-trigger]');
+    const panel = root.querySelector('[data-mobile-panel]');
+    const backdrop = root.querySelector('[data-mobile-backdrop]');
+    const openIcon = root.querySelector('[data-mobile-trigger-icon="open"]');
+    const closeIcon = root.querySelector('[data-mobile-trigger-icon="close"]');
+    const closeTargets = Array.from(root.querySelectorAll('[data-mobile-close]'));
+    const localeLinks = Array.from(root.querySelectorAll('[data-mobile-locale]'));
+    const modeButtons = Array.from(root.querySelectorAll('[data-mobile-mode]'));
+    const themeSelect = root.querySelector('[data-mobile-theme-select]');
+
+    if (
+      !(trigger instanceof HTMLButtonElement) ||
+      !(panel instanceof HTMLElement) ||
+      !(backdrop instanceof HTMLElement)
+    ) {
+      return;
+    }
+
+    const setOpen = (open: boolean) => {
+      panel.classList.toggle('hidden', !open);
+      backdrop.classList.toggle('hidden', !open);
+      trigger.setAttribute('aria-expanded', String(open));
+      document.body.classList.toggle('overflow-hidden', open);
+      if (openIcon instanceof HTMLElement) openIcon.hidden = open;
+      if (closeIcon instanceof HTMLElement) closeIcon.hidden = !open;
+    };
+
+    const syncThemeState = () => {
+      const { mode, style } = getStoredThemePreferences(defaultMode, defaultStyle);
+      modeButtons.forEach((button) => {
+        if (!(button instanceof HTMLButtonElement)) return;
+        const active = style === 'default' && button.dataset.mobileMode === mode;
+        button.dataset.active = String(active);
+        button.setAttribute('aria-pressed', String(active));
+      });
+      if (themeSelect instanceof HTMLSelectElement) {
+        themeSelect.value = style;
+      }
+    };
+
+    trigger.addEventListener('click', () => {
+      const isOpen = trigger.getAttribute('aria-expanded') === 'true';
+      setOpen(!isOpen);
+    });
+
+    backdrop.addEventListener('click', () => setOpen(false));
+    closeTargets.forEach((target) => {
+      target.addEventListener('click', () => setOpen(false));
+    });
+
+    localeLinks.forEach((link) => {
+      if (!(link instanceof HTMLAnchorElement)) return;
+      link.addEventListener('click', () => {
+        const nextLocale = link.dataset.mobileLocale;
+        if (nextLocale) {
+          localStorage.setItem('preferred-locale', nextLocale);
+        }
+      });
+    });
+
+    modeButtons.forEach((button) => {
+      if (!(button instanceof HTMLButtonElement)) return;
+      button.addEventListener('click', () => {
+        const mode = button.dataset.mobileMode;
+        if (!mode || !isColorMode(mode)) return;
+        setThemePreferences({ mode, style: 'default' });
+      });
+    });
+
+    if (themeSelect instanceof HTMLSelectElement) {
+      themeSelect.addEventListener('change', () => {
+        if (!isThemeStyle(themeSelect.value)) return;
+        const { mode } = getStoredThemePreferences(defaultMode, defaultStyle);
+        setThemePreferences({ mode, style: themeSelect.value });
+      });
+    }
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        setOpen(false);
+      }
+    });
+
+    window.addEventListener(THEME_CHANGE_EVENT, syncThemeState);
+    syncThemeState();
+  });
+</script>

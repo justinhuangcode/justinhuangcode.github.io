@@ -5,11 +5,19 @@ import { getImage } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import Navbar from '@/components/Navbar.astro';
 import Footer from '@/components/Footer.astro';
+import ThemeEffects from '@/components/ThemeEffects.astro';
 import Analytics from '@/components/Analytics.astro';
 import Crisp from '@/components/Crisp.astro';
-import LocaleBanner from '@/components/react/LocaleBanner';
+import LocaleBanner from '@/components/LocaleBanner.astro';
 import { siteConfig } from '@/config/site';
-import { getLocaleFromUrl, getMessages, htmlLangs, locales, stripLocalePrefix } from '@/i18n';
+import { CUSTOM_THEME_KEYS } from '@/lib/theme';
+import {
+  getLocaleFromUrl,
+  getMessages,
+  htmlLangs,
+  locales,
+  stripLocalePrefix,
+} from '@/i18n';
 
 interface Props {
   title?: string;
@@ -55,16 +63,28 @@ if (typeof imageSource === 'string') {
 const pathname = Astro.url.pathname;
 const canonicalUrl = new URL(pathname, siteConfig.url).href;
 
+// Hreflang: map locale codes to BCP 47 tags
+const hreflangMap: Record<string, string> = {
+  en: 'en', 'zh-hans': 'zh-Hans', 'zh-hant': 'zh-Hant',
+  ko: 'ko', fr: 'fr', de: 'de', it: 'it',
+  es: 'es', ru: 'ru', id: 'id', 'pt-br': 'pt-BR',
+};
+
 // Build the locale-independent path for hreflang alternates
 const cleanPath = stripLocalePrefix(pathname);
 const alternateUrls = locales.map((l) => ({
-  hreflang: htmlLangs[l],
+  hreflang: hreflangMap[l],
   href: new URL(l === 'en' ? cleanPath : `/${l}${cleanPath}`, siteConfig.url).href,
 }));
 
 ---
 
-<html lang={htmlLangs[locale]} class="no-transition">
+<html
+  lang={htmlLangs[locale]}
+  class="no-transition"
+  data-default-mode={siteConfig.ui.defaultMode}
+  data-default-style={siteConfig.ui.defaultStyle}
+>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -75,7 +95,6 @@ const alternateUrls = locales.map((l) => ({
       <link rel="alternate" hreflang={hreflang} href={href} />
     ))}
     <link rel="alternate" hreflang="x-default" href={new URL(cleanPath, siteConfig.url).href} />
-    <link rel="search" type="application/opensearchdescription+xml" title={siteConfig.name} href="/opensearch.xml" />
     {alternateFormats?.map(({ type, href, title: t }) => (
       <link rel="alternate" type={type} href={href} title={t} />
     ))}
@@ -109,21 +128,54 @@ const alternateUrls = locales.map((l) => ({
     ) : null}
     <Analytics />
     {enableCrisp && <Crisp locale={locale} />}
-    <script is:inline define:vars={{ defaultMode: siteConfig.ui.defaultMode }}>
+    <script
+      is:inline
+      define:vars={{
+        defaultMode: siteConfig.ui.defaultMode,
+        defaultStyle: siteConfig.ui.defaultStyle,
+        customThemeKeys: CUSTOM_THEME_KEYS,
+      }}
+    >
       (function () {
         try {
-          var theme = localStorage.getItem('theme') || defaultMode;
+          var storedMode = localStorage.getItem('color-mode');
+          var storedStyle = localStorage.getItem('theme-style');
+          var legacyTheme = localStorage.getItem('theme');
+          var mode =
+            storedMode === 'light' || storedMode === 'dark' || storedMode === 'system'
+              ? storedMode
+              : defaultMode;
+          var style =
+            storedStyle && (storedStyle === 'default' || customThemeKeys.indexOf(storedStyle) > -1)
+              ? storedStyle
+              : defaultStyle;
+
+          if (!storedMode && !storedStyle && legacyTheme) {
+            if (legacyTheme === 'light' || legacyTheme === 'dark' || legacyTheme === 'system') {
+              mode = legacyTheme;
+            } else if (customThemeKeys.indexOf(legacyTheme) > -1) {
+              style = legacyTheme;
+            }
+          }
+
           var systemTheme = window.matchMedia('(prefers-color-scheme: dark)')
             .matches
             ? 'dark'
             : 'light';
-          var resolved = theme === 'system' ? systemTheme : theme;
-          document.documentElement.classList.add(resolved);
+          var resolved = mode === 'system' ? systemTheme : mode;
+          var root = document.documentElement;
+
+          root.classList.remove('light', 'dark');
+          root.classList.add(style === 'default' ? resolved : style);
+          root.dataset.mode = resolved;
+          root.dataset.theme = style;
         } catch (e) {
-          var fallback = defaultMode === 'system'
+          var fallbackMode = defaultMode === 'system'
             ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
             : defaultMode;
-          document.documentElement.classList.add(fallback);
+          document.documentElement.classList.add(defaultStyle === 'default' ? fallbackMode : defaultStyle);
+          document.documentElement.dataset.mode = fallbackMode;
+          document.documentElement.dataset.theme = defaultStyle;
         }
       })();
     </script>
@@ -134,18 +186,57 @@ const alternateUrls = locales.map((l) => ({
         });
       });
     </script>
+    <script>
+      import {
+        THEME_CHANGE_EVENT,
+        applyThemePreferences,
+        getStoredThemePreferences,
+        isColorMode,
+        isThemeStyle,
+        resolveColorMode,
+        type ColorMode,
+        type ThemeStyle,
+      } from '@/lib/theme';
+
+      const root = document.documentElement;
+      const rawDefaultMode = root.dataset.defaultMode ?? '';
+      const rawDefaultStyle = root.dataset.defaultStyle ?? '';
+      const defaultMode: ColorMode = isColorMode(rawDefaultMode)
+        ? rawDefaultMode
+        : 'system';
+      const defaultStyle: ThemeStyle = isThemeStyle(rawDefaultStyle)
+        ? rawDefaultStyle
+        : 'default';
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      const syncSystemTheme = () => {
+        const preferences = getStoredThemePreferences(defaultMode, defaultStyle);
+        if (preferences.mode !== 'system') return;
+
+        applyThemePreferences(preferences);
+        window.dispatchEvent(
+          new CustomEvent(THEME_CHANGE_EVENT, {
+            detail: {
+              ...preferences,
+              resolvedMode: resolveColorMode(preferences.mode),
+            },
+          }),
+        );
+      };
+
+      mediaQuery.addEventListener('change', syncSystemTheme);
+    </script>
   </head>
   <body
     class="font-body antialiased bg-background text-foreground"
     style="font-weight:400"
   >
     <LocaleBanner
-      client:idle
       currentLocale={locale}
       currentPath={Astro.url.pathname}
       allMessages={allBannerMessages}
     />
-    <div class="flex min-h-screen flex-col">
+    <ThemeEffects />
+    <div class="flex min-h-screen flex-col relative z-[1]">
       <Navbar locale={locale} />
       <main class="flex-1">
         <slot />

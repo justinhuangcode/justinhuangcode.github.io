@@ -1,6 +1,10 @@
 import { locales } from '@/i18n';
 import { getPostsByLocale, getSlug } from '@/lib/posts';
-import { getPostMarkdownPath, getPostPath, toAbsoluteSiteUrl } from '@/lib/site-content';
+import {
+  getPostMarkdownPath,
+  getPostPath,
+  toAbsoluteSiteUrl,
+} from '@/lib/site-content';
 
 export async function GET() {
   const data: Record<string, unknown[]> = {};
