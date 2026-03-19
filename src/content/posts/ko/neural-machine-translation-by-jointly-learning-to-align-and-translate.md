@@ -7,7 +7,7 @@ tags: [paper-reading, attention, AI, LLM, rust]
 pinned: false
 ---
 
-2014년 9월 1일, 세 명의 연구자가 arXiv(연구자들이 학술지 피어 리뷰를 거치지 않고 논문을 공개할 수 있는 프리프린트 서버)에 한 편의 논문을 업로드했다: <a href="/papers/Neural%20Machine%20Translation%20by%20Jointly%20Learning%20to%20Align%20and%20Translate.pdf" target="_blank"><i>Neural Machine Translation by Jointly Learning to Align and Translate</i></a>.
+2014년 9월 1일, 세 명의 연구자가 arXiv(연구자들이 학술지 피어 리뷰를 거치지 않고 논문을 공개할 수 있는 프리프린트 서버)에 한 편의 논문을 업로드했다: <a href="/papers/1409.0473v7.pdf" target="_blank"><i>Neural Machine Translation by Jointly Learning to Align and Translate</i></a>.
 
 저자는 몬트리올 대학교의 Dzmitry Bahdanau, KyungHyun Cho, Yoshua Bengio 세 사람이다. Yoshua Bengio는 Geoffrey Hinton, Yann LeCun과 함께 딥러닝의 "세 거장"으로 불리며, 세 사람은 2018년 튜링상을 공동 수상했다. Bahdanau는 당시 아직 박사과정 학생이었다.
 

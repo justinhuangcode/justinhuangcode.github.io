@@ -7,7 +7,7 @@ tags: [paper-reading, chinchilla, scaling-laws, AI, LLM, rust]
 pinned: false
 ---
 
-2022년 3월 29일, DeepMind의 연구팀이 arXiv(연구자들이 학술지 심사를 거치지 않고 논문을 공개할 수 있는 프리프린트 서버)에 논문을 업로드했다: <a href="/papers/Training%20Compute-Optimal%20Large%20Language%20Models.pdf" target="_blank"><i>Training Compute-Optimal Large Language Models</i></a>.
+2022년 3월 29일, DeepMind의 연구팀이 arXiv(연구자들이 학술지 심사를 거치지 않고 논문을 공개할 수 있는 프리프린트 서버)에 논문을 업로드했다: <a href="/papers/2203.15556v1.pdf" target="_blank"><i>Training Compute-Optimal Large Language Models</i></a>.
 
 제1저자는 Jordan Hoffmann이고, 공저자로 Sebastian Borgeaud, Arthur Mensch, Elena Buchatskaya, Trevor Cai, Eliza Rutherford 등 다수가 참여했다 — 당시 전원 DeepMind 소속이었다. Arthur Mensch는 이후 유럽에서 가장 주목받는 AI 기업 중 하나인 Mistral AI를 공동 창립하게 된다.
 

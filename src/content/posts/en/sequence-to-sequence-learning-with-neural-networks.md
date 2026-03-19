@@ -7,7 +7,7 @@ tags: [paper-reading, seq2seq, AI, LLM, rust]
 pinned: false
 ---
 
-On September 10, 2014, three Google researchers uploaded a paper to arXiv (a preprint server where researchers can publish papers without waiting for journal peer review): <a href="/papers/Sequence%20to%20Sequence%20Learning%20with%20Neural%20Networks.pdf" target="_blank"><i>Sequence to Sequence Learning with Neural Networks</i></a>.
+On September 10, 2014, three Google researchers uploaded a paper to arXiv (a preprint server where researchers can publish papers without waiting for journal peer review): <a href="/papers/1409.3215v3.pdf" target="_blank"><i>Sequence to Sequence Learning with Neural Networks</i></a>.
 
 The authors are Ilya Sutskever, Oriol Vinyals, and Quoc V. Le, all from Google. Sutskever was one of the authors of AlexNet, collaborating with Alex Krizhevsky and Geoffrey Hinton on the paper that ignited the deep learning revolution; he later became a co-founder of OpenAI. Vinyals went on to lead AlphaStar (DeepMind's StarCraft AI) at DeepMind. Quoc V. Le drove AutoML and other research at Google.
 

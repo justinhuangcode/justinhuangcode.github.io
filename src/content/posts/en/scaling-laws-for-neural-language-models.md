@@ -7,7 +7,7 @@ tags: [paper-reading, scaling-laws, AI, LLM, rust]
 pinned: false
 ---
 
-On January 23, 2020, a team of ten researchers from OpenAI uploaded a paper to arXiv (a preprint server where researchers can publish papers without waiting for journal peer review): <a href="/papers/Scaling%20Laws%20for%20Neural%20Language%20Models.pdf" target="_blank"><i>Scaling Laws for Neural Language Models</i></a>.
+On January 23, 2020, a team of ten researchers from OpenAI uploaded a paper to arXiv (a preprint server where researchers can publish papers without waiting for journal peer review): <a href="/papers/2001.08361v1.pdf" target="_blank"><i>Scaling Laws for Neural Language Models</i></a>.
 
 The ten were Jared Kaplan, Sam McCandlish, Tom Henighan, Tom B. Brown, Benjamin Chess, Rewon Child, Scott Gray, Alec Radford, Jeffrey Wu, and Dario Amodei. All at OpenAI at the time.
 

@@ -7,7 +7,7 @@ tags: [paper-reading, attention, AI, LLM, rust]
 pinned: false
 ---
 
-On September 1, 2014, three researchers uploaded a paper to arXiv (a preprint server where researchers can publish papers without waiting for journal peer review): <a href="/papers/Neural%20Machine%20Translation%20by%20Jointly%20Learning%20to%20Align%20and%20Translate.pdf" target="_blank"><i>Neural Machine Translation by Jointly Learning to Align and Translate</i></a>.
+On September 1, 2014, three researchers uploaded a paper to arXiv (a preprint server where researchers can publish papers without waiting for journal peer review): <a href="/papers/1409.0473v7.pdf" target="_blank"><i>Neural Machine Translation by Jointly Learning to Align and Translate</i></a>.
 
 The three were Dzmitry Bahdanau, KyungHyun Cho, and Yoshua Bengio, from the University of Montreal. Yoshua Bengio is one of the "three godfathers" of deep learning, alongside Geoffrey Hinton and Yann LeCun; the three shared the 2018 Turing Award. Bahdanau was still a PhD student at the time.
 

@@ -7,7 +7,7 @@ tags: [paper-reading, gpt-3, AI, LLM, rust]
 pinned: false
 ---
 
-2020년 5월 28일, OpenAI는 75페이지짜리 논문을 arXiv(연구자들이 학술지 심사를 거치지 않고 논문을 공개할 수 있는 프리프린트 서버)에 업로드했다: <a href="/papers/Language%20Models%20are%20Few-Shot%20Learners.pdf" target="_blank"><i>Language Models are Few-Shot Learners</i></a>.
+2020년 5월 28일, OpenAI는 75페이지짜리 논문을 arXiv(연구자들이 학술지 심사를 거치지 않고 논문을 공개할 수 있는 프리프린트 서버)에 업로드했다: <a href="/papers/2005.14165v4.pdf" target="_blank"><i>Language Models are Few-Shot Learners</i></a>.
 
 저자는 총 31명이고, 전원 OpenAI 소속이다. 제1저자는 Tom B. Brown이며, 주요 공저자로는 Jared Kaplan(scaling laws의 핵심 연구자), Alec Radford(GPT-1과 GPT-2의 주요 설계자), Ilya Sutskever(OpenAI 공동 창립자 겸 수석 과학자), Dario Amodei(OpenAI 연구 부사장)가 있다.
 

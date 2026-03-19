@@ -7,7 +7,7 @@ tags: [paper-reading, attention, AI, LLM, rust]
 pinned: false
 ---
 
-2014 年 9 月 1 日，三个人在 arXiv（一个学术论文预印本网站，论文不用等期刊审稿就能直接发布）上传了一篇论文：<a href="/papers/Neural%20Machine%20Translation%20by%20Jointly%20Learning%20to%20Align%20and%20Translate.pdf" target="_blank">《Neural Machine Translation by Jointly Learning to Align and Translate》</a>（通过联合学习对齐与翻译实现神经机器翻译）。
+2014 年 9 月 1 日，三个人在 arXiv（一个学术论文预印本网站，论文不用等期刊审稿就能直接发布）上传了一篇论文：<a href="/papers/1409.0473v7.pdf" target="_blank">《Neural Machine Translation by Jointly Learning to Align and Translate》</a>（通过联合学习对齐与翻译实现神经机器翻译）。
 
 这三个人是 Dzmitry Bahdanau、KyungHyun Cho 和 Yoshua Bengio，来自蒙特利尔大学。Yoshua Bengio 是深度学习「三巨头」之一，另外两位是 Geoffrey Hinton 和 Yann LeCun；三人共同获得了 2018 年图灵奖。Bahdanau 当时还是博士生。
 

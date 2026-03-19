@@ -7,7 +7,7 @@ tags: [paper-reading, gpt-3, AI, LLM, rust]
 pinned: false
 ---
 
-On May 28, 2020, OpenAI uploaded a 75-page paper to arXiv (a preprint server where researchers can publish papers without waiting for journal peer review): <a href="/papers/Language%20Models%20are%20Few-Shot%20Learners.pdf" target="_blank"><i>Language Models are Few-Shot Learners</i></a>.
+On May 28, 2020, OpenAI uploaded a 75-page paper to arXiv (a preprint server where researchers can publish papers without waiting for journal peer review): <a href="/papers/2005.14165v4.pdf" target="_blank"><i>Language Models are Few-Shot Learners</i></a>.
 
 The paper has 31 authors, all from OpenAI. The first author is Tom B. Brown, with notable co-authors including Jared Kaplan (a key researcher behind scaling laws), Alec Radford (the primary designer of GPT-1 and GPT-2), Ilya Sutskever (OpenAI co-founder and Chief Scientist), and Dario Amodei (OpenAI VP of Research).
 

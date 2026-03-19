@@ -7,7 +7,7 @@ tags: [paper-reading, seq2seq, AI, LLM, rust]
 pinned: false
 ---
 
-2014년 9월 10일, 세 명의 Google 연구자가 arXiv(연구자들이 저널 심사를 거치지 않고 논문을 공개할 수 있는 프리프린트 서버)에 한 편의 논문을 올렸다: <a href="/papers/Sequence%20to%20Sequence%20Learning%20with%20Neural%20Networks.pdf" target="_blank"><i>Sequence to Sequence Learning with Neural Networks</i></a>.
+2014년 9월 10일, 세 명의 Google 연구자가 arXiv(연구자들이 저널 심사를 거치지 않고 논문을 공개할 수 있는 프리프린트 서버)에 한 편의 논문을 올렸다: <a href="/papers/1409.3215v3.pdf" target="_blank"><i>Sequence to Sequence Learning with Neural Networks</i></a>.
 
 저자는 Ilya Sutskever, Oriol Vinyals, Quoc V. Le로, 모두 Google 소속이었다. Sutskever는 AlexNet의 공동 저자로, Alex Krizhevsky, Geoffrey Hinton과 함께 딥러닝 혁명의 불을 지핀 논문을 작성했으며, 이후 OpenAI의 공동 창립자가 되었다. Vinyals는 이후 DeepMind에서 AlphaStar(DeepMind의 StarCraft AI)를 이끌었고, Quoc V. Le는 Google에서 AutoML 등의 연구를 주도했다.
 

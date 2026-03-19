@@ -7,7 +7,7 @@ tags: [paper-reading, scaling-laws, AI, LLM, rust]
 pinned: false
 ---
 
-2020년 1월 23일, OpenAI의 연구자 10명이 arXiv(연구자들이 학술지 심사를 거치지 않고 논문을 공개할 수 있는 프리프린트 서버)에 논문을 업로드했다: <a href="/papers/Scaling%20Laws%20for%20Neural%20Language%20Models.pdf" target="_blank"><i>Scaling Laws for Neural Language Models</i></a>.
+2020년 1월 23일, OpenAI의 연구자 10명이 arXiv(연구자들이 학술지 심사를 거치지 않고 논문을 공개할 수 있는 프리프린트 서버)에 논문을 업로드했다: <a href="/papers/2001.08361v1.pdf" target="_blank"><i>Scaling Laws for Neural Language Models</i></a>.
 
 10명은 Jared Kaplan, Sam McCandlish, Tom Henighan, Tom B. Brown, Benjamin Chess, Rewon Child, Scott Gray, Alec Radford, Jeffrey Wu, Dario Amodei였다. 당시 전원 OpenAI 소속이었다.
 

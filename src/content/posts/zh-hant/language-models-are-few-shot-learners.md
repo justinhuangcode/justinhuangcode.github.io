@@ -7,7 +7,7 @@ tags: [paper-reading, gpt-3, AI, LLM, rust]
 pinned: false
 ---
 
-2020 年 5 月 28 日，OpenAI 在 arXiv（一個學術論文預印本網站，論文不用等期刊審稿就能直接發布）上傳了一篇 75 頁的論文：<a href="/papers/Language%20Models%20are%20Few-Shot%20Learners.pdf" target="_blank">《Language Models are Few-Shot Learners》</a>（語言模型是少樣本學習者）。
+2020 年 5 月 28 日，OpenAI 在 arXiv（一個學術論文預印本網站，論文不用等期刊審稿就能直接發布）上傳了一篇 75 頁的論文：<a href="/papers/2005.14165v4.pdf" target="_blank">《Language Models are Few-Shot Learners》</a>（語言模型是少樣本學習者）。
 
 作者有 31 人，全部來自 OpenAI。第一作者 Tom B. Brown，其餘包括 Jared Kaplan（縮放定律的核心研究者）、Alec Radford（GPT-1 和 GPT-2 的主要設計者）、Ilya Sutskever（OpenAI 聯合創始人兼首席科學家）、Dario Amodei（OpenAI 研究副總裁）等。
 

@@ -7,7 +7,7 @@ tags: [paper-reading, seq2seq, AI, LLM, rust]
 pinned: false
 ---
 
-2014 年 9 月 10 日，三個 Google 研究員在 arXiv（一個學術論文預印本網站，論文不用等期刊審稿就能直接發布）上傳了一篇論文：<a href="/papers/Sequence%20to%20Sequence%20Learning%20with%20Neural%20Networks.pdf" target="_blank">《Sequence to Sequence Learning with Neural Networks》</a>（使用神經網路進行序列到序列學習）。
+2014 年 9 月 10 日，三個 Google 研究員在 arXiv（一個學術論文預印本網站，論文不用等期刊審稿就能直接發布）上傳了一篇論文：<a href="/papers/1409.3215v3.pdf" target="_blank">《Sequence to Sequence Learning with Neural Networks》</a>（使用神經網路進行序列到序列學習）。
 
 作者是 Ilya Sutskever、Oriol Vinyals 和 Quoc V. Le，均來自 Google。Sutskever 是 AlexNet 的作者之一，與 Alex Krizhevsky、Geoffrey Hinton 合作完成了那篇引爆深度學習的電腦視覺論文，後來成為 OpenAI 聯合創始人之一；Vinyals 後來在 DeepMind 主導了 AlphaStar（星際爭霸 AI）；Quoc V. Le 則在 Google 推動了 AutoML 等研究。
 

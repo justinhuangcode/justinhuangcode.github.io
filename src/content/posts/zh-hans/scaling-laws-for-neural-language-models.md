@@ -7,7 +7,7 @@ tags: [paper-reading, scaling-laws, AI, LLM, rust]
 pinned: false
 ---
 
-2020 年 1 月 23 日，OpenAI 的十个人在 arXiv（一个学术论文预印本网站，论文不用等期刊审稿就能直接发布）上传了一篇论文：<a href="/papers/Scaling%20Laws%20for%20Neural%20Language%20Models.pdf" target="_blank">《Scaling Laws for Neural Language Models》</a>（神经语言模型的缩放定律）。
+2020 年 1 月 23 日，OpenAI 的十个人在 arXiv（一个学术论文预印本网站，论文不用等期刊审稿就能直接发布）上传了一篇论文：<a href="/papers/2001.08361v1.pdf" target="_blank">《Scaling Laws for Neural Language Models》</a>（神经语言模型的缩放定律）。
 
 十位作者分别是 Jared Kaplan、Sam McCandlish、Tom Henighan、Tom B. Brown、Benjamin Chess、Rewon Child、Scott Gray、Alec Radford、Jeffrey Wu 和 Dario Amodei，当时全部在 OpenAI。
 

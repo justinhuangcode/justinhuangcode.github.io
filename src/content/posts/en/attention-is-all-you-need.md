@@ -7,7 +7,7 @@ tags: [paper-reading, transformer, AI, LLM, rust]
 pinned: false
 ---
 
-On June 12, 2017, eight people uploaded a paper to arXiv (a preprint server where researchers can publish papers without waiting for journal peer review), with a title of just five words: <a href="/papers/Attention%20Is%20All%20You%20Need.pdf" target="_blank"><i>Attention Is All You Need</i></a>.
+On June 12, 2017, eight people uploaded a paper to arXiv (a preprint server where researchers can publish papers without waiting for journal peer review), with a title of just five words: <a href="/papers/1706.03762v7.pdf" target="_blank"><i>Attention Is All You Need</i></a>.
 
 The eight were Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Łukasz Kaiser, and Illia Polosukhin, most of them working at Google Brain and Google Research at the time.
 

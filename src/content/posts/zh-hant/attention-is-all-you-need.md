@@ -7,7 +7,7 @@ tags: [paper-reading, transformer, AI, LLM, rust]
 pinned: false
 ---
 
-2017 年 6 月 12 日，八個人在 arXiv（一個學術論文預印本網站，論文不用等期刊審稿就能直接發布）上傳了一篇論文，標題只有五個詞：<a href="/papers/Attention%20Is%20All%20You%20Need.pdf" target="_blank">《Attention Is All You Need》</a>（注意力就是你所需要的全部）。
+2017 年 6 月 12 日，八個人在 arXiv（一個學術論文預印本網站，論文不用等期刊審稿就能直接發布）上傳了一篇論文，標題只有五個詞：<a href="/papers/1706.03762v7.pdf" target="_blank">《Attention Is All You Need》</a>（注意力就是你所需要的全部）。
 
 這八個人是 Ashish Vaswani、Noam Shazeer、Niki Parmar、Jakob Uszkoreit、Llion Jones、Aidan N. Gomez、Łukasz Kaiser 和 Illia Polosukhin，當時大多在 Google Brain 和 Google Research 工作。
 

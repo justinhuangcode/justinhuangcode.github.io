@@ -7,7 +7,7 @@ tags: [paper-reading, bert, AI, LLM, rust]
 pinned: false
 ---
 
-2018 年 10 月 11 日，Google AI Language 团队在 arXiv（一个学术论文预印本网站，论文不用等期刊审稿就能直接发布）上传了一篇论文：<a href="/papers/BERT%20Pre-training%20of%20Deep%20Bidirectional%20Transformers%20for%20Language%20Understanding.pdf" target="_blank">《BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding》</a>（BERT：用于语言理解的深度双向 Transformer 预训练）。
+2018 年 10 月 11 日，Google AI Language 团队在 arXiv（一个学术论文预印本网站，论文不用等期刊审稿就能直接发布）上传了一篇论文：<a href="/papers/1810.04805v2.pdf" target="_blank">《BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding》</a>（BERT：用于语言理解的深度双向 Transformer 预训练）。
 
 作者是 Jacob Devlin、Ming-Wei Chang、Kenton Lee 和 Kristina Toutanova，四人均来自 Google。Devlin 此前在微软研究院工作，加入 Google 后主导了 BERT 的设计和实现。
 

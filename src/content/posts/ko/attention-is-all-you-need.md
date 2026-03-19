@@ -7,7 +7,7 @@ tags: [paper-reading, transformer, AI, LLM, rust]
 pinned: false
 ---
 
-2017년 6월 12일, 여덟 명이 arXiv(연구자들이 학술지 심사를 기다리지 않고 논문을 발표할 수 있는 프리프린트 서버)에 논문 한 편을 올렸다. 제목은 단 다섯 단어: <a href="/papers/Attention%20Is%20All%20You%20Need.pdf" target="_blank"><i>Attention Is All You Need</i></a>.
+2017년 6월 12일, 여덟 명이 arXiv(연구자들이 학술지 심사를 기다리지 않고 논문을 발표할 수 있는 프리프린트 서버)에 논문 한 편을 올렸다. 제목은 단 다섯 단어: <a href="/papers/1706.03762v7.pdf" target="_blank"><i>Attention Is All You Need</i></a>.
 
 여덟 명은 Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Łukasz Kaiser, 그리고 Illia Polosukhin이었으며, 대부분 당시 Google Brain과 Google Research에서 일하고 있었다.
 

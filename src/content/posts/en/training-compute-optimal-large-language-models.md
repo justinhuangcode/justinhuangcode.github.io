@@ -7,7 +7,7 @@ tags: [paper-reading, chinchilla, scaling-laws, AI, LLM, rust]
 pinned: false
 ---
 
-On March 29, 2022, a team of researchers from DeepMind uploaded a paper to arXiv (a preprint server where researchers can publish papers without waiting for journal peer review): <a href="/papers/Training%20Compute-Optimal%20Large%20Language%20Models.pdf" target="_blank"><i>Training Compute-Optimal Large Language Models</i></a>.
+On March 29, 2022, a team of researchers from DeepMind uploaded a paper to arXiv (a preprint server where researchers can publish papers without waiting for journal peer review): <a href="/papers/2203.15556v1.pdf" target="_blank"><i>Training Compute-Optimal Large Language Models</i></a>.
 
 The first author is Jordan Hoffmann, with co-authors including Sebastian Borgeaud, Arthur Mensch, Elena Buchatskaya, Trevor Cai, Eliza Rutherford, and many others — all at DeepMind at the time. Arthur Mensch would later co-found Mistral AI, one of Europe's most prominent AI companies.
 
