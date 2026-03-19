@@ -19,6 +19,16 @@ I went through its codebase: over 200,000 lines of TypeScript, covering native a
 
 ![Chatting with Clawd on WhatsApp](/images/whatsapp-clawd.webp)
 
+## 0. A Few Terms First
+
+If this kind of project is new to you, 5 quick terms will make the rest easier to follow:
+
+- `centralized AI assistant`: a service where your chat history, memory, and control mostly live on the vendor's servers
+- `self-hosted`: software you run on your own machine or server, so deployment and data ownership stay with you
+- `AI Agent`: not just a chatbot, but a system that can remember context, call tools, and carry out tasks
+- `chat channels`: the messaging apps you already use, like WhatsApp, Telegram, Slack, and iMessage
+- `open-source`: code that is public, so people can inspect it, modify it, and deploy it themselves
+
 This is no weekend Hackathon side project -- it's a system built with a long-term product mindset. In many details, you can tell the author has taste when it comes to product trade-offs.
 
 What's even more impressive is its sense of boundaries.

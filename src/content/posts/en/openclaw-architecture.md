@@ -13,13 +13,24 @@ The [last article](/posts/openclaw-ecosystem/) covered the ecosystem. This one t
 
 OpenClaw's codebase is not small -- 430,000 lines of TypeScript. But the interesting part isn't the line count; it's the architectural choices. An AI assistant that has to juggle twenty-plus chat platforms, manage multiple Agents, and invoke tools on the fly -- how do you cram all of that into one system without it falling apart?
 
-## I. Three-Layer Architecture: Channel -> Gateway -> Node
+## 0. A Few Terms First
+
+If you do not come from a systems background, that is fine. Six quick terms will make the rest much easier:
+
+- `architecture`: how a system is split into layers, and what each layer is responsible for
+- `Channel / adapter layer`: the layer that speaks each external chat platform's protocol
+- `Gateway`: the central coordinator that routes messages and manages sessions and Agents
+- `Node`: the execution endpoint that actually runs commands and interacts with devices
+- `workspace`: the local folder where an Agent's config, memory, skills, and session files live
+- `sandbox`: an isolated execution environment for risky operations
+
+## 1. 3-Layer Architecture: Channel -> Gateway -> Node
 
 First, the big picture:
 
 ![OpenClaw Architecture](/images/openclaw-architecture.svg)
 
-Think of OpenClaw as a company with three departments:
+Think of OpenClaw as a company with 3 departments:
 
 | Who | What it does | Analogy |
 |-----|-------------|---------|
@@ -31,7 +42,7 @@ The heart of the entire system is the Gateway -- a long-running process that by 
 
 Why a single process instead of a distributed setup? The reason is practical: WhatsApp's protocol requires that only one device be online at a time. Spin up two processes and they'll fight each other. Rather than piling on coordination logic for the sake of "architectural correctness," a single process handles everything end to end. For the vast majority of personal users, that's more than enough.
 
-## II. The Journey of a Single Message
+## 2. The Journey of a Single Message
 
 You send your OpenClaw a message on Telegram: "What's the weather in Beijing tomorrow?" Here's what happens:
 
@@ -49,7 +60,7 @@ You send your OpenClaw a message on Telegram: "What's the weather in Beijing tom
 
 Across this entire chain, the only truly slow part is Step 4 -- waiting for the model to produce its first token. Everything else is millisecond-level.
 
-## III. The Channel Adapter Layer: Build Once, Talk Everywhere
+## 3. The Channel Adapter Layer: Build Once, Talk Everywhere
 
 OpenClaw integrates with over twenty chat platforms, but it doesn't write a full implementation from scratch for each one. It abstracts an "adapter" layer, and each platform's adapter is responsible for exactly four things:
 
@@ -62,7 +73,7 @@ Six major platforms are built in (WhatsApp, Telegram, Discord, Slack, Signal, iM
 
 The biggest payoff of this abstraction: the Agent never needs to know which platform a message came from. The Agent you chat with on WhatsApp is the same one you chat with on Telegram -- identical logic, fully reused. Channels are just megaphones; swapping the megaphone doesn't change the person speaking.
 
-## IV. The Agent Runtime and Workspace
+## 4. The Agent Runtime and Workspace
 
 The Agent runtime's core comes from Pi-mono (an open-source coding Agent), embedded directly within the Gateway process.
 
@@ -94,9 +105,9 @@ No database, no dedicated admin panel -- just plain text files. Want to change t
 
 Context assembly isn't a brute-force dump of everything. Irrelevant skills aren't loaded, unnecessary tools aren't injected -- saving tokens is saving money.
 
-## V. Four Layers of Memory: Making AI Actually Remember You
+## 5. 4 Layers of Memory: Making AI Actually Remember You
 
-Most chatbots forget you the moment you close the window. OpenClaw doesn't. It has four layers of memory, from the deepest "who am I" to the shallowest "what did we just talk about":
+Most chatbots forget you the moment you close the window. OpenClaw doesn't. It has 4 layers of memory, from the deepest "who am I" to the shallowest "what did we just talk about":
 
 | Layer | What it is | Analogy |
 |-------|-----------|---------|
@@ -115,7 +126,7 @@ A few clever mechanisms:
 
 **Cross-platform identity.** You chat with it on Telegram for half an hour, then switch to WhatsApp and keep going -- it knows you. The same person's IDs across different platforms are linked to a single identity, sharing the same memory. But group chat memories are isolated -- what you said in a group won't leak into your private conversation.
 
-## VI. The Tool System: Just Four Knives
+## 6. The Tool System: Just 4 Knives
 
 This is OpenClaw's most "rebellious" design choice.
 
@@ -140,7 +151,7 @@ On top of these four core tools, there are 55 built-in Skills and the ClawHub sk
 
 **Even more interesting is self-extension.** When an OpenClaw Agent encounters something it can't do, it writes a skill to handle it, then auto-installs it. Finds a bug in the skill? Fixes it and reloads. This means your Agent gets stronger over time through use -- it's essentially raising itself.
 
-## VII. Multi-Agent Routing: One Brain, Multiple Personalities
+## 7. Multi-Agent Routing: One Brain, Multiple Personalities
 
 A single Gateway can run several Agents simultaneously, each doing its own thing. The routing rules look like this:
 
@@ -156,7 +167,7 @@ A single Gateway can run several Agents simultaneously, each doing its own thing
 
 In plain English: messages from your personal WhatsApp go to the "home assistant," Slack messages go to the "work assistant," and a specific Discord server goes to the "community bot." The three Agents are fully isolated -- each with its own personality, memories, skills, and security policies.
 
-## VIII. Security: Three Doors
+## 8. Security: 3 Doors
 
 Your Agent runs on your own server. It can execute commands and read/write files -- so security is obviously a big deal. OpenClaw's security model has three doors:
 
@@ -168,7 +179,7 @@ Your Agent runs on your own server. It can execute commands and read/write files
 
 Beneath these are layers of defense in depth: five-tier tool permission filtering, Docker sandbox isolation (stranger commands run in the sandbox), and security audit commands (`openclaw security audit`). These layers are independent -- pairing code compromised? The sandbox is still there. Sandbox bypassed? Tool policies still restrict what can be called.
 
-## IX. Takeaways
+## 9. Takeaways
 
 **Single-process isn't laziness; it's pragmatism.** For individual users, one process handling everything is far more reliable than a distributed setup. Where's the ceiling? Probably when concurrent message volume exceeds what a single machine can handle -- and for the vast majority of people, that day will never come.
 

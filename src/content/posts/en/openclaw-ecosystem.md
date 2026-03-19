@@ -9,7 +9,17 @@ pinned: false
 
 ![OpenClaw](/images/openclaw-logo-text-dark.webp)
 
-## I. Start With the Person
+## 0. A Few Terms First
+
+If this is your first time reading an ecosystem analysis like this, 5 quick terms will help:
+
+- `ecosystem`: not just one repo, but a set of products and tools growing around the same core capability
+- `runtime`: the long-running core process that actually runs the Agent and orchestrates work
+- `skill marketplace`: the place where new Agent capabilities are discovered and installed
+- `workflow engine`: a system that packages repeated multi-step tasks into reusable flows
+- `flywheel`: a growth loop where better supply attracts more usage, which in turn attracts more supply
+
+## 1. Start With the Person
 
 To understand a project, start with the person behind it.
 
@@ -23,7 +33,7 @@ In late January 2026, Anthropic sent a trademark warning -- the name was too clo
 
 A person who has produced nine-figure results chose to pour his energy into an MIT-licensed open-source project. Whatever the motivation, that choice alone deserves a serious look.
 
-## II. Not Just a Project -- It's Growing an Ecosystem
+## 2. Not Just a Project -- It's Growing an Ecosystem
 
 For most viral open-source projects, "ecosystem" basically means: a roadmap in the docs plus a few placeholder repos.
 
@@ -40,7 +50,7 @@ OpenClaw is different. It has grown real product layering:
 
 Runtime, skill marketplace, workflow engine, deployment tools -- each does its own thing, with clean responsibility boundaries. This isn't the kind of crude expansion where everything gets crammed into one repo. It's layering by design.
 
-## III. A Few Key Judgments
+## 3. A Few Key Judgments
 
 ### Channel Coverage: Not Showing Off -- It's "You Don't Have to Do Anything"
 
@@ -72,7 +82,7 @@ The problem is structural: the more permissions you give an Agent, the more it c
 
 OpenClaw isn't unaware -- pairing codes, allowlists, sandboxing, command approval, layer after layer tightening up. But the structural tension of "high-privilege Agent + third-party skills + twenty-plus entry points" isn't something you fix with a few bug patches. This is a long war.
 
-## IV. Risks -- Can't Not Talk About Them
+## 4. Risks -- Can't Not Talk About Them
 
 Done with the good stuff. Now the bad.
 
@@ -84,7 +94,7 @@ Done with the good stuff. Now the bad.
 
 **Single-point dependency.** 18,000+ commits, but core roadmap and product judgment still heavily depend on one person -- the founder. Maintainers have been added from the community, but whether it can go from "one person's project" to "a community's platform" is the real watershed ahead.
 
-## V. Conclusion
+## 5. Conclusion
 
 What's truly scarce about OpenClaw isn't the hype -- anyone can have hype for a while. What's scarce is that it has already grown from a single project into the beginnings of an ecosystem: with layering, division of labor, and real product form.
 
