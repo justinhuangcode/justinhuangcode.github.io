@@ -1,15 +1,19 @@
 {
   "name": "astro-theme-aither",
   "type": "module",
-  "version": "2026.03.13",
+  "version": "2026.03.20",
   "packageManager": "pnpm@10.32.1",
   "scripts": {
     "dev": "astro dev",
+    "check": "astro check",
+    "typecheck": "tsc --noEmit",
     "build": "astro build",
+    "validate": "pnpm check && pnpm typecheck && pnpm build",
     "preview": "astro preview",
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/mdx": "^5.0.0",
     "@astrojs/react": "^5.0.0",
     "@astrojs/rss": "^4.0.17",
     "@astrojs/sitemap": "^3.7.1",
@@ -37,6 +41,7 @@
     ]
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.8",
     "@types/react": "^19.1.6",
     "@types/react-dom": "^19.1.6",
     "typescript": "^5.8.3"

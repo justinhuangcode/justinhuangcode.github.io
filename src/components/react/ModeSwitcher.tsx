@@ -7,8 +7,15 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { IconMonitor, IconMoon, IconSun } from '@/components/icons';
+import { siteConfig } from '@/config/site';
 
 type Theme = 'light' | 'dark' | 'system';
+
+interface ModeLabels {
+  light: string;
+  dark: string;
+  system: string;
+}
 
 function resolveTheme(theme: Theme): string {
   if (theme === 'system') {
@@ -21,8 +28,12 @@ function resolveTheme(theme: Theme): string {
 
 function useThemeLocal() {
   const [theme, setThemeState] = useState<Theme>(() => {
-    if (typeof window === 'undefined') return 'dark';
-    return (localStorage.getItem('theme') as Theme) || 'dark';
+    const fallback = siteConfig.ui.defaultMode;
+    if (typeof window === 'undefined') return fallback;
+    const stored = localStorage.getItem('theme');
+    return stored === 'light' || stored === 'dark' || stored === 'system'
+      ? stored
+      : fallback;
   });
 
   const setTheme = useCallback((newTheme: Theme) => {
@@ -50,7 +61,11 @@ function useThemeLocal() {
   return { theme, setTheme };
 }
 
-export default function ModeSwitcher() {
+export default function ModeSwitcher({
+  labels = { light: 'Light', dark: 'Dark', system: 'System' },
+}: {
+  labels?: ModeLabels;
+}) {
   const { theme, setTheme } = useThemeLocal();
   const triggerRef = useRef<HTMLButtonElement>(null);
 
@@ -101,9 +116,9 @@ export default function ModeSwitcher() {
   );
 
   const items: { key: Theme; label: string; icon: typeof IconSun }[] = [
-    { key: 'light', label: 'Light', icon: IconSun },
-    { key: 'dark', label: 'Dark', icon: IconMoon },
-    { key: 'system', label: 'System', icon: IconMonitor },
+    { key: 'light', label: labels.light, icon: IconSun },
+    { key: 'dark', label: labels.dark, icon: IconMoon },
+    { key: 'system', label: labels.system, icon: IconMonitor },
   ];
 
   return (

@@ -9,13 +9,14 @@ import Analytics from '@/components/Analytics.astro';
 import Crisp from '@/components/Crisp.astro';
 import LocaleBanner from '@/components/react/LocaleBanner';
 import { siteConfig } from '@/config/site';
-import { getLocaleFromUrl, getMessages, locales } from '@/i18n';
+import { getLocaleFromUrl, getMessages, htmlLangs, locales, stripLocalePrefix } from '@/i18n';
 
 interface Props {
   title?: string;
   description?: string;
   image?: string | ImageMetadata;
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+  enableCrisp?: boolean;
   article?: {
     publishedTime: string;
     author: string;
@@ -25,7 +26,6 @@ interface Props {
 }
 
 const locale = getLocaleFromUrl(Astro.url);
-const m = getMessages(locale);
 const allBannerMessages = Object.fromEntries(
   locales.map((l) => [l, getMessages(l).localeBanner])
 );
@@ -34,6 +34,7 @@ const {
   description = siteConfig.description,
   image: imageProp,
   jsonLd,
+  enableCrisp = true,
   article,
   alternateFormats,
 } = Astro.props;
@@ -54,24 +55,16 @@ if (typeof imageSource === 'string') {
 const pathname = Astro.url.pathname;
 const canonicalUrl = new URL(pathname, siteConfig.url).href;
 
-// Hreflang: map locale codes to BCP 47 tags
-const hreflangMap: Record<string, string> = {
-  en: 'en', 'zh-hans': 'zh-Hans', 'zh-hant': 'zh-Hant',
-  ko: 'ko', fr: 'fr', de: 'de', it: 'it',
-  es: 'es', ru: 'ru', id: 'id', 'pt-br': 'pt-BR',
-};
-
 // Build the locale-independent path for hreflang alternates
-const localePattern = locales.filter(l => l !== 'en').join('|');
-const cleanPath = pathname.replace(new RegExp(`^\\/(${localePattern})`), '') || '/';
+const cleanPath = stripLocalePrefix(pathname);
 const alternateUrls = locales.map((l) => ({
-  hreflang: hreflangMap[l],
+  hreflang: htmlLangs[l],
   href: new URL(l === 'en' ? cleanPath : `/${l}${cleanPath}`, siteConfig.url).href,
 }));
 
 ---
 
-<html lang={locale} class="no-transition">
+<html lang={htmlLangs[locale]} class="no-transition">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -90,7 +83,9 @@ const alternateUrls = locales.map((l) => ({
     <meta name="description" content={description} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
     <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:site_name" content={siteConfig.name} />
     <meta property="og:type" content={article ? 'article' : 'website'} />
     {article && (
       <Fragment>
@@ -107,13 +102,13 @@ const alternateUrls = locales.map((l) => ({
     <meta name="twitter:image" content={ogImageUrl} />
     {jsonLd && Array.isArray(jsonLd) ? (
       jsonLd.map((item) => (
-        <script type="application/ld+json" set:html={JSON.stringify(item)} />
+        <script is:inline type="application/ld+json" set:html={JSON.stringify(item)} />
       ))
     ) : jsonLd ? (
-      <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+      <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
     ) : null}
     <Analytics />
-    <Crisp />
+    {enableCrisp && <Crisp locale={locale} />}
     <script is:inline define:vars={{ defaultMode: siteConfig.ui.defaultMode }}>
       (function () {
         try {
@@ -125,19 +120,10 @@ const alternateUrls = locales.map((l) => ({
           var resolved = theme === 'system' ? systemTheme : theme;
           document.documentElement.classList.add(resolved);
         } catch (e) {
-          document.documentElement.classList.add(defaultMode);
-        }
-      })();
-    </script>
-    <script is:inline define:vars={{ currentLocale: locale }}>
-      (function () {
-        // Auto-redirect if user previously selected a different locale
-        var preferred = localStorage.getItem('preferred-locale');
-        if (preferred && preferred !== currentLocale) {
-          var path = window.location.pathname;
-          var clean = path.replace(/^\/(en|zh-hans|zh-hant|ko|fr|de|it|es|ru|id|pt-br)/, '') || '/';
-          var newPath = preferred === 'en' ? clean : '/' + preferred + clean;
-          window.location.replace(newPath);
+          var fallback = defaultMode === 'system'
+            ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+            : defaultMode;
+          document.documentElement.classList.add(fallback);
         }
       })();
     </script>

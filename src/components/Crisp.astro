@@ -4,15 +4,28 @@
  * To test locally, set PUBLIC_CRISP_ENABLE_IN_DEV=true in .env.
  */
 import { siteConfig } from '@/config/site';
+import type { Locale } from '@/i18n';
 
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
 const crispId = siteConfig.crisp.websiteId;
 const shouldEnable =
   Boolean(crispId) &&
   (import.meta.env.PROD || import.meta.env.PUBLIC_CRISP_ENABLE_IN_DEV === 'true');
+const crispLocaleMap: Record<Locale, string> = {
+  en: 'en',
+  'zh-hans': 'zh',
+  'zh-hant': 'zh',
+  ko: 'ko',
+};
+const crispLocale = crispLocaleMap[locale];
 ---
 
 {shouldEnable && (
-  <script is:inline define:vars={{ crispId }}>
+  <script is:inline define:vars={{ crispId, crispLocale }}>
     (function () {
       var loaded = false;
       var idleId;
@@ -38,6 +51,7 @@ const shouldEnable =
         loaded = true;
         cleanup();
 
+        window.CRISP_RUNTIME_CONFIG = { locale: crispLocale };
         window.$crisp = window.$crisp || [];
         window.CRISP_WEBSITE_ID = crispId;
 

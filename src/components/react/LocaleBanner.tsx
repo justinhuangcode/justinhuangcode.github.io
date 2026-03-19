@@ -17,13 +17,6 @@ function detectLocale(): Locale | null {
     return 'zh-hans';
   }
   if (code === 'ko') return 'ko';
-  if (code === 'fr') return 'fr';
-  if (code === 'de') return 'de';
-  if (code === 'it') return 'it';
-  if (code === 'es') return 'es';
-  if (code === 'ru') return 'ru';
-  if (code === 'id' || code === 'ms') return 'id';
-  if (code === 'pt') return 'pt-br';
   if (code === 'en') return 'en';
   return null;
 }
@@ -40,7 +33,7 @@ export default function LocaleBanner({ currentLocale, currentPath, allMessages }
   const bannerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Already has a preference → auto-redirect handled by inline script
+    // Already has a preference
     if (localStorage.getItem(PREFERRED_KEY)) return;
 
     // Dismissed within this session

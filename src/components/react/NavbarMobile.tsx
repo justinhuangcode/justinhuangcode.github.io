@@ -16,6 +16,11 @@ interface NavbarMobileProps {
   logoDark: string;
   navLinks: NavLink[];
   languageLabel?: string;
+  modeLabels?: {
+    light: string;
+    dark: string;
+    system: string;
+  };
 }
 
 export default function NavbarMobile({
@@ -26,6 +31,7 @@ export default function NavbarMobile({
   logoDark,
   navLinks,
   languageLabel = 'Language',
+  modeLabels = { light: 'Light', dark: 'Dark', system: 'System' },
 }: NavbarMobileProps) {
   const [open, setOpen] = useState(false);
 
@@ -47,7 +53,7 @@ export default function NavbarMobile({
   return (
     <div className="lg:hidden">
       <div className="flex items-center justify-between">
-        <a href="/" className="flex items-center gap-2">
+        <a href={getLocalizedPath('/', locale)} className="flex items-center gap-2">
           <img
             src={logoLight}
             alt={siteName}
@@ -120,6 +126,7 @@ export default function NavbarMobile({
                   <a
                     key={loc}
                     href={getLocalizedPath(currentPath, loc)}
+                    onClick={() => localStorage.setItem('preferred-locale', loc)}
                     className={`rounded-md px-3 py-1.5 text-sm transition-colors ${
                       loc === locale
                         ? 'bg-muted font-semibold text-foreground'
@@ -139,7 +146,7 @@ export default function NavbarMobile({
                   type="button"
                   onClick={() => setTheme('light')}
                   className="rounded-full p-1.5 hover:bg-accent transition-colors"
-                  aria-label="Light mode"
+                  aria-label={modeLabels.light}
                 >
                   <IconSun className="size-4" />
                 </button>
@@ -147,7 +154,7 @@ export default function NavbarMobile({
                   type="button"
                   onClick={() => setTheme('dark')}
                   className="rounded-full p-1.5 hover:bg-accent transition-colors"
-                  aria-label="Dark mode"
+                  aria-label={modeLabels.dark}
                 >
                   <IconMoon className="size-4" />
                 </button>
@@ -155,7 +162,7 @@ export default function NavbarMobile({
                   type="button"
                   onClick={() => setTheme('system')}
                   className="rounded-full p-1.5 hover:bg-accent transition-colors"
-                  aria-label="System mode"
+                  aria-label={modeLabels.system}
                 >
                   <IconMonitor className="size-4" />
                 </button>

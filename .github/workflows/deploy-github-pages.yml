@@ -33,10 +33,10 @@ jobs:
           cache: pnpm
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
-      - name: Build
-        run: pnpm build
+      - name: Validate
+        run: pnpm validate
         env:
           PUBLIC_GA_ID: ${{ secrets.PUBLIC_GA_ID }}
           PUBLIC_CRISP_WEBSITE_ID: ${{ secrets.PUBLIC_CRISP_WEBSITE_ID }}

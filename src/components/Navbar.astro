@@ -1,6 +1,5 @@
 ---
 import Container from './Container.astro';
-import Logo from './Logo.astro';
 import { siteConfig } from '@/config/site';
 import { getMessages, getLocalizedPath, type Locale } from '@/i18n';
 import ModeSwitcher from '@/components/react/ModeSwitcher';
@@ -25,7 +24,7 @@ const currentPath = Astro.url.pathname;
       class="hidden lg:flex lg:items-center lg:justify-between"
     >
       <a
-        href="/"
+        href={getLocalizedPath('/', locale)}
         aria-label="Home"
         class="text-[18px] font-semibold leading-5 py-[15px] pr-[15px] text-[var(--color-nav-text-active)] hover:text-[var(--color-nav-text-hover)]"
       >
@@ -60,7 +59,7 @@ const currentPath = Astro.url.pathname;
         </ul>
 
         <div class="flex items-center gap-1 ml-2">
-          <ModeSwitcher client:idle />
+          <ModeSwitcher client:idle labels={m.common.mode} />
           <LanguageSwitcher client:idle currentLocale={locale} currentPath={currentPath} />
         </div>
       </div>
@@ -75,6 +74,7 @@ const currentPath = Astro.url.pathname;
       logoDark={siteConfig.images.logoDark}
       navLinks={siteConfig.nav.map((item) => ({ title: m.nav[item.labelKey], href: getLocalizedPath(item.href, locale) }))}
       languageLabel={m.common.language}
+      modeLabels={m.common.mode}
     />
   </Container>
 </header>

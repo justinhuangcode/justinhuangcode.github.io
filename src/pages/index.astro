@@ -1,49 +1,8 @@
 ---
-import Layout from '@/layouts/Layout.astro';
-import Container from '@/components/Container.astro';
-import BlogGrid from '@/components/BlogGrid.astro';
-import BlogCard from '@/components/BlogCard.astro';
-import BlogPagination from '@/components/BlogPagination.astro';
-import { siteConfig } from '@/config/site';
-import { getPostsByLocale, getSlug } from '@/lib/posts';
+import BlogIndexPage from '@/components/pages/BlogIndexPage.astro';
+import { getPaginatedPosts } from '@/lib/site-content';
 
-const pageSize = siteConfig.blog.paginationSize;
-const allPosts = await getPostsByLocale('en');
-const totalPages = Math.ceil(allPosts.length / pageSize);
-const currentPage = 1;
-const posts = allPosts.slice(0, pageSize);
-const websiteJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'WebSite',
-  name: siteConfig.name,
-  description: siteConfig.description,
-  url: siteConfig.url,
-  inLanguage: 'en',
-  potentialAction: {
-    '@type': 'SearchAction',
-    target: `${siteConfig.url}/?q={search_term_string}`,
-    'query-input': 'required name=search_term_string',
-  },
-};
+const { posts, totalPages } = await getPaginatedPosts('en', 1);
 ---
 
-<Layout jsonLd={websiteJsonLd}>
-  <Container class="px-4">
-    <div class="mt-8">
-      <BlogGrid>
-        {
-          posts.map((post) => (
-            <BlogCard
-              slug={getSlug(post.id)}
-              title={post.data.title}
-              date={post.data.date}
-              locale="en-US"
-              pinned={post.data.pinned}
-            />
-          ))
-        }
-      </BlogGrid>
-    </div>
-    <BlogPagination currentPage={currentPage} totalPages={totalPages} />
-  </Container>
-</Layout>
+<BlogIndexPage locale="en" currentPage={1} posts={posts} totalPages={totalPages} />

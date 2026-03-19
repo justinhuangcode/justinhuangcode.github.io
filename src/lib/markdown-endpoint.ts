@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { getPostsByLocale, getSlug } from '@/lib/posts';
 import type { Locale } from '@/i18n';
@@ -16,7 +16,9 @@ export function createMarkdownStaticPaths(locale: Locale) {
 }
 
 export function createMarkdownResponse(postId: string) {
-  const filePath = resolve(CONTENT_DIR, `${postId}.md`);
+  const mdPath = resolve(CONTENT_DIR, `${postId}.md`);
+  const mdxPath = resolve(CONTENT_DIR, `${postId}.mdx`);
+  const filePath = existsSync(mdxPath) ? mdxPath : mdPath;
   const raw = readFileSync(filePath, 'utf-8');
 
   return new Response(raw, {

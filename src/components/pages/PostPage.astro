@@ -1,36 +1,41 @@
 ---
-import Tag from '@/components/Tag.astro';
-import CategoryPill from '@/components/CategoryPill.astro';
-import Giscus from '@/components/Giscus.astro';
+import { render } from 'astro:content';
 import ArrowLeft from '@/components/icons/ArrowLeft.astro';
 import ArrowRight from '@/components/icons/ArrowRight.astro';
-import Layout from '@/layouts/Layout.astro';
+import BlogCoverImage from '@/components/BlogCoverImage.astro';
+import CategoryPill from '@/components/CategoryPill.astro';
 import Container from '@/components/Container.astro';
+import Giscus from '@/components/Giscus.astro';
+import Layout from '@/layouts/Layout.astro';
 import Prose from '@/components/Prose.astro';
 import TableOfContents from '@/components/TableOfContents.astro';
-import { render } from 'astro:content';
-import { formatDate, wordCount, readingTime } from '@/lib/formatter';
+import Tag from '@/components/Tag.astro';
 import { siteConfig } from '@/config/site';
-import { getMessages } from '@/i18n';
-import { getPostsByLocale, getSlug } from '@/lib/posts';
-import BlogCoverImage from '@/components/BlogCoverImage.astro';
+import { formatDate, readingTime, wordCount } from '@/lib/formatter';
+import { getSlug, type PostEntry } from '@/lib/posts';
+import {
+  getLocaleHomePath,
+  getPostMarkdownPath,
+  getPostOgImagePath,
+  getPostPath,
+  toAbsoluteSiteUrl,
+} from '@/lib/site-content';
+import { getMessages, type Locale } from '@/i18n';
 
-export async function getStaticPaths() {
-  const posts = await getPostsByLocale('zh-hant');
-  return posts.map((post, i) => ({
-    params: { slug: getSlug(post.id) },
-    props: {
-      post,
-      prevPost: i < posts.length - 1 ? posts[i + 1] : null,
-      nextPost: i > 0 ? posts[i - 1] : null,
-    },
-  }));
+interface Props {
+  locale: Locale;
+  post: PostEntry;
+  prevPost: PostEntry | null;
+  nextPost: PostEntry | null;
 }
 
-const { post, prevPost, nextPost } = Astro.props;
+const { locale, post, prevPost, nextPost } = Astro.props;
 const { Content, headings } = await render(post);
-const m = getMessages('zh-hant');
-const postUrl = `${siteConfig.url}/zh-hant/posts/${getSlug(post.id)}/`;
+const m = getMessages(locale);
+const slug = getSlug(post.id);
+const postPath = getPostPath(locale, slug);
+const postUrl = toAbsoluteSiteUrl(postPath);
+const homeUrl = toAbsoluteSiteUrl(getLocaleHomePath(locale));
 const articleJsonLd = [
   {
     '@context': 'https://schema.org',
@@ -46,51 +51,56 @@ const articleJsonLd = [
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: siteConfig.name, item: `${siteConfig.url}/zh-hant` },
-      { '@type': 'ListItem', position: 2, name: m.nav.blog, item: `${siteConfig.url}/zh-hant` },
+      { '@type': 'ListItem', position: 1, name: siteConfig.name, item: homeUrl },
+      { '@type': 'ListItem', position: 2, name: m.nav.blog, item: homeUrl },
       { '@type': 'ListItem', position: 3, name: post.data.title, item: postUrl },
     ],
   },
-];
-const slug = getSlug(post.id);
-const alternateFormats = [
-  { type: 'text/markdown', href: `/zh-hant/posts/${slug}.md`, title: `${post.data.title} (Markdown)` },
 ];
 ---
 
 <Layout
   title={`${post.data.title} | ${siteConfig.name}`}
   description={post.data.description}
-  image={post.data.image ?? `/og/zh-hant/${getSlug(post.id)}.png`}
+  image={post.data.image ?? getPostOgImagePath(locale, slug)}
   jsonLd={articleJsonLd}
+  enableCrisp={false}
   article={{
     publishedTime: post.data.date.toISOString(),
     author: siteConfig.author.name,
     tags: post.data.tags,
   }}
-  alternateFormats={alternateFormats}
+  alternateFormats={[
+    {
+      type: 'text/markdown',
+      href: getPostMarkdownPath(locale, slug),
+      title: `${post.data.title} (Markdown)`,
+    },
+  ]}
 >
   <Container class="py-16 px-4">
     <div class="xl:grid xl:grid-cols-[1fr_220px] xl:gap-8">
       <article>
         <div class="mb-4 flex flex-wrap items-center gap-2">
-          <CategoryPill category={post.data.category} locale="zh-hant" />
-          {post.data.tags && post.data.tags.map((tag: string) => <Tag tag={tag} locale="zh-hant" />)}
+          <CategoryPill category={post.data.category} locale={locale} />
+          {post.data.tags?.map((tag) => <Tag tag={tag} locale={locale} />)}
         </div>
 
-        <h1 class="text-[31px] font-semibold mb-4 leading-[1.4] max-md:text-xl text-[var(--color-link)]">{post.data.title}</h1>
+        <h1 class="text-xl sm:text-2xl md:text-[31px] font-semibold mb-4 leading-[1.4] text-[var(--color-link)] break-words">{post.data.title}</h1>
 
-        <div class="mb-8 flex items-center gap-3 text-muted-foreground/60 text-xs font-mono" title={m.blog.readingTimeTooltip.replace('{words}', String(wordCount(post.body ?? ''))).replace('{minutes}', String(readingTime(post.body ?? '')))}>
+        <div class="mb-8 flex flex-wrap items-center gap-x-3 gap-y-1 text-muted-foreground/60 text-xs font-mono" title={m.blog.readingTimeTooltip.replace('{words}', String(wordCount(post.body ?? ''))).replace('{minutes}', String(readingTime(post.body ?? '')))}>
           <span>{formatDate(post.data.date)}</span>
           <span>·</span>
-          <span>{wordCount(post.body ?? '')}{m.blog.wordCount}</span>
+          <span>{wordCount(post.body ?? '')} {m.blog.wordCount}</span>
           <span>·</span>
-          <span>{readingTime(post.body ?? '')}{m.blog.minRead}</span>
+          <span>{readingTime(post.body ?? '')} {m.blog.minRead}</span>
         </div>
 
         {
           post.data.description && (
-            <p class="mt-4 text-muted-foreground text-lg leading-relaxed">{post.data.description}</p>
+            <p class="mt-4 text-muted-foreground text-lg leading-relaxed">
+              {post.data.description}
+            </p>
           )
         }
 
@@ -112,11 +122,11 @@ const alternateFormats = [
           <span class="flex-1 border-t border-border"></span>
         </div>
 
-        <nav class="mt-6 flex items-stretch justify-between gap-4">
+        <nav class="mt-6 flex flex-col sm:flex-row items-stretch justify-between gap-4">
           {prevPost ? (
             <a
-              href={`/zh-hant/posts/${getSlug(prevPost.id)}/`}
-              class="group flex flex-col items-start text-sm hover:text-foreground max-w-[45%]"
+              href={getPostPath(locale, getSlug(prevPost.id))}
+              class="group flex flex-col items-start text-sm hover:text-foreground sm:max-w-[45%] py-2"
             >
               <span class="inline-flex items-center gap-1 text-muted-foreground group-hover:text-foreground">
                 <ArrowLeft class="size-3.5" />
@@ -127,8 +137,8 @@ const alternateFormats = [
           ) : <span />}
           {nextPost ? (
             <a
-              href={`/zh-hant/posts/${getSlug(nextPost.id)}/`}
-              class="group flex flex-col items-end text-sm hover:text-foreground max-w-[45%] ml-auto"
+              href={getPostPath(locale, getSlug(nextPost.id))}
+              class="group flex flex-col items-start sm:items-end text-sm hover:text-foreground sm:max-w-[45%] sm:ml-auto py-2"
             >
               <span class="inline-flex items-center gap-1 text-muted-foreground group-hover:text-foreground">
                 {m.blog.nextPost}
@@ -139,7 +149,7 @@ const alternateFormats = [
           ) : <span />}
         </nav>
 
-        <Giscus locale="zh-hant" />
+        <Giscus locale={locale} />
       </article>
       <TableOfContents headings={headings} label={m.blog.onThisPage} />
     </div>

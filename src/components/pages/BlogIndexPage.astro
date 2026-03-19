@@ -1,0 +1,42 @@
+---
+import BlogCard from '@/components/BlogCard.astro';
+import BlogGrid from '@/components/BlogGrid.astro';
+import BlogPagination from '@/components/BlogPagination.astro';
+import Container from '@/components/Container.astro';
+import Layout from '@/layouts/Layout.astro';
+import { getLocaleBasePath, type Locale } from '@/i18n';
+import { getSlug, type PostEntry } from '@/lib/posts';
+import { buildWebsiteJsonLd } from '@/lib/site-content';
+
+interface Props {
+  locale: Locale;
+  currentPage: number;
+  posts: PostEntry[];
+  totalPages: number;
+}
+
+const { locale, currentPage, posts, totalPages } = Astro.props;
+const basePath = getLocaleBasePath(locale);
+const websiteJsonLd = buildWebsiteJsonLd(locale);
+---
+
+<Layout jsonLd={websiteJsonLd}>
+  <Container class="px-4">
+    <div class="mt-8">
+      <BlogGrid>
+        {
+          posts.map((post) => (
+            <BlogCard
+              slug={getSlug(post.id)}
+              title={post.data.title}
+              date={post.data.date}
+              basePath={basePath}
+              pinned={post.data.pinned}
+            />
+          ))
+        }
+      </BlogGrid>
+    </div>
+    <BlogPagination currentPage={currentPage} totalPages={totalPages} basePath={basePath || '/'} />
+  </Container>
+</Layout>

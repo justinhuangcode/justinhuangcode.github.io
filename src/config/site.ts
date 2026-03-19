@@ -20,14 +20,13 @@ export interface FooterSection {
 export const siteConfig = {
   name: 'Justin Huang',
   title: 'Justin Huang blog',
-  description:
-    'Justin Huang blog',
+  description: 'Justin Huang blog',
   author: {
     name: 'Justin Huang',
     avatar: '' as ImageMetadata | string, // Import from src/assets/ for optimization, or use URL string
   },
   url: 'https://justinhuangcode.github.io',
-  ogImage: '/og.png',
+  ogImage: '/og/index.png',
   images: {
     logoLight: '/logo.svg',
     logoDark: '/logo-dark.svg',
@@ -46,6 +45,7 @@ export const siteConfig = {
   ] satisfies SocialLink[],
   blog: {
     paginationSize: 20,
+    timeZone: 'Asia/Shanghai',
   },
   analytics: {
     googleAnalyticsId: import.meta.env.PUBLIC_GA_ID || '',
@@ -54,7 +54,7 @@ export const siteConfig = {
     websiteId: import.meta.env.PUBLIC_CRISP_WEBSITE_ID || '',
   },
   ui: {
-    defaultMode: 'dark' as const,
+    defaultMode: 'system' as const,
     enableModeSwitch: true,
   },
   giscus: {

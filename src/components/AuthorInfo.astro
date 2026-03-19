@@ -12,13 +12,23 @@ const { name, avatar } = siteConfig.author;
 
 <div class:list={['flex items-center gap-2', className]}>
   {avatar ? (
-    <Image
-      src={avatar}
-      alt={name}
-      width={24}
-      height={24}
-      class="size-6 rounded-full object-cover"
-    />
+    typeof avatar === 'string' ? (
+      <img
+        src={avatar}
+        alt={name}
+        width="24"
+        height="24"
+        class="size-6 rounded-full object-cover"
+      />
+    ) : (
+      <Image
+        src={avatar}
+        alt={name}
+        width={24}
+        height={24}
+        class="size-6 rounded-full object-cover"
+      />
+    )
   ) : (
     <div class="size-6 rounded-full bg-muted flex items-center justify-center text-muted-foreground">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" shape-rendering="geometricPrecision">
