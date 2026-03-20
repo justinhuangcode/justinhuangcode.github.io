@@ -3,7 +3,7 @@ title: "Technical Report Reading: Attention Residuals"
 date: "2026-03-19T16:49:27+08:00"
 category: "Technical Report Reading"
 description: "A reading of Kimi Team's Attention Residuals technical report: why residual connections should become attention-like too, and how Full AttnRes / Block AttnRes turn that idea into a trainable, deployable system"
-tags: [technical-report-reading, residual-connections, transformer, AI, LLM, rust]
+tags: [technical-report-reading, residual-connections, transformer, AI, LLM, python]
 pinned: false
 ---
 
@@ -100,33 +100,24 @@ That means the input dependence does not vanish. It just lives in the layer repr
 Third, **the keys are normalized with RMSNorm first.**  
 This is a small but important choice. Without normalization, layers with larger magnitudes would automatically dominate the dot products. Then the attention weights would reflect "which layer is louder" more than "which layer is more relevant."
 
-In Rust-style pseudocode, it looks like this:
+In Python (using PyTorch), one clean implementation looks like this:
 
-```rust
-// Rust
+```python
+import torch
+from torch import nn
 
-fn attention_residual(
-    sources: &[Tensor],   // embedding + all previous layer outputs
-    pseudo_query: &Tensor, // current layer's learned vector w_l
-    norm: &RmsNorm,
-) -> Tensor {
-    let keys: Vec<Tensor> = sources
-        .iter()
-        .map(|x| norm.forward(x))
-        .collect();
 
-    let logits: Vec<Tensor> = keys
-        .iter()
-        .map(|k| pseudo_query.dot(k))
-        .collect();
+def attention_residual(
+    sources: list[torch.Tensor],
+    pseudo_query: torch.Tensor,
+    norm: nn.RMSNorm,
+) -> torch.Tensor:
+    keys = torch.stack([norm(source) for source in sources], dim=0)
+    values = torch.stack(sources, dim=0)
 
-    let weights = Tensor::stack(&logits, 0).softmax(0);
-
-    weights
-        .iter()
-        .zip(sources.iter())
-        .fold(Tensor::zeros_like(&sources[0]), |acc, (w, v)| acc + w * v)
-}
+    logits = keys @ pseudo_query
+    weights = torch.softmax(logits, dim=0)
+    return (weights.unsqueeze(-1) * values).sum(dim=0)
 ```
 
 At first glance, this looks like "put attention on top of residuals." But I think a more accurate description is:

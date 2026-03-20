@@ -2,8 +2,8 @@
 title: "論文共讀：《Scaling Laws for Neural Language Models》（神經語言模型的縮放定律）"
 date: "2026-03-01T16:45:39+08:00"
 category: "Paper Reading"
-description: 規模的數學：為什麼更大的模型可預測地更好，附 Rust 複現核心程式碼
-tags: [paper-reading, scaling-laws, AI, LLM, rust]
+description: 規模的數學：為什麼更大的模型可預測地更好，附真實 Python 核心程式碼
+tags: [paper-reading, scaling-laws, AI, LLM, python]
 pinned: false
 ---
 
@@ -57,34 +57,21 @@ pinned: false
 
 關鍵洞察：這些是冪律，不是對數曲線。對數曲線很快就會趨平：輸入翻倍，輸出幾乎不動。冪律則大方得多：至少在論文測量到的區間內，性能沒有出現明顯「撞牆」，而是持續沿著冪律改善。論文也提醒了：這個趨勢不可能無限延伸到零損失，最終一定會變平：但在觀測範圍內，趨勢乾淨俐落。
 
-```rust
-// Rust
+```python
+def power_law_loss(x: float, x_c: float, alpha: float) -> float:
+    return (x_c / x) ** alpha
 
-/// Power-law scaling: loss as a function of a single variable
-/// L(x) = (x_c / x)^alpha
-/// On a log-log plot, this is a straight line with slope -alpha
-fn power_law_loss(x: f64, x_c: f64, alpha: f64) -> f64 {
-    (x_c / x).powf(alpha)
-}
 
-/// The three scaling laws from the paper
-fn scaling_laws() {
-    let alpha_n = 0.076;  // exponent for model size
-    let alpha_d = 0.095;  // exponent for dataset size
-    let alpha_c = 0.050;  // exponent for compute
+def scaling_law_examples() -> dict[str, float]:
+    alpha_n = 0.076
+    alpha_d = 0.095
+    alpha_c = 0.050
 
-    // Example: if you 10x the number of parameters
-    let improvement_n = (10.0_f64).powf(alpha_n);
-    // loss decreases by a factor of ~1.19 (about 19% better)
-
-    // Example: if you 10x the dataset
-    let improvement_d = (10.0_f64).powf(alpha_d);
-    // loss decreases by a factor of ~1.24 (about 24% better)
-
-    // Example: if you 10x the compute
-    let improvement_c = (10.0_f64).powf(alpha_c);
-    // loss decreases by a factor of ~1.12 (about 12% better)
-}
+    return {
+        "10x_params": 10.0 ** alpha_n,
+        "10x_data": 10.0 ** alpha_d,
+        "10x_compute": 10.0 ** alpha_c,
+    }
 ```
 
 指數本身就說明了問題。資料集大小（α = 0.095）每多一個量級帶來的提升最大。模型大小（α = 0.076）次之。算力（α = 0.050）最小：因為如果不合理分配算力到模型大小和訓練時長上，單純堆算力是浪費的。真正的槓桿在於擴大正確的東西。
@@ -97,32 +84,23 @@ fn scaling_laws() {
 
 一個只有 2 層但隱藏維度巨大的 Transformer？和一個 40 層但隱藏維度很小的 Transformer 損失差不多：前提是非嵌入參數預算接近。
 
-```rust
-// Rust
+```python
+from dataclasses import dataclass
 
-/// The paper's finding: architecture shape has minimal effect on performance
-/// What matters is the total number of non-embedding parameters
-struct ArchitectureExperiment {
-    n_layers: usize,
-    d_model: usize,
-    n_heads: usize,
-    d_ff: usize,
-}
 
-fn non_embedding_params(config: &ArchitectureExperiment) -> u64 {
-    let n = config.n_layers as u64;
-    let d = config.d_model as u64;
-    let ff = config.d_ff as u64;
-    // Each Transformer layer has:
-    // - attention: 4 * d_model^2 parameters (Q, K, V projections + output projection)
-    // - feed-forward: 2 * d_model * d_ff parameters (two linear layers)
-    // - layer norms: 4 * d_model parameters
-    n * (4 * d * d + 2 * d * ff + 4 * d)
-}
+@dataclass(frozen=True)
+class ArchitectureExperiment:
+    n_layers: int
+    d_model: int
+    n_heads: int
+    d_ff: int
 
-// The point: two configs with different shapes but same non_embedding_params()
-// will have approximately the same test loss.
-// Architecture is not destiny. Scale is.
+
+def non_embedding_params(config: ArchitectureExperiment) -> int:
+    n = config.n_layers
+    d = config.d_model
+    d_ff = config.d_ff
+    return n * (4 * d * d + 2 * d * d_ff + 4 * d)
 ```
 
 這有一個深遠的含義：你不需要花好幾個禮拜去搜尋「最優」架構。選一個合理的 Transformer 形狀，然後把精力集中在把它做大就好。論文之所以把 embedding 參數從 N 中排除，是因為他們發現 embedding 參數對性能的貢獻遠小於非 embedding 參數：模型的「思考」能力在 Transformer 層裡，不在詞表裡。
@@ -141,31 +119,18 @@ fn non_embedding_params(config: &ArchitectureExperiment) -> u64 {
 
 白話翻譯：模型越大，需要的資料就越多：但增長是次線性的。大 10 倍的模型只需要約 10^0.74 ≈ 5.5 倍的資料。更大的模型樣本效率更高：它們能從每個訓練詞元中提取更多資訊。
 
-```rust
-// Rust
+```python
+def loss_nd(n_params: float, n_tokens: float) -> float:
+    n_c = 8.8e13
+    d_c = 5.4e13
+    alpha_n = 0.076
+    alpha_d = 0.095
+    ratio = alpha_n / alpha_d
+    return ((n_c / n_params) ** ratio + d_c / n_tokens) ** alpha_d
 
-/// The paper's unified two-variable loss formula
-/// L(N, D) = [(N_c / N)^(alpha_N / alpha_D) + D_c / D]^alpha_D
-fn loss_nd(n_params: f64, n_tokens: f64) -> f64 {
-    let n_c = 8.8e13;       // reference constant for model size
-    let d_c = 5.4e13;       // reference constant for dataset size
-    let alpha_n = 0.076;
-    let alpha_d = 0.095;
-    let ratio = alpha_n / alpha_d;
-    ((n_c / n_params).powf(ratio) + d_c / n_tokens).powf(alpha_d)
-}
 
-/// Rough overfitting threshold from the paper
-/// D_min ≈ 5000 * N^0.74
-fn min_dataset_tokens(n_params: f64) -> f64 {
-    5000.0 * n_params.powf(0.74)
-}
-
-/// Example: for a 1B parameter model
-/// min_dataset_tokens(1e9) ≈ 5000 * (1e9)^0.74 ≈ 2.3 × 10^10 tokens (~23B tokens)
-///
-/// For a 175B parameter model (GPT-3 scale)
-/// min_dataset_tokens(175e9) ≈ 5000 * (175e9)^0.74 ≈ ~1.0 × 10^12 tokens (~1T tokens)
+def min_dataset_tokens(n_params: float) -> float:
+    return 5_000.0 * n_params ** 0.74
 ```
 
 按這條關係粗略推算，175B 級別模型要把過擬合壓在論文討論的閾值附近，資料量應接近兆級 token。反過來看，GPT-3 的 3000 億詞元其實並不充裕。這也說明「模型多大、資料餵多少」並不是拍腦袋，而是有可分析的權衡：後來業界重新審視這個配比（最典型的就是 Chinchilla 論文，Hoffmann 等人，2022 年），正是因為意識到了許多大模型的資料其實不夠。
@@ -186,35 +151,28 @@ fn min_dataset_tokens(n_params: f64) -> f64 {
 
 違反直覺的地方在於：**你應該訓練非常大的模型，然後在遠未收斂之前就停下來。** 大多數人的本能是把一個小模型徹底訓練到收斂。縮放定律說的恰好相反：在相同的算力預算下，一個部分訓練的大模型優於一個完全訓練的小模型。
 
-```rust
-// Rust
+```python
+from dataclasses import dataclass
 
-/// Compute-optimal allocation: given a compute budget C,
-/// how to distribute it across model size, batch size, and training steps
-struct ComputeAllocation {
-    n_params: f64,        // model parameters
-    batch_size: f64,      // tokens per batch
-    training_steps: f64,  // number of optimization steps
-}
 
-fn optimal_allocation(compute: f64) -> ComputeAllocation {
-    // These exponents are from the paper's empirical fits
-    ComputeAllocation {
-        n_params: compute.powf(0.73),       // most of the budget goes to model size
-        batch_size: compute.powf(0.24),      // batch size scales slowly
-        training_steps: compute.powf(0.03),  // training steps barely change
-    }
-}
+@dataclass(frozen=True)
+class ComputeAllocation:
+    n_params: float
+    batch_size: float
+    training_steps: float
 
-/// The implication: compute-efficient frontier
-/// For each compute budget, there is ONE optimal model size.
-/// Larger models trained for fewer steps beat smaller models trained to convergence.
-fn is_compute_efficient(n_params: f64, compute: f64) -> bool {
-    let optimal_n = compute.powf(0.73);
-    // If your model is much smaller than optimal, you're wasting compute
-    // on training steps that yield diminishing returns
-    (n_params / optimal_n - 1.0).abs() < 0.5  // within ~50% of optimal
-}
+
+def optimal_allocation(compute: float) -> ComputeAllocation:
+    return ComputeAllocation(
+        n_params=compute ** 0.73,
+        batch_size=compute ** 0.24,
+        training_steps=compute ** 0.03,
+    )
+
+
+def is_compute_efficient(n_params: float, compute: float) -> bool:
+    optimal_n = compute ** 0.73
+    return abs(n_params / optimal_n - 1.0) < 0.5
 ```
 
 這個結果塑造了整個產業。五個月後發表的 GPT-3 直接遵循了這個邏輯：訓練一個在當時規模空前的 1750 億參數模型，而不是把一個小模型徹底訓練完。後來的「Chinchilla」論文（Hoffmann et al., 2022）更新了這些指數，並指出大多數大型模型相對於最優資料分配其實是訓練不足的：但核心洞察，即存在一個可計算的最優權衡，源頭在這裡。
@@ -229,23 +187,9 @@ fn is_compute_efficient(n_params: f64, compute: f64) -> bool {
 
 低於臨界批次大小時，批次翻倍大致能讓訓練時間減半（完美的平行化）。高於臨界批次大小時，批次翻倍幾乎沒有幫助：只是在浪費算力。
 
-```rust
-// Rust
-
-/// Critical batch size: the threshold between compute-efficient and time-efficient training
-/// B_crit(L) ∝ L^(-4.8)
-fn critical_batch_size(loss: f64, b_star: f64, l_star: f64) -> f64 {
-    // b_star and l_star are reference constants from empirical fitting
-    b_star * (l_star / loss).powf(4.8)
-}
-
-/// Below B_crit: each step gives a strong gradient signal.
-///   Doubling batch size ≈ halving training time. Compute stays roughly constant.
-/// Above B_crit: gradient signal per additional sample diminishes.
-///   Doubling batch size barely speeds up training. You're wasting compute.
-///
-/// Practical implication: as training progresses and loss drops,
-/// you can (and should) increase the batch size to maintain efficiency.
+```python
+def critical_batch_size(loss: float, b_star: float, l_star: float) -> float:
+    return b_star * (l_star / loss) ** 4.8
 ```
 
 這是很實用的工程智慧。很多團隊全程使用固定的批次大小。縮放定律告訴你應該隨著訓練推進逐步增大批次：開始用小批次，模型變好後再放大。

@@ -2,8 +2,8 @@
 title: "Paper Reading: Training Compute-Optimal Large Language Models"
 date: "2026-03-11T16:58:04+08:00"
 category: "Paper Reading"
-description: The Chinchilla paper — why most large models were undertrained, and how to spend your compute budget wisely, with core code reimplemented in Rust
-tags: [paper-reading, chinchilla, scaling-laws, AI, LLM, rust]
+description: The Chinchilla paper — why most large models were undertrained, and how to spend your compute budget wisely, with real Python code examples
+tags: [paper-reading, chinchilla, scaling-laws, AI, LLM, python]
 pinned: false
 ---
 
@@ -43,31 +43,13 @@ All three approaches agreed:
 
 > N_opt ∝ C^a, D_opt ∝ C^b, where a ≈ 0.50, b ≈ 0.50
 
-```rust
-// Rust
-
-/// The Chinchilla paper's central finding:
-/// model size and training tokens should scale EQUALLY with compute.
-///
-/// Kaplan et al. (2020) said: N ∝ C^0.73, D ∝ C^0.27 (favor model size)
-/// Chinchilla (2022) says: N ∝ C^0.50, D ∝ C^0.50 (scale both equally)
-fn optimal_scaling(compute: f64) -> (f64, f64) {
-    // Approach 1: a = 0.50, b = 0.50
-    // Approach 2: a = 0.49, b = 0.51
-    // Approach 3: a = 0.46, b = 0.54
-    let a = 0.50;
-    let b = 0.50;
-    let n_opt = compute.powf(a);  // optimal model parameters
-    let d_opt = compute.powf(b);  // optimal training tokens
-    (n_opt, d_opt)
-}
-
-/// What this means in practice:
-/// If your compute budget grows 10x, you should make the model ~3.2x bigger
-/// AND train on ~3.2x more data.
-///
-/// Kaplan would have said: make it ~5.4x bigger, barely increase data.
-/// The difference is enormous at scale.
+```python
+def optimal_scaling(compute: float) -> tuple[float, float]:
+    a = 0.50
+    b = 0.50
+    n_opt = compute ** a
+    d_opt = compute ** b
+    return n_opt, d_opt
 ```
 
 The exponents a ≈ b ≈ 0.5 mean that as compute grows, model size and training data should scale at approximately the same rate. When compute grows 10x, both should increase by roughly 3.2x; when compute doubles, both increase by roughly 1.4x. In other words, for every doubling of model size, the number of training tokens should also double. This directly contradicts Kaplan et al., who said compute should be spent primarily on model size.
@@ -80,36 +62,18 @@ Kaplan et al. used a fixed learning rate schedule that did not adjust for traini
 
 Hoffmann's team adjusted the learning rate schedule for each training run, ensuring each configuration got a fair shot. When you do this, training longer on more data turns out to be much more valuable than Kaplan's numbers suggested.
 
-```rust
-// Rust
+```python
+from dataclasses import dataclass
+from typing import Literal
 
-/// The methodological difference that changed the answer:
-///
-/// Kaplan: fixed learning rate schedule for all runs
-///   → longer training looks worse than it is
-///   → conclusion: spend compute on model size, not training duration
-///
-/// Chinchilla: adjusted learning rate schedule per run
-///   → each run is fairly optimized
-///   → conclusion: spend compute equally on model size and data
-///
-/// This is a reminder that scaling laws are empirical —
-/// they describe behavior under specific experimental conditions.
-/// Change the conditions, change the law.
 
-struct TrainingConfig {
-    n_params: f64,
-    n_tokens: f64,
-    learning_rate_schedule: LRSchedule,
-}
-
-enum LRSchedule {
-    Fixed,               // Kaplan's approach
-    CosineWithWarmup {   // Chinchilla's approach
-        warmup_steps: usize,
-        total_steps: usize,  // adjusted per run
-    },
-}
+@dataclass(frozen=True)
+class TrainingConfig:
+    n_params: float
+    n_tokens: float
+    schedule: Literal["fixed", "cosine_with_warmup"]
+    warmup_steps: int
+    total_steps: int
 ```
 
 ## 4. The Parametric Loss Function
@@ -126,45 +90,27 @@ Where the fitted constants are:
 
 The structure of this equation is worth studying. Loss has three components: a floor you can never get below (E), a penalty for having too few parameters (A/N^α), and a penalty for having too little data (B/D^β). The model-size penalty and data penalty are additive — they compete for your attention and your compute budget.
 
-```rust
-// Rust
+```python
+def estimated_loss(n_params: float, n_tokens: float) -> float:
+    e = 1.69
+    a = 406.4
+    alpha = 0.34
+    b = 410.7
+    beta = 0.28
+    return e + a / (n_params ** alpha) + b / (n_tokens ** beta)
 
-/// Chinchilla's parametric loss function (Approach 3)
-/// L̂(N, D) = E + A / N^α + B / D^β
-fn estimated_loss(n_params: f64, n_tokens: f64) -> f64 {
-    let e = 1.69;       // irreducible loss (entropy of natural language)
-    let a = 406.4;      // model-size coefficient
-    let alpha = 0.34;   // model-size exponent
-    let b = 410.7;      // data coefficient
-    let beta = 0.28;    // data exponent
 
-    e + a / n_params.powf(alpha) + b / n_tokens.powf(beta)
-}
+def optimal_params_and_tokens(compute_flops: float) -> tuple[float, float]:
+    alpha = 0.34
+    beta = 0.28
+    a = beta / (alpha + beta)
+    b = alpha / (alpha + beta)
+    g = 2.0
 
-/// To find compute-optimal allocation, we minimize L̂(N, D)
-/// subject to the constraint C ≈ 6 * N * D (total compute in FLOPs).
-///
-/// Taking derivatives and solving, the optimal allocation is:
-/// N_opt = G * (C / 6)^a        where a = β / (α + β)
-/// D_opt = (1/G) * (C / 6)^b    where b = α / (α + β)
-///
-/// With α = 0.34 and β = 0.28:
-///   a = 0.28 / (0.34 + 0.28) = 0.45
-///   b = 0.34 / (0.34 + 0.28) = 0.55
-///
-/// Close to 0.5 / 0.5 — consistent with Approaches 1 and 2.
-fn optimal_params_and_tokens(compute_flops: f64) -> (f64, f64) {
-    let alpha = 0.34;
-    let beta = 0.28;
-    let a = beta / (alpha + beta);       // ≈ 0.45
-    let b = alpha / (alpha + beta);      // ≈ 0.55
-    let g: f64 = 2.0; // approximate scaling constant G from the paper
-
-    let base = compute_flops / 6.0;
-    let n_opt = g * base.powf(a);
-    let d_opt = (1.0 / g) * base.powf(b);
-    (n_opt, d_opt)
-}
+    base = compute_flops / 6.0
+    n_opt = g * (base ** a)
+    d_opt = (1.0 / g) * (base ** b)
+    return n_opt, d_opt
 ```
 
 ## 5. The Damning Table
@@ -180,48 +126,25 @@ The paper's Table 1 lists the actual parameter counts and training tokens for se
 
 Every single model was trained on roughly 300 billion tokens. But according to Chinchilla's analysis, GPT-3 should have been trained on 3.7 trillion tokens — more than 12 times what it actually saw. Gopher should have seen nearly 6 trillion. MT-NLG, the largest of the bunch at 530 billion parameters, should have been trained on 11 trillion tokens — 40 times its actual training data.
 
-```rust
-// Rust
+```python
+from dataclasses import dataclass
 
-/// Combining Table 1 (actual) and Table 3 (compute-optimal) from the paper
-struct ModelComparison {
-    name: &'static str,
-    params_billions: f64,
-    tokens_used_billions: f64,
-    optimal_tokens_billions: f64,
-}
 
-fn industry_models() -> Vec<ModelComparison> {
-    vec![
-        ModelComparison {
-            name: "GPT-3",
-            params_billions: 175.0,
-            tokens_used_billions: 300.0,
-            optimal_tokens_billions: 3700.0,  // 12x undertrained
-        },
-        ModelComparison {
-            name: "Gopher",
-            params_billions: 280.0,
-            tokens_used_billions: 300.0,
-            optimal_tokens_billions: 5900.0,  // 20x undertrained
-        },
-        ModelComparison {
-            name: "Jurassic-1",
-            params_billions: 178.0,
-            tokens_used_billions: 300.0,
-            optimal_tokens_billions: 3700.0,  // 12x undertrained
-        },
-        ModelComparison {
-            name: "MT-NLG",
-            params_billions: 530.0,
-            tokens_used_billions: 270.0,
-            optimal_tokens_billions: 11000.0, // 40x undertrained
-        },
+@dataclass(frozen=True)
+class ModelComparison:
+    name: str
+    params_billions: float
+    tokens_used_billions: float
+    optimal_tokens_billions: float
+
+
+def industry_models() -> list[ModelComparison]:
+    return [
+        ModelComparison("GPT-3", 175.0, 300.0, 3_700.0),
+        ModelComparison("Gopher", 280.0, 300.0, 5_900.0),
+        ModelComparison("Jurassic-1", 178.0, 300.0, 3_700.0),
+        ModelComparison("MT-NLG", 530.0, 270.0, 11_000.0),
     ]
-}
-
-/// The pattern is unmistakable: the industry converged on ~300B tokens
-/// regardless of model size. Chinchilla says this was wildly insufficient.
 ```
 
 The pattern is striking. The entire industry had settled on roughly the same amount of training data — around 300 billion tokens — regardless of model size. It was as if everyone had decided that 300B tokens was "enough" and poured all additional compute into making models bigger. Chinchilla says this was exactly backwards.
@@ -237,42 +160,25 @@ The result was decisive. Chinchilla outperformed Gopher on nearly every benchmar
 - **Common sense** (HellaSwag): Chinchilla 80.8% vs. Gopher 79.2%
 - **BIG-bench**: Chinchilla outperformed Gopher on the majority of tasks
 
-```rust
-// Rust
+```python
+from dataclasses import dataclass
 
-/// Chinchilla vs. Gopher: same compute, different allocation
-struct ModelConfig {
-    name: &'static str,
-    params_billions: f64,
-    tokens_billions: f64,
-    mmlu_accuracy: f64,
-}
 
-fn chinchilla_vs_gopher() {
-    let gopher = ModelConfig {
-        name: "Gopher",
-        params_billions: 280.0,
-        tokens_billions: 300.0,
-        mmlu_accuracy: 60.0,
-    };
+@dataclass(frozen=True)
+class ModelConfig:
+    name: str
+    params_billions: float
+    tokens_billions: float
+    mmlu_accuracy: float
 
-    let chinchilla = ModelConfig {
-        name: "Chinchilla",
-        params_billions: 70.0,
-        tokens_billions: 1400.0,
-        mmlu_accuracy: 67.6,
-    };
 
-    // Same compute: C ≈ 6 * N * D
-    let gopher_flops = 6.0 * gopher.params_billions * 1e9
-                         * gopher.tokens_billions * 1e9;
-    let chinchilla_flops = 6.0 * chinchilla.params_billions * 1e9
-                             * chinchilla.tokens_billions * 1e9;
-    // gopher_flops ≈ chinchilla_flops ≈ 5.0 × 10^23
+def chinchilla_vs_gopher() -> tuple[float, float]:
+    gopher = ModelConfig("Gopher", 280.0, 300.0, 60.0)
+    chinchilla = ModelConfig("Chinchilla", 70.0, 1_400.0, 67.6)
 
-    // But Chinchilla is 4x smaller, trained on 4.7x more data
-    // Result: better on nearly every benchmark
-}
+    gopher_flops = 6.0 * gopher.params_billions * 1e9 * gopher.tokens_billions * 1e9
+    chinchilla_flops = 6.0 * chinchilla.params_billions * 1e9 * chinchilla.tokens_billions * 1e9
+    return gopher_flops, chinchilla_flops
 ```
 
 A model that is 4 times smaller beating the larger model on nearly every benchmark — using the same compute — is a powerful demonstration. The compute was not wasted; it was simply redirected from parameters to data.
@@ -287,25 +193,17 @@ The Chinchilla paper had immediate, concrete consequences for the industry.
 
 **The LLaMA moment.** Meta's LLaMA (February 2023) was arguably the most direct application of Chinchilla scaling. LLaMA-13B, trained on 1 trillion tokens, outperformed GPT-3 (175B) on most benchmarks. LLaMA-65B, trained on 1.4 trillion tokens, was competitive with Chinchilla and PaLM-540B. Meta explicitly cited the Chinchilla paper and deliberately trained smaller models on far more data than earlier conventions would have suggested.
 
-```rust
-// Rust
+```python
+def inference_cost_comparison() -> tuple[float, float]:
+    gopher_cost_per_token = 280.0
+    chinchilla_cost_per_token = 70.0
 
-/// Why smaller compute-optimal models win at deployment
-fn inference_cost_comparison() {
-    // Rough comparison: cost per token scales approximately linearly with params
-    let gopher_cost_per_token = 280.0;   // arbitrary units
-    let chinchilla_cost_per_token = 70.0; // 4x cheaper
+    queries_per_day = 1_000_000.0
+    tokens_per_query = 500.0
 
-    // Over millions of user queries, the savings compound
-    let queries_per_day: f64 = 1_000_000.0;
-    let tokens_per_query: f64 = 500.0;
-
-    let daily_cost_gopher = queries_per_day * tokens_per_query * gopher_cost_per_token;
-    let daily_cost_chinchilla = queries_per_day * tokens_per_query * chinchilla_cost_per_token;
-
-    // Chinchilla: better performance AND 75% lower serving cost
-    // This is why the paper changed industry behavior so quickly
-}
+    daily_cost_gopher = queries_per_day * tokens_per_query * gopher_cost_per_token
+    daily_cost_chinchilla = queries_per_day * tokens_per_query * chinchilla_cost_per_token
+    return daily_cost_gopher, daily_cost_chinchilla
 ```
 
 ## 8. My Takeaways

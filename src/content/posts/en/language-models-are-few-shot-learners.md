@@ -2,8 +2,8 @@
 title: "Paper Reading: Language Models are Few-Shot Learners"
 date: "2026-02-11T16:22:54+08:00"
 category: "Paper Reading"
-description: Larger models, better at eliciting abilities from context, with core code reimplemented in Rust
-tags: [paper-reading, gpt-3, AI, LLM, rust]
+description: Larger models, better at eliciting abilities from context, with real Python code examples
+tags: [paper-reading, gpt-3, AI, LLM, python]
 pinned: false
 ---
 
@@ -39,48 +39,46 @@ GPT-3's evaluation methodology differed from every large model before it. It def
 
 **Zero-Shot**: no examples at all, just a natural language instruction. This is the hardest setting, but also the most practical — if the model truly "understands" the task itself, it should not need any examples.
 
-```rust
-// Rust
+```python
+from dataclasses import dataclass
+from typing import Union
 
-/// GPT-3's three evaluation settings — all involve only forward inference, no parameter updates
-enum EvalSetting {
-    /// Task description only, no examples
-    ZeroShot {
-        instruction: String,    // "Translate English to French."
-        prompt: String,         // "cheese =>"
-    },
-    /// Task description + one example
-    OneShot {
-        instruction: String,
-        example: (String, String),  // ("sea otter =>", "loutre de mer")
-        prompt: String,
-    },
-    /// Task description + multiple examples (typically 10-100)
-    FewShot {
-        instruction: String,
-        examples: Vec<(String, String)>,  // pack as many as possible into the context window
-        prompt: String,
-    },
-}
 
-fn build_prompt(setting: &EvalSetting) -> String {
-    match setting {
-        EvalSetting::ZeroShot { instruction, prompt } => {
-            format!("{}\n{}", instruction, prompt)
-        }
-        EvalSetting::OneShot { instruction, example, prompt } => {
-            format!("{}\n{} {}\n{}", instruction, example.0, example.1, prompt)
-        }
-        EvalSetting::FewShot { instruction, examples, prompt } => {
-            let mut text = instruction.clone();
-            for (input, output) in examples {
-                text.push_str(&format!("\n{} {}", input, output));
-            }
-            text.push_str(&format!("\n{}", prompt));
-            text
-        }
-    }
-}
+@dataclass
+class ZeroShot:
+    instruction: str
+    prompt: str
+
+
+@dataclass
+class OneShot:
+    instruction: str
+    example: tuple[str, str]
+    prompt: str
+
+
+@dataclass
+class FewShot:
+    instruction: str
+    examples: list[tuple[str, str]]
+    prompt: str
+
+
+EvalSetting = Union[ZeroShot, OneShot, FewShot]
+
+
+def build_prompt(setting: EvalSetting) -> str:
+    if isinstance(setting, ZeroShot):
+        return f"{setting.instruction}\n{setting.prompt}"
+
+    if isinstance(setting, OneShot):
+        example_input, example_output = setting.example
+        return f"{setting.instruction}\n{example_input} {example_output}\n{setting.prompt}"
+
+    lines = [setting.instruction]
+    lines.extend(f"{example_input} {example_output}" for example_input, example_output in setting.examples)
+    lines.append(setting.prompt)
+    return "\n".join(lines)
 ```
 
 The paper calls this capability **in-context learning**: during pre-training, the model implicitly learns patterns for a wide variety of tasks from massive amounts of text; at inference time, examples are concatenated into the context, and the model "recognizes" the current task during the forward pass and completes it. The paper describes this process using the language of "meta-learning" — pre-training is the outer loop, in-context learning is the inner loop.
@@ -106,30 +104,31 @@ What is genuinely different is the scale. The paper trained 8 models of varying 
 
 175 billion parameters, 96 layers, 96 attention heads, hidden dimension of 12288. Context window of 2048 tokens. This scale was unprecedented at the time — over 100 times larger than GPT-2's 1.5 billion parameters.
 
-```rust
-// Rust
+```python
+from dataclasses import dataclass
 
-struct GPT3Config {
-    n_params: u64,       // total parameter count
-    n_layers: usize,     // number of Transformer layers
-    d_model: usize,      // hidden dimension
-    n_heads: usize,      // number of attention heads
-    d_head: usize,       // dimension per head (d_model / n_heads)
-    d_ff: usize,         // feed-forward network dimension (4 * d_model)
-    n_ctx: usize,        // context window length
-}
 
-fn gpt3_175b() -> GPT3Config {
-    GPT3Config {
-        n_params: 175_000_000_000,
-        n_layers: 96,
-        d_model: 12288,
-        n_heads: 96,
-        d_head: 128,       // 12288 / 96
-        d_ff: 49152,       // 12288 * 4
-        n_ctx: 2048,
-    }
-}
+@dataclass(frozen=True)
+class GPT3Config:
+    n_params: int
+    n_layers: int
+    d_model: int
+    n_heads: int
+    d_head: int
+    d_ff: int
+    n_ctx: int
+
+
+def gpt3_175b() -> GPT3Config:
+    return GPT3Config(
+        n_params=175_000_000_000,
+        n_layers=96,
+        d_model=12_288,
+        n_heads=96,
+        d_head=128,
+        d_ff=49_152,
+        n_ctx=2_048,
+    )
 ```
 
 The purpose of training these models was explicit: to validate scaling laws. Earlier work by Kaplan et al. (one of this paper's co-authors) had already shown a smooth power-law relationship between language model loss and parameter count. GPT-3 pushed that hypothesis to 175 billion parameters to see whether in-context learning ability follows the same pattern.
@@ -168,43 +167,40 @@ The paper evaluated across more than twenty datasets, covering 9 major task cate
 
 **Synthetic Tasks**: the paper also designed novel tasks specifically to test in-context learning. For example, giving the model a few examples of "made-up words" (defining a nonexistent word and then using it in a sentence), GPT-3 could correctly learn and use the new word. Three-digit addition was nearly 100% accurate in few-shot (two-digit was also near-perfect), but accuracy dropped sharply at four and five digits.
 
-```rust
-// Rust
+```python
+from typing import Callable, Protocol
 
-/// The core flow of in-context learning — note that the entire process involves no gradient computation
-fn in_context_learning(
-    model: &GPT3,
-    examples: &[(String, String)],  // a few examples
-    query: &str,                     // new input
-) -> String {
-    // Step 1: concatenate examples and query into a single text sequence
-    let mut prompt = String::new();
-    for (input, output) in examples {
-        prompt.push_str(&format!("{} {}\n", input, output));
-    }
-    prompt.push_str(query);
 
-    // Step 2: tokenize
-    let tokens = tokenize(&prompt);  // BPE tokenization, vocabulary ~50,000
+class AutoregressiveModel(Protocol):
+    def forward(self, tokens: list[int]) -> list[list[float]]:
+        ...
 
-    // Step 3: forward inference, generating token by token
-    let mut output_tokens = Vec::new();
-    let mut context = tokens;
 
-    loop {
-        // Forward pass only — no backpropagation, no parameter updates
-        let logits = model.forward(&context);
-        let next_token = sample_from(logits.last().unwrap());
+def in_context_learning(
+    model: AutoregressiveModel,
+    examples: list[tuple[str, str]],
+    query: str,
+    tokenize: Callable[[str], list[int]],
+    decode: Callable[[list[int]], str],
+    sample_from: Callable[[list[float]], int],
+    eos_token: int,
+) -> str:
+    prompt_lines = [f"{example_input} {example_output}" for example_input, example_output in examples]
+    prompt_lines.append(query)
+    prompt = "\n".join(prompt_lines)
 
-        if next_token == EOS_TOKEN {
-            break;
-        }
-        output_tokens.push(next_token);
-        context.push(next_token);
-    }
+    context = tokenize(prompt)
+    output_tokens: list[int] = []
 
-    decode(&output_tokens)
-}
+    while True:
+        logits = model.forward(context)
+        next_token = sample_from(logits[-1])
+        if next_token == eos_token:
+            break
+        output_tokens.append(next_token)
+        context.append(next_token)
+
+    return decode(output_tokens)
 ```
 
 ## 6. Data Contamination

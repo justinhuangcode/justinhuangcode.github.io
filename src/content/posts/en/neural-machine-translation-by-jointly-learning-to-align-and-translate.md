@@ -2,8 +2,8 @@
 title: "Paper Reading: Neural Machine Translation by Jointly Learning to Align and Translate"
 date: "2026-01-11T16:26:19+08:00"
 category: "Paper Reading"
-description: The origin of attention mechanism, with core code reimplemented in Rust
-tags: [paper-reading, attention, AI, LLM, rust]
+description: The origin of attention mechanism, with real Python code examples
+tags: [paper-reading, attention, AI, LLM, python]
 pinned: false
 ---
 
@@ -51,30 +51,26 @@ This is called "additive attention." The decoder state and encoder state each un
 
 This context vector is the key information the decoder extracts from the source sentence when generating the i-th word. The context vector is different for each generated word, because the model focuses on different source positions each time.
 
-In Rust:
+In Python (using PyTorch):
 
-```rust
-// Rust
+```python
+import torch
+from torch import nn
 
-/// Additive attention: Bahdanau style
-fn bahdanau_attention(
-    decoder_state: &Tensor,  // decoder's current state s_{i-1}
-    encoder_outputs: &Tensor, // encoder hidden states at all positions [h_1, ..., h_T]
-    w_a: &Tensor,            // weight matrix W_a
-    u_a: &Tensor,            // weight matrix U_a
-    v_a: &Tensor,            // vector v_a
-) -> (Tensor, Tensor) {
-    // Step 1: compute alignment scores
-    let score = v_a.matmul(
-        &(w_a.matmul(decoder_state) + u_a.matmul(encoder_outputs))
-            .tanh()             // tanh squashes values to [-1, 1]
-    );
-    // Step 2: softmax to get probabilities
-    let weights = score.softmax(-1);
-    // Step 3: weighted sum to get context vector
-    let context = weights.matmul(encoder_outputs.transpose(-2, -1));
-    (context, weights)          // return context vector and attention weights
-}
+
+def bahdanau_attention(
+    decoder_state: torch.Tensor,
+    encoder_outputs: torch.Tensor,
+    w_a: nn.Linear,
+    u_a: nn.Linear,
+    v_a: nn.Linear,
+) -> tuple[torch.Tensor, torch.Tensor]:
+    decoder_features = w_a(decoder_state).unsqueeze(1)
+    encoder_features = u_a(encoder_outputs)
+    scores = v_a(torch.tanh(decoder_features + encoder_features)).squeeze(-1)
+    weights = torch.softmax(scores, dim=-1)
+    context = torch.sum(weights.unsqueeze(-1) * encoder_outputs, dim=1)
+    return context, weights
 ```
 
 Unlike the "dot-product attention" used later in the Transformer (where Q and K are directly dot-producted), this paper uses "additive attention" (each is linearly transformed first, then added together). The two approaches have different characteristics, but dot-product attention is better suited for efficient matrix multiplication; combined with the Transformer's removal of RNN's sequential dependency, attention finally became a core operator that could be massively parallelized.
@@ -85,24 +81,24 @@ A unidirectional RNN reads the sentence left to right, outputting a summary vect
 
 The paper solves this with a bidirectional RNN (BiRNN). One RNN reads left to right, another reads right to left, and then the hidden states from both directions are concatenated. This way, each position's hidden state contains context from both the left and the right.
 
-```rust
-// Rust
+```python
+import torch
+from torch import nn
 
-struct BidirectionalRNN {
-    forward_rnn: RNN,   // reads left to right
-    backward_rnn: RNN,  // reads right to left
-}
 
-impl BidirectionalRNN {
-    fn forward(&self, input: &[Tensor]) -> Vec<Tensor> {
-        let fwd = self.forward_rnn.forward(input);          // forward hidden states
-        let bwd = self.backward_rnn.forward_reversed(input); // backward hidden states
-        // concatenate forward and backward hidden states
-        fwd.iter().zip(bwd.iter())
-            .map(|(f, b)| Tensor::cat(&[f, b], -1))
-            .collect()
-    }
-}
+class BidirectionalRNN(nn.Module):
+    def __init__(self, input_size: int, hidden_size: int) -> None:
+        super().__init__()
+        self.rnn = nn.GRU(
+            input_size=input_size,
+            hidden_size=hidden_size,
+            bidirectional=True,
+            batch_first=True,
+        )
+
+    def forward(self, inputs: torch.Tensor) -> torch.Tensor:
+        outputs, _ = self.rnn(inputs)
+        return outputs
 ```
 
 In the paper, each direction has 1000 hidden units, concatenated to 2000 dimensions. This doubles the parameters compared to a unidirectional RNN, but in return every position can see the full context.
@@ -117,31 +113,41 @@ Putting the encoder and attention mechanism together, the decoder's workflow bec
    - Produces a context vector via weighted sum
    - Combines the context vector, the previously generated word, and the current state to predict the next word
 
-```rust
-// Rust
+```python
+import torch
+from torch import nn
 
-struct AttentionDecoder {
-    rnn: RNN,
-    attention: BahdanauAttention,
-    output_proj: Linear,
-}
 
-impl AttentionDecoder {
-    fn decode_step(
-        &self,
-        prev_word: &Tensor,       // previously generated word
-        prev_state: &Tensor,      // previous hidden state
-        encoder_outputs: &Tensor, // encoder hidden states at all positions
-    ) -> (Tensor, Tensor) {
-        // attention: decide which parts of the source to focus on
-        let (context, _weights) = self.attention.forward(prev_state, encoder_outputs);
-        // RNN state update: fuse context, previous word, and previous state
-        let new_state = self.rnn.step(prev_word, prev_state, &context);
-        // predict probability distribution over next word
-        let output = self.output_proj.forward(&new_state);
-        (output, new_state)
-    }
-}
+class AttentionDecoder(nn.Module):
+    def __init__(self, embedding_dim: int, hidden_size: int, vocab_size: int) -> None:
+        super().__init__()
+        self.rnn = nn.GRU(
+            input_size=embedding_dim + 2 * hidden_size,
+            hidden_size=hidden_size,
+            batch_first=True,
+        )
+        self.w_a = nn.Linear(hidden_size, hidden_size, bias=False)
+        self.u_a = nn.Linear(2 * hidden_size, hidden_size, bias=False)
+        self.v_a = nn.Linear(hidden_size, 1, bias=False)
+        self.output_proj = nn.Linear(hidden_size, vocab_size)
+
+    def decode_step(
+        self,
+        prev_word: torch.Tensor,
+        prev_state: torch.Tensor,
+        encoder_outputs: torch.Tensor,
+    ) -> tuple[torch.Tensor, torch.Tensor]:
+        context, _ = bahdanau_attention(
+            prev_state.squeeze(0),
+            encoder_outputs,
+            self.w_a,
+            self.u_a,
+            self.v_a,
+        )
+        rnn_input = torch.cat([prev_word, context.unsqueeze(1)], dim=-1)
+        output, new_state = self.rnn(rnn_input, prev_state)
+        logits = self.output_proj(output[:, -1, :])
+        return logits, new_state
 ```
 
 The key point: every time the decoder generates a target word, it recomputes the attention distribution. When translating the first word, it might focus on the beginning of the source sentence; when translating the last word, it might focus on the end. This dynamic alignment capability is something the previous fixed-vector architecture simply could not do.
@@ -169,7 +175,7 @@ First, the problem this paper solves is extremely clear: the encoder compresses 
 
 Second, attention in this paper is still a supporting role to the RNN. The encoder is still recurrent (bidirectional RNN), the decoder is still recurrent, and attention merely bridges the two. Three years later, Vaswani et al. asked a far more radical question: if attention works so well, can we throw away the RNN entirely and keep only attention? The answer was the Transformer.
 
-Third, when reimplementing this paper's attention mechanism in Rust, you will notice that its computation is considerably more complex than the Transformer's Scaled Dot-Product Attention. Additive attention requires extra weight matrices W_a, U_a, v_a, while dot-product attention only needs Q and K to be directly multiplied and scaled. Going from "addition" to "multiplication" seems like a small step, but in practice it dramatically simplified the computation and made it far more suitable for efficient matrix operations.
+Third, when rewriting this paper's attention mechanism in real Python, you will notice that its computation is considerably more complex than the Transformer's Scaled Dot-Product Attention. Additive attention requires extra weight matrices W_a, U_a, v_a, while dot-product attention only needs Q and K to be directly multiplied and scaled. Going from "addition" to "multiplication" seems like a small step, but in practice it dramatically simplified the computation and made it far more suitable for efficient matrix operations.
 
 Fourth, Bahdanau was a PhD student at the time, and Bengio was his advisor. A PhD student's paper ended up defining the core component of AI research for the next decade. The attention mechanism started here, was amplified by the Transformer, and ultimately became the foundation of GPT, BERT, and LLaMA.
 

@@ -2,8 +2,8 @@
 title: "Paper Reading: Attention Is All You Need"
 date: "2026-01-06T16:18:46+08:00"
 category: "Paper Reading"
-description: Sharing my understanding of the Transformer paper, with core code reimplemented in Rust
-tags: [paper-reading, transformer, AI, LLM, rust]
+description: Sharing my understanding of the Transformer paper, with real Python code examples
+tags: [paper-reading, transformer, AI, LLM, python]
 pinned: false
 ---
 
@@ -17,7 +17,7 @@ Eight authors, seven companies, spanning AI, blockchain, and biotech.
 
 Nearly nine years later, ChatGPT, Claude, DeepSeek, Qwen -- the underlying architecture of these AI products can almost all be traced back to those 15 pages.
 
-This post is my understanding after reading the paper, with core code reimplemented in Rust. It is not a translation, not a summary. You do not need a technical background to follow along.
+This post is my understanding after reading the paper, with real Python code examples. It is not a translation, not a summary. You do not need a technical background to follow along.
 
 ## 1. The One-Sentence Version
 
@@ -52,23 +52,22 @@ Do not panic at the formula. Let's break it down step by step:
 - **softmax**: converts a set of scores into probabilities that sum to 1. For example, if three words have scores [10, 2, 1], softmax turns them into roughly [0.99, 0.007, 0.003]. The highest-scoring word captures nearly all the attention; the rest are pushed close to zero
 - **x V**: use those probabilities to take a weighted combination of each word's actual content. High-probability words contribute more, low-probability words contribute less. The final output is a new vector that fuses the key information together
 
-In Rust:
+In Python (using PyTorch):
 
-```rust
-// Rust
+```python
+import math
+import torch
 
-fn scaled_dot_product_attention(
-    query: &Tensor,   // what each word is looking for
-    key: &Tensor,     // what each word can offer
-    value: &Tensor,   // the actual content each word carries
-) -> Tensor {
-    let d_k = key.size(-1) as f64;       // vector length
-    let scores = query.matmul(           // dot product: compute match scores
-        &key.transpose(-2, -1)
-    ) / d_k.sqrt();                       // scale down to prevent exploding scores
-    let weights = scores.softmax(-1);     // convert to probabilities (summing to 1)
-    weights.matmul(value)                 // weighted combination to extract information
-}
+
+def scaled_dot_product_attention(
+    query: torch.Tensor,
+    key: torch.Tensor,
+    value: torch.Tensor,
+) -> torch.Tensor:
+    d_k = key.size(-1)
+    scores = query @ key.transpose(-2, -1) / math.sqrt(d_k)
+    weights = torch.softmax(scores, dim=-1)
+    return weights @ value
 ```
 
 That is just a few lines of code. Many of the capabilities that later reshaped the industry were built on top of this handful of operations.
@@ -93,27 +92,47 @@ Breaking it down:
 - **Concat**: concatenate all 8 results end-to-end into one long vector
 - **W^O**: a linear transformation (think "multiply by a matrix") that projects the concatenated long vector back to the original dimension. Like a manager listening to reports from 8 investigators and producing one consolidated conclusion
 
-```rust
-// Rust
+```python
+import math
+import torch
+from torch import nn
 
-struct MultiHeadAttention {
-    heads: Vec<AttentionHead>,    // 8 attention heads, each operating independently
-    output_proj: Linear,          // W^O: consolidates all heads' results
-}
 
-impl MultiHeadAttention {
-    fn forward(&self, query: &Tensor, key: &Tensor, value: &Tensor) -> Tensor {
-        // each head runs attention independently
-        let head_outputs: Vec<Tensor> = self.heads
-            .iter()
-            .map(|head| head.forward(query, key, value))
-            .collect();
-        // concatenate all heads' results
-        let concatenated = Tensor::cat(&head_outputs, -1);
-        // project concatenated result back to original dimension via W^O
-        self.output_proj.forward(&concatenated)
-    }
-}
+class MultiHeadAttention(nn.Module):
+    def __init__(self, d_model: int, num_heads: int) -> None:
+        super().__init__()
+        if d_model % num_heads != 0:
+            raise ValueError("d_model must be divisible by num_heads")
+        self.num_heads = num_heads
+        self.d_head = d_model // num_heads
+        self.q_proj = nn.Linear(d_model, d_model)
+        self.k_proj = nn.Linear(d_model, d_model)
+        self.v_proj = nn.Linear(d_model, d_model)
+        self.out_proj = nn.Linear(d_model, d_model)
+
+    def _split_heads(self, x: torch.Tensor) -> torch.Tensor:
+        batch_size, seq_len, _ = x.shape
+        x = x.view(batch_size, seq_len, self.num_heads, self.d_head)
+        return x.transpose(1, 2)
+
+    def forward(
+        self,
+        query: torch.Tensor,
+        key: torch.Tensor,
+        value: torch.Tensor,
+    ) -> torch.Tensor:
+        q = self._split_heads(self.q_proj(query))
+        k = self._split_heads(self.k_proj(key))
+        v = self._split_heads(self.v_proj(value))
+
+        scores = q @ k.transpose(-2, -1) / math.sqrt(self.d_head)
+        weights = torch.softmax(scores, dim=-1)
+        heads = weights @ v
+
+        batch_size, _, target_len, _ = heads.shape
+        merged = heads.transpose(1, 2).contiguous()
+        merged = merged.view(batch_size, target_len, self.num_heads * self.d_head)
+        return self.out_proj(merged)
 ```
 
 The paper's parameters: the model uses 512 numbers to describe each word (d_model = 512), with 8 heads, each getting 64 numbers (512 / 8 = 64). The total computation of 8 heads is roughly the same as a single 512-dimensional head, but the expressive power is far greater. Same cost, multi-perspective understanding. A very good trade.
@@ -137,23 +156,22 @@ The formula looks intimidating, but the core idea is intuitive:
 
 The end result: each position gets a unique numerical fingerprint, and the model uses this fingerprint to distinguish word order.
 
-```rust
-// Rust
+```python
+import math
+import torch
 
-fn positional_encoding(seq_len: usize, d_model: usize) -> Tensor {
-    let mut encoding = Tensor::zeros(&[seq_len, d_model]);
-    for pos in 0..seq_len {                          // iterate over each position
-        for i in (0..d_model).step_by(2) {           // process one pair of dimensions at a time (even + odd)
-            let angle = pos as f64               // position index
-                / (10000_f64).powf(i as f64 / d_model as f64);  // divide by scaling factor
-            encoding[[pos, i]] = angle.sin();        // even dimensions use sin
-            if i + 1 < d_model {
-                encoding[[pos, i + 1]] = angle.cos();// odd dimensions use cos
-            }
-        }
-    }
-    encoding
-}
+
+def positional_encoding(seq_len: int, d_model: int) -> torch.Tensor:
+    positions = torch.arange(seq_len, dtype=torch.float32).unsqueeze(1)
+    div_term = torch.exp(
+        torch.arange(0, d_model, 2, dtype=torch.float32)
+        * (-math.log(10000.0) / d_model)
+    )
+
+    encoding = torch.zeros(seq_len, d_model)
+    encoding[:, 0::2] = torch.sin(positions * div_term)
+    encoding[:, 1::2] = torch.cos(positions * div_term)
+    return encoding
 ```
 
 Why sine and cosine specifically? Because they have an elegant mathematical property: the relationship between the encodings of two positions separated by a fixed distance is the same regardless of whether those positions are at the start or the end of the sentence. The model does not need to memorize the relationship between "position 3 and position 8" -- it only needs to learn what "5 positions apart" means. The paper's team also tried letting the model learn positional encodings on its own, and the results were similar, but the sinusoidal version has one extra advantage: it can handle sentences longer than any seen during training.
@@ -173,31 +191,54 @@ First, **cross-attention**: as the decoder generates each word, it looks back at
 
 Second, **masking**: when generating the 3rd word, the model is only allowed to see the first 2 words. The 4th position and beyond are blocked (attention scores set to negative infinity, which becomes zero after softmax). The logic is simple: when you are writing an essay, the next word has not been written yet -- you cannot peek ahead.
 
-```rust
-// Rust
+```python
+from typing import Optional
 
-struct Transformer {
-    encoder_layers: Vec<EncoderLayer>,  // 6 encoder layers
-    decoder_layers: Vec<DecoderLayer>,  // 6 decoder layers
-}
+import torch
+from torch import nn
 
-struct EncoderLayer {
-    self_attention: MultiHeadAttention, // self-attention: relationships between words within the sentence
-    feed_forward: FeedForward,          // feed-forward network: independent transformation at each position
-    norm1: LayerNorm,                   // first normalization layer
-    norm2: LayerNorm,                   // second normalization layer
-    dropout: f64, // 0.1               // randomly disable 10% of pathways during training to prevent memorizing the data
-}
 
-struct DecoderLayer {
-    masked_self_attention: MultiHeadAttention, // masked self-attention: can only see previously generated words
-    cross_attention: MultiHeadAttention,       // cross-attention: looks back at encoder output
-    feed_forward: FeedForward,                 // feed-forward network
-    norm1: LayerNorm,
-    norm2: LayerNorm,
-    norm3: LayerNorm,                          // extra normalization layer (for the additional cross-attention)
-    dropout: f64, // 0.1
-}
+class Transformer(nn.Module):
+    def __init__(
+        self,
+        vocab_size: int,
+        d_model: int = 512,
+        num_heads: int = 8,
+        num_layers: int = 6,
+        d_ff: int = 2048,
+        dropout: float = 0.1,
+    ) -> None:
+        super().__init__()
+        self.embedding = nn.Embedding(vocab_size, d_model)
+
+        encoder_layer = nn.TransformerEncoderLayer(
+            d_model=d_model,
+            nhead=num_heads,
+            dim_feedforward=d_ff,
+            dropout=dropout,
+            batch_first=True,
+        )
+        decoder_layer = nn.TransformerDecoderLayer(
+            d_model=d_model,
+            nhead=num_heads,
+            dim_feedforward=d_ff,
+            dropout=dropout,
+            batch_first=True,
+        )
+
+        self.encoder = nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
+        self.decoder = nn.TransformerDecoder(decoder_layer, num_layers=num_layers)
+        self.output_proj = nn.Linear(d_model, vocab_size)
+
+    def forward(
+        self,
+        src_token_ids: torch.Tensor,
+        tgt_token_ids: torch.Tensor,
+        tgt_mask: Optional[torch.Tensor] = None,
+    ) -> torch.Tensor:
+        memory = self.encoder(self.embedding(src_token_ids))
+        hidden = self.decoder(self.embedding(tgt_token_ids), memory, tgt_mask=tgt_mask)
+        return self.output_proj(hidden)
 ```
 
 There is one more component that is easy to overlook: the feed-forward network. Its formula is FFN(x) = max(0, xW1 + b1)W2 + b2. In plain language: take each word's 512-dimensional vector and expand it to 2048 dimensions (multiply by a matrix and add a bias), run it through ReLU (all negative numbers become zero, positive numbers stay), then compress it back to 512 dimensions. The ReLU step is the key: it introduces "nonlinearity," allowing the model to learn complex patterns that a straight line could never capture. If every operation were linear, stacking multiple layers would still be mathematically equivalent to a single layer. Nonlinearity is the prerequisite for modeling complexity.
@@ -220,7 +261,7 @@ After reading this paper, a few things stand out.
 
 First, the core insight of this paper is remarkably concise: throw away the baggage of sequential processing and let the attention mechanism directly model the relationship between any two positions. Self-Attention, residual connections, Layer Normalization -- none of these were new inventions. The real breakthrough was not inventing new tools, but the authors' willingness to bet that "these simple building blocks, assembled together, are enough" -- and then proving themselves right with experiments.
 
-Second, reimplementing it in Rust gave me a deeper understanding of every design decision. When you write Scaled Dot-Product Attention yourself, you feel viscerally why that sqrt(d_k) scaling matters. When you implement masking, you understand exactly where the autoregressive generation constraint comes from. Reading the paper ten times is not worth as much as writing it once yourself.
+Second, writing it out in real Python gave me a deeper understanding of every design decision. When you write Scaled Dot-Product Attention yourself, you feel viscerally why that sqrt(d_k) scaling matters. When you implement masking, you understand exactly where the autoregressive generation constraint comes from. Reading the paper ten times is not worth as much as writing it once yourself.
 
 Third, what truly struck me was not how many models it later spawned, but the fact that it reframed the problem back in 2017: from "how do we remember a sentence in order" to "how do we let every position directly find the information it needs most." GPT, BERT, T5, LLaMA -- all of them are products of that reframing.
 

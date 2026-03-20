@@ -2,8 +2,8 @@
 title: "논문 읽기: 《Scaling Laws for Neural Language Models》 (신경 언어 모델을 위한 스케일링 법칙)"
 date: "2026-03-01T16:45:39+08:00"
 category: "Paper Reading"
-description: 규모의 수학 — 더 큰 모델이 예측 가능하게 더 나은 이유, 핵심 코드를 Rust로 재구현
-tags: [paper-reading, scaling-laws, AI, LLM, rust]
+description: 규모의 수학 — 더 큰 모델이 예측 가능하게 더 나은 이유, 실제 Python 코드 예시 포함
+tags: [paper-reading, scaling-laws, AI, LLM, python]
 pinned: false
 ---
 
@@ -57,34 +57,21 @@ pinned: false
 
 핵심 통찰: 이것들은 멱법칙이지, 대수(logarithmic) 곡선이 아니다. 대수 곡선은 빠르게 평탄해진다 — 입력을 두 배로 늘려도 출력은 거의 움직이지 않는다. 멱법칙은 훨씬 관대하다: 적어도 논문이 측정한 범위 내에서, 성능은 뚜렷한 벽에 부딪히는 징후 없이 멱법칙 추세를 따라 꾸준히 개선되었다. 논문도 이 추세가 영원히 0까지 내려갈 수는 없으며 결국은 평탄해질 것이라고 명시했지만, 관측된 범위 내에서는 추세가 깔끔하게 유지되었다.
 
-```rust
-// Rust
+```python
+def power_law_loss(x: float, x_c: float, alpha: float) -> float:
+    return (x_c / x) ** alpha
 
-/// Power-law scaling: loss as a function of a single variable
-/// L(x) = (x_c / x)^alpha
-/// On a log-log plot, this is a straight line with slope -alpha
-fn power_law_loss(x: f64, x_c: f64, alpha: f64) -> f64 {
-    (x_c / x).powf(alpha)
-}
 
-/// The three scaling laws from the paper
-fn scaling_laws() {
-    let alpha_n = 0.076;  // exponent for model size
-    let alpha_d = 0.095;  // exponent for dataset size
-    let alpha_c = 0.050;  // exponent for compute
+def scaling_law_examples() -> dict[str, float]:
+    alpha_n = 0.076
+    alpha_d = 0.095
+    alpha_c = 0.050
 
-    // Example: if you 10x the number of parameters
-    let improvement_n = (10.0_f64).powf(alpha_n);
-    // loss decreases by a factor of ~1.19 (about 19% better)
-
-    // Example: if you 10x the dataset
-    let improvement_d = (10.0_f64).powf(alpha_d);
-    // loss decreases by a factor of ~1.24 (about 24% better)
-
-    // Example: if you 10x the compute
-    let improvement_c = (10.0_f64).powf(alpha_c);
-    // loss decreases by a factor of ~1.12 (about 12% better)
-}
+    return {
+        "10x_params": 10.0 ** alpha_n,
+        "10x_data": 10.0 ** alpha_d,
+        "10x_compute": 10.0 ** alpha_c,
+    }
 ```
 
 지수들이 이야기를 들려준다. 데이터셋 크기(α = 0.095)가 스케일링 배수당 가장 큰 향상을 가져온다. 모델 크기(α = 0.076)가 그 다음이다. 컴퓨팅(α = 0.050)은 가장 적은 향상을 보인다 — 모델 크기와 학습 시간 사이에 적절히 배분하지 않고 컴퓨팅만 늘리는 것은 낭비이기 때문이다. 진짜 레버리지는 올바른 것을 스케일링하는 데서 나온다.
@@ -97,32 +84,23 @@ fn scaling_laws() {
 
 레이어 2개에 거대한 히든 차원을 가진 Transformer? 비슷한 비임베딩 파라미터 예산 하에서 레이어 40개에 작은 히든 차원을 가진 것과 대략 같은 손실을 보인다.
 
-```rust
-// Rust
+```python
+from dataclasses import dataclass
 
-/// The paper's finding: architecture shape has minimal effect on performance
-/// What matters is the total number of non-embedding parameters
-struct ArchitectureExperiment {
-    n_layers: usize,
-    d_model: usize,
-    n_heads: usize,
-    d_ff: usize,
-}
 
-fn non_embedding_params(config: &ArchitectureExperiment) -> u64 {
-    let n = config.n_layers as u64;
-    let d = config.d_model as u64;
-    let ff = config.d_ff as u64;
-    // Each Transformer layer has:
-    // - attention: 4 * d_model^2 parameters (Q, K, V projections + output projection)
-    // - feed-forward: 2 * d_model * d_ff parameters (two linear layers)
-    // - layer norms: 4 * d_model parameters
-    n * (4 * d * d + 2 * d * ff + 4 * d)
-}
+@dataclass(frozen=True)
+class ArchitectureExperiment:
+    n_layers: int
+    d_model: int
+    n_heads: int
+    d_ff: int
 
-// The point: two configs with different shapes but same non_embedding_params()
-// will have approximately the same test loss.
-// Architecture is not destiny. Scale is.
+
+def non_embedding_params(config: ArchitectureExperiment) -> int:
+    n = config.n_layers
+    d = config.d_model
+    d_ff = config.d_ff
+    return n * (4 * d * d + 2 * d * d_ff + 4 * d)
 ```
 
 이것은 심오한 함의를 갖는다: "최적의" 아키텍처를 찾는 데 몇 주를 소비할 필요가 없다. 합리적인 Transformer 구조를 하나 골라서, 그것을 키우는 데 에너지를 집중하면 된다. 논문은 임베딩 파라미터가 비임베딩 파라미터보다 성능에 기여하는 바가 훨씬 적다는 것을 발견했기 때문에 N에서 임베딩 파라미터를 명시적으로 제외했다 — 모델의 "사고" 능력은 어휘 테이블이 아니라 Transformer 레이어에 있다.
@@ -141,31 +119,18 @@ fn non_embedding_params(config: &ArchitectureExperiment) -> u64 {
 
 쉽게 말하면: 모델을 크게 만들수록 필요한 데이터의 양이 늘어난다 — 하지만 선형 이하로. 10배 큰 모델은 10^0.74 ≈ 5.5배의 데이터만 더 필요하다. 더 큰 모델은 더 샘플 효율적이다: 학습 데이터의 각 토큰에서 더 많은 정보를 추출한다.
 
-```rust
-// Rust
+```python
+def loss_nd(n_params: float, n_tokens: float) -> float:
+    n_c = 8.8e13
+    d_c = 5.4e13
+    alpha_n = 0.076
+    alpha_d = 0.095
+    ratio = alpha_n / alpha_d
+    return ((n_c / n_params) ** ratio + d_c / n_tokens) ** alpha_d
 
-/// The paper's unified two-variable loss formula
-/// L(N, D) = [(N_c / N)^(alpha_N / alpha_D) + D_c / D]^alpha_D
-fn loss_nd(n_params: f64, n_tokens: f64) -> f64 {
-    let n_c = 8.8e13;       // reference constant for model size
-    let d_c = 5.4e13;       // reference constant for dataset size
-    let alpha_n = 0.076;
-    let alpha_d = 0.095;
-    let ratio = alpha_n / alpha_d;
-    ((n_c / n_params).powf(ratio) + d_c / n_tokens).powf(alpha_d)
-}
 
-/// Rough overfitting threshold from the paper
-/// D_min ≈ 5000 * N^0.74
-fn min_dataset_tokens(n_params: f64) -> f64 {
-    5000.0 * n_params.powf(0.74)
-}
-
-/// Example: for a 1B parameter model
-/// min_dataset_tokens(1e9) ≈ 5000 * (1e9)^0.74 ≈ 2.3 × 10^10 tokens (~23B tokens)
-///
-/// For a 175B parameter model (GPT-3 scale)
-/// min_dataset_tokens(175e9) ≈ 5000 * (175e9)^0.74 ≈ ~1.0 × 10^12 tokens (~1T tokens)
+def min_dataset_tokens(n_params: float) -> float:
+    return 5_000.0 * n_params ** 0.74
 ```
 
 이 관계를 대략적으로 추산하면, 175B 규모 모델이 과적합을 논문이 논의한 임계값 근처로 억제하려면 거의 1조 토큰에 가까운 데이터가 필요하다. 반대로 보면, GPT-3의 3,000억 토큰은 사실 넉넉하지 않았다. 이것은 「모델을 얼마나 크게 만들고, 데이터를 얼마나 먹일 것인가」가 감이 아니라 분석 가능한 트레이드오프라는 것을 보여준다 — 이후 업계가 이 비율을 재검토한 것(가장 대표적으로 Chinchilla 논문, Hoffmann et al., 2022)도 많은 대형 모델의 데이터가 실제로 부족했다는 인식 때문이었다.
@@ -186,35 +151,28 @@ fn min_dataset_tokens(n_params: f64) -> f64 {
 
 직관에 반하는 부분: **아주 큰 모델을 학습시키고 수렴 훨씬 전에 멈춰야 한다.** 대부분의 사람들의 직감은 작은 모델을 완전히 학습시키는 것이다. 스케일링 법칙은 그 반대를 말한다 — 같은 컴퓨팅 예산에서, 부분적으로 학습된 큰 모델이 완전히 학습된 작은 모델을 이긴다.
 
-```rust
-// Rust
+```python
+from dataclasses import dataclass
 
-/// Compute-optimal allocation: given a compute budget C,
-/// how to distribute it across model size, batch size, and training steps
-struct ComputeAllocation {
-    n_params: f64,        // model parameters
-    batch_size: f64,      // tokens per batch
-    training_steps: f64,  // number of optimization steps
-}
 
-fn optimal_allocation(compute: f64) -> ComputeAllocation {
-    // These exponents are from the paper's empirical fits
-    ComputeAllocation {
-        n_params: compute.powf(0.73),       // most of the budget goes to model size
-        batch_size: compute.powf(0.24),      // batch size scales slowly
-        training_steps: compute.powf(0.03),  // training steps barely change
-    }
-}
+@dataclass(frozen=True)
+class ComputeAllocation:
+    n_params: float
+    batch_size: float
+    training_steps: float
 
-/// The implication: compute-efficient frontier
-/// For each compute budget, there is ONE optimal model size.
-/// Larger models trained for fewer steps beat smaller models trained to convergence.
-fn is_compute_efficient(n_params: f64, compute: f64) -> bool {
-    let optimal_n = compute.powf(0.73);
-    // If your model is much smaller than optimal, you're wasting compute
-    // on training steps that yield diminishing returns
-    (n_params / optimal_n - 1.0).abs() < 0.5  // within ~50% of optimal
-}
+
+def optimal_allocation(compute: float) -> ComputeAllocation:
+    return ComputeAllocation(
+        n_params=compute ** 0.73,
+        batch_size=compute ** 0.24,
+        training_steps=compute ** 0.03,
+    )
+
+
+def is_compute_efficient(n_params: float, compute: float) -> bool:
+    optimal_n = compute ** 0.73
+    return abs(n_params / optimal_n - 1.0) < 0.5
 ```
 
 이 결과는 업계 전체를 형성했다. 이 논문 5개월 후에 나온 GPT-3는 이 논리를 직접적으로 따랐다: 작은 모델을 완전히 학습시키는 대신, 당시 기준으로 거대한 1,750억 파라미터 모델을 학습시켰다. 이후의 "Chinchilla" 논문(Hoffmann et al., 2022)은 이 지수들을 업데이트하고 대부분의 대형 모델이 최적 데이터 배분 대비 실제로 과소 학습되었다고 주장했지만 — 계산 가능한 최적 트레이드오프가 존재한다는 핵심 통찰은 여기서 시작되었다.
@@ -229,23 +187,9 @@ fn is_compute_efficient(n_params: f64, compute: f64) -> bool {
 
 임계 배치 크기 이하에서는, 배치를 두 배로 늘리면 학습 시간이 대략 절반으로 줄어든다(완벽한 병렬화). 그 이상에서는, 배치를 두 배로 늘려도 거의 도움이 되지 않는다 — 컴퓨팅을 낭비할 뿐이다.
 
-```rust
-// Rust
-
-/// Critical batch size: the threshold between compute-efficient and time-efficient training
-/// B_crit(L) ∝ L^(-4.8)
-fn critical_batch_size(loss: f64, b_star: f64, l_star: f64) -> f64 {
-    // b_star and l_star are reference constants from empirical fitting
-    b_star * (l_star / loss).powf(4.8)
-}
-
-/// Below B_crit: each step gives a strong gradient signal.
-///   Doubling batch size ≈ halving training time. Compute stays roughly constant.
-/// Above B_crit: gradient signal per additional sample diminishes.
-///   Doubling batch size barely speeds up training. You're wasting compute.
-///
-/// Practical implication: as training progresses and loss drops,
-/// you can (and should) increase the batch size to maintain efficiency.
+```python
+def critical_batch_size(loss: float, b_star: float, l_star: float) -> float:
+    return b_star * (l_star / loss) ** 4.8
 ```
 
 이것은 실용적인 엔지니어링 지혜이다. 많은 팀이 학습 내내 고정된 배치 크기를 사용한다. 스케일링 법칙은 학습이 진행됨에 따라 배치 크기를 늘려야 한다고 말한다 — 작게 시작해서, 모델이 나아짐에 따라 키워라.

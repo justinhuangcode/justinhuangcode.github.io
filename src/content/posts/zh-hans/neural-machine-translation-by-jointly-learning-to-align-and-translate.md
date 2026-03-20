@@ -2,8 +2,8 @@
 title: "论文共读：《Neural Machine Translation by Jointly Learning to Align and Translate》（通过联合学习对齐与翻译实现神经机器翻译）"
 date: "2026-01-11T16:26:19+08:00"
 category: "Paper Reading"
-description: 注意力机制的起源，附 Rust 复现代码
-tags: [paper-reading, attention, AI, LLM, rust]
+description: 注意力机制的起源，附真实 Python 代码
+tags: [paper-reading, attention, AI, LLM, python]
 pinned: false
 ---
 
@@ -61,30 +61,26 @@ pinned: false
 
 这个上下文向量就是解码器在生成第 i 个词时，从源句子里提取到的关键信息。每生成一个词，上下文向量都不一样，因为模型关注的源句子位置不一样。
 
-用 Rust 写出来：
+用 Python（基于 PyTorch）写出来：
 
-```rust
-// Rust
+```python
+import torch
+from torch import nn
 
-/// 加性注意力：Bahdanau 风格
-fn bahdanau_attention(
-    decoder_state: &Tensor,  // 解码器当前状态 s_{i-1}
-    encoder_outputs: &Tensor, // 编码器所有位置的隐藏状态 [h_1, ..., h_T]
-    w_a: &Tensor,            // 权重矩阵 W_a
-    u_a: &Tensor,            // 权重矩阵 U_a
-    v_a: &Tensor,            // 向量 v_a
-) -> (Tensor, Tensor) {
-    // 第一步：算对齐分数
-    let score = v_a.matmul(
-        &(w_a.matmul(decoder_state) + u_a.matmul(encoder_outputs))
-            .tanh()             // tanh 把数值压到 -1 到 1
-    );
-    // 第二步：softmax 转成概率
-    let weights = score.softmax(-1);
-    // 第三步：加权求和，得到上下文向量
-    let context = weights.matmul(encoder_outputs.transpose(-2, -1));
-    (context, weights)          // 返回上下文向量和注意力权重
-}
+
+def bahdanau_attention(
+    decoder_state: torch.Tensor,
+    encoder_outputs: torch.Tensor,
+    w_a: nn.Linear,
+    u_a: nn.Linear,
+    v_a: nn.Linear,
+) -> tuple[torch.Tensor, torch.Tensor]:
+    decoder_features = w_a(decoder_state).unsqueeze(1)
+    encoder_features = u_a(encoder_outputs)
+    scores = v_a(torch.tanh(decoder_features + encoder_features)).squeeze(-1)
+    weights = torch.softmax(scores, dim=-1)
+    context = torch.sum(weights.unsqueeze(-1) * encoder_outputs, dim=1)
+    return context, weights
 ```
 
 和后来 Transformer 用的「点积注意力」（Q 和 K 直接做点积）不同，这篇论文用的是「加性注意力」（先各自做线性变换，再加起来）。两种方法各有特点，但点积注意力更适合用高效矩阵乘法实现；再加上 Transformer 去掉了 RNN 的顺序依赖，注意力才真正成为可大规模并行的核心算子。
@@ -95,24 +91,24 @@ fn bahdanau_attention(
 
 论文用了双向 RNN（BiRNN）来解决这个问题。一个 RNN 从左往右读，另一个从右往左读，然后把两个方向的隐藏状态拼起来。这样每个位置的隐藏状态就同时包含了左边和右边的上下文。
 
-```rust
-// Rust
+```python
+import torch
+from torch import nn
 
-struct BidirectionalRNN {
-    forward_rnn: RNN,   // 从左往右读
-    backward_rnn: RNN,  // 从右往左读
-}
 
-impl BidirectionalRNN {
-    fn forward(&self, input: &[Tensor]) -> Vec<Tensor> {
-        let fwd = self.forward_rnn.forward(input);          // 正向隐藏状态
-        let bwd = self.backward_rnn.forward_reversed(input); // 反向隐藏状态
-        // 把正向和反向的隐藏状态拼起来
-        fwd.iter().zip(bwd.iter())
-            .map(|(f, b)| Tensor::cat(&[f, b], -1))
-            .collect()
-    }
-}
+class BidirectionalRNN(nn.Module):
+    def __init__(self, input_size: int, hidden_size: int) -> None:
+        super().__init__()
+        self.rnn = nn.GRU(
+            input_size=input_size,
+            hidden_size=hidden_size,
+            bidirectional=True,
+            batch_first=True,
+        )
+
+    def forward(self, inputs: torch.Tensor) -> torch.Tensor:
+        outputs, _ = self.rnn(inputs)
+        return outputs
 ```
 
 论文里每个方向各有 1000 个隐藏单元，拼起来就是 2000 维。这比单向 RNN 多了一倍参数，但换来的是每个位置都能看到完整的上下文。
@@ -127,31 +123,41 @@ impl BidirectionalRNN {
    - 加权求和得到上下文向量
    - 结合上下文向量、上一个生成的词和当前状态，预测下一个词
 
-```rust
-// Rust
+```python
+import torch
+from torch import nn
 
-struct AttentionDecoder {
-    rnn: RNN,
-    attention: BahdanauAttention,
-    output_proj: Linear,
-}
 
-impl AttentionDecoder {
-    fn decode_step(
-        &self,
-        prev_word: &Tensor,       // 上一步生成的词
-        prev_state: &Tensor,      // 上一步的隐藏状态
-        encoder_outputs: &Tensor, // 编码器所有位置的隐藏状态
-    ) -> (Tensor, Tensor) {
-        // 注意力：决定看源句子的哪些部分
-        let (context, _weights) = self.attention.forward(prev_state, encoder_outputs);
-        // RNN 更新状态：融合上下文、上一个词和上一步状态
-        let new_state = self.rnn.step(prev_word, prev_state, &context);
-        // 预测下一个词的概率分布
-        let output = self.output_proj.forward(&new_state);
-        (output, new_state)
-    }
-}
+class AttentionDecoder(nn.Module):
+    def __init__(self, embedding_dim: int, hidden_size: int, vocab_size: int) -> None:
+        super().__init__()
+        self.rnn = nn.GRU(
+            input_size=embedding_dim + 2 * hidden_size,
+            hidden_size=hidden_size,
+            batch_first=True,
+        )
+        self.w_a = nn.Linear(hidden_size, hidden_size, bias=False)
+        self.u_a = nn.Linear(2 * hidden_size, hidden_size, bias=False)
+        self.v_a = nn.Linear(hidden_size, 1, bias=False)
+        self.output_proj = nn.Linear(hidden_size, vocab_size)
+
+    def decode_step(
+        self,
+        prev_word: torch.Tensor,
+        prev_state: torch.Tensor,
+        encoder_outputs: torch.Tensor,
+    ) -> tuple[torch.Tensor, torch.Tensor]:
+        context, _ = bahdanau_attention(
+            prev_state.squeeze(0),
+            encoder_outputs,
+            self.w_a,
+            self.u_a,
+            self.v_a,
+        )
+        rnn_input = torch.cat([prev_word, context.unsqueeze(1)], dim=-1)
+        output, new_state = self.rnn(rnn_input, prev_state)
+        logits = self.output_proj(output[:, -1, :])
+        return logits, new_state
 ```
 
 关键在于：每生成一个目标词，解码器都会重新计算注意力分布。翻译第一个词时可能重点关注源句子的开头，翻译最后一个词时可能重点关注源句子的结尾。这种动态对齐能力，是之前的固定向量架构做不到的。
@@ -179,7 +185,7 @@ impl AttentionDecoder {
 
 第二，注意力机制在这篇论文里还是 RNN 的配角。编码器仍然是循环的（双向 RNN），解码器也是循环的，注意力只是在两者之间架了一座桥。三年后 Vaswani 等人问了一个更激进的问题：既然注意力这么好用，能不能把 RNN 整个扔掉，只留注意力？答案就是 Transformer。
 
-第三，用 Rust 复现这篇论文的注意力机制时，你会发现它的计算流程比 Transformer 的 Scaled Dot-Product Attention 复杂不少。加性注意力需要额外的权重矩阵 W_a、U_a、v_a，而点积注意力只需要 Q 和 K 直接相乘再缩放。从「加法」到「乘法」，看似一小步，实际上大幅简化了计算，也更适合用矩阵运算高效实现。
+第三，用真实 Python 重写这篇论文的注意力机制时，你会发现它的计算流程比 Transformer 的 Scaled Dot-Product Attention 复杂不少。加性注意力需要额外的权重矩阵 W_a、U_a、v_a，而点积注意力只需要 Q 和 K 直接相乘再缩放。从「加法」到「乘法」，看似一小步，实际上大幅简化了计算，也更适合用矩阵运算高效实现。
 
 第四，Bahdanau 当时是博士生，Bengio 是他的导师。一个博士生的论文，定义了此后十年 AI 研究的核心组件。注意力机制从这里开始，经过 Transformer 的放大，最终成为 GPT、BERT、LLaMA 的基石。
 

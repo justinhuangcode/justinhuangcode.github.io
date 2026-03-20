@@ -2,8 +2,8 @@
 title: "Paper Reading: BERT — Pre-training of Deep Bidirectional Transformers for Language Understanding"
 date: "2026-01-31T16:52:21+08:00"
 category: "Paper Reading"
-description: Establishing the pre-training paradigm, with core code reimplemented in Rust
-tags: [paper-reading, bert, AI, LLM, rust]
+description: Establishing the pre-training paradigm, with real Python code examples
+tags: [paper-reading, bert, AI, LLM, python]
 pinned: false
 ---
 
@@ -37,29 +37,35 @@ After masking, the model must use both left and right context to make prediction
 
 But replacing all selected tokens with \[MASK\] introduces a problem: \[MASK\] never appears during fine-tuning, creating a mismatch between pre-training and fine-tuning. The paper's solution: of the selected 15% of tokens, 80% are replaced with \[MASK\], 10% are replaced with a random token, and 10% are left unchanged. This way, the model cannot simply rely on "I see \[MASK\] so I need to predict" — it must maintain understanding at every position.
 
-```rust
-// Rust
+```python
+import random
+from typing import Optional, Sequence
 
-fn mask_tokens(tokens: &[Token], mask_prob: f64) -> (Vec<Token>, Vec<usize>, Vec<Token>) {
-    let mut masked = tokens.to_vec();
-    let mut positions = Vec::new();
-    let mut labels = Vec::new();
 
-    for i in 0..tokens.len() {
-        if random::<f64>() < mask_prob {  // 15% chance of being selected
-            positions.push(i);
-            labels.push(tokens[i].clone()); // remember original token for training
-            let r = random::<f64>();
-            if r < 0.8 {
-                masked[i] = Token::MASK;       // 80%: replace with [MASK]
-            } else if r < 0.9 {
-                masked[i] = random_token();     // 10%: replace with random token
-            }
-            // remaining 10%: keep original token unchanged
-        }
-    }
-    (masked, positions, labels)  // return masked input, positions, and original labels
-}
+def mask_tokens(
+    tokens: Sequence[str],
+    mask_prob: float = 0.15,
+    vocab: Optional[Sequence[str]] = None,
+) -> tuple[list[str], list[int], list[str]]:
+    if vocab is None:
+        vocab = tokens
+
+    masked = list(tokens)
+    positions: list[int] = []
+    labels: list[str] = []
+
+    for i, token in enumerate(tokens):
+        if random.random() < mask_prob:
+            positions.append(i)
+            labels.append(token)
+
+            r = random.random()
+            if r < 0.8:
+                masked[i] = "[MASK]"
+            elif r < 0.9:
+                masked[i] = random.choice(vocab)
+
+    return masked, positions, labels
 ```
 
 ## 3. The Second Pre-training Task: Next Sentence Prediction
@@ -70,16 +76,17 @@ The paper added a second pre-training task: **Next Sentence Prediction (NSP)**. 
 
 The task design is simple, but the paper's ablation study (removing one component at a time to observe the effect) showed that removing NSP noticeably hurt performance on question answering and natural language inference tasks; however, later work (such as RoBERTa) reached different conclusions about the necessity of NSP.
 
-```rust
-// Rust
+```python
+from dataclasses import dataclass
 
-struct PretrainingExample {
-    tokens: Vec<Token>,      // [CLS] sentence_A [SEP] sentence_B [SEP]
-    segment_ids: Vec<usize>, // 0 for sentence A, 1 for sentence B
-    masked_positions: Vec<usize>,  // positions that were masked
-    masked_labels: Vec<Token>,     // original tokens at masked positions
-    is_next: bool,                 // whether B is the actual next sentence
-}
+
+@dataclass
+class PretrainingExample:
+    tokens: list[str]
+    segment_ids: list[int]
+    masked_positions: list[int]
+    masked_labels: list[str]
+    is_next: bool
 ```
 
 ## 4. Model Architecture
@@ -101,36 +108,72 @@ The input representation is the sum of three components:
 
 Every input sequence begins with a special \[CLS\] token, whose final-layer hidden state is used for sentence-level classification (e.g., NSP, sentiment analysis). Two sentences are separated by \[SEP\].
 
-```rust
-// Rust
+```python
+import torch
+from torch import nn
 
-struct BertInput {
-    token_ids: Vec<usize>,    // [CLS] tok1 tok2 [SEP] tok3 tok4 [SEP]
-    segment_ids: Vec<usize>,  // [0,    0,   0,   0,    1,   1,   1  ]
-    position_ids: Vec<usize>, // [0,    1,   2,   3,    4,   5,   6  ]
-}
 
-struct BertModel {
-    token_embedding: Embedding,     // token embedding
-    segment_embedding: Embedding,   // segment embedding
-    position_embedding: Embedding,  // position embedding
-    layers: Vec<TransformerLayer>,  // 12 or 24 Transformer encoder layers
-}
+class BertEmbeddings(nn.Module):
+    def __init__(
+        self,
+        vocab_size: int,
+        hidden_size: int,
+        max_positions: int,
+        type_vocab_size: int = 2,
+        dropout: float = 0.1,
+    ) -> None:
+        super().__init__()
+        self.token_embedding = nn.Embedding(vocab_size, hidden_size)
+        self.segment_embedding = nn.Embedding(type_vocab_size, hidden_size)
+        self.position_embedding = nn.Embedding(max_positions, hidden_size)
+        self.layer_norm = nn.LayerNorm(hidden_size, eps=1e-12)
+        self.dropout = nn.Dropout(dropout)
 
-impl BertModel {
-    fn forward(&self, input: &BertInput) -> Vec<Tensor> {
-        // sum the three embeddings
-        let mut hidden = self.token_embedding.lookup(&input.token_ids)
-            + self.segment_embedding.lookup(&input.segment_ids)
-            + self.position_embedding.lookup(&input.position_ids);
+    def forward(
+        self,
+        token_ids: torch.Tensor,
+        segment_ids: torch.Tensor,
+    ) -> torch.Tensor:
+        position_ids = torch.arange(token_ids.size(1), device=token_ids.device).unsqueeze(0)
+        position_ids = position_ids.expand_as(token_ids)
+        embeddings = (
+            self.token_embedding(token_ids)
+            + self.segment_embedding(segment_ids)
+            + self.position_embedding(position_ids)
+        )
+        embeddings = self.layer_norm(embeddings)
+        return self.dropout(embeddings)
 
-        // pass through each Transformer encoder layer
-        for layer in &self.layers {
-            hidden = layer.forward(&hidden);  // bidirectional self-attention + feed-forward
-        }
-        hidden
-    }
-}
+
+class BertModel(nn.Module):
+    def __init__(
+        self,
+        vocab_size: int,
+        hidden_size: int = 768,
+        max_positions: int = 512,
+        num_layers: int = 12,
+        num_heads: int = 12,
+        dropout: float = 0.1,
+    ) -> None:
+        super().__init__()
+        self.embeddings = BertEmbeddings(vocab_size, hidden_size, max_positions, dropout=dropout)
+        encoder_layer = nn.TransformerEncoderLayer(
+            d_model=hidden_size,
+            nhead=num_heads,
+            dim_feedforward=4 * hidden_size,
+            dropout=dropout,
+            activation="gelu",
+            batch_first=True,
+        )
+        self.encoder = nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
+
+    def forward(
+        self,
+        token_ids: torch.Tensor,
+        segment_ids: torch.Tensor,
+    ) -> torch.Tensor:
+        hidden = self.embeddings(token_ids, segment_ids)
+        return self.encoder(hidden)
 ```
 
 ## 5. Fine-tuning: One Model for Every Task
@@ -185,7 +228,7 @@ Second, the divergence between BERT and GPT is already clear in this paper. GPT'
 
 Third, the impact of the "pre-train + fine-tune" paradigm extends far beyond NLP. Computer vision later made a wholesale shift toward the same approach (ViT, MAE), and even multimodal models (CLIP, GPT-4V) build on large-scale pre-training with fine-tuning or prompting. BERT was not the first to do pre-training, but it was the first to push pre-training, in such a concise way, from a useful trick into the mainstream working paradigm of NLP.
 
-Fourth, when reimplementing BERT's input processing in Rust, you can feel how clean the design is. \[CLS\] + sentence A + \[SEP\] + sentence B + \[SEP\], with three embeddings summed together — the entire pipeline can handle classification, question answering, and sequence labeling with a single unified codebase. This "one model for every task" simplicity is where its real power lies.
+Fourth, when rewriting BERT's input processing in real Python, you can feel how clean the design is. \[CLS\] + sentence A + \[SEP\] + sentence B + \[SEP\], with three embeddings summed together — the entire pipeline can handle classification, question answering, and sequence labeling with a single unified codebase. This "one model for every task" simplicity is where its real power lies.
 
 There is one word in this paper's title that matters most: Pre-training. Before BERT, every NLP task was learning from scratch. BERT proved something: general knowledge about language can be learned first, then transferred to virtually any task.
 

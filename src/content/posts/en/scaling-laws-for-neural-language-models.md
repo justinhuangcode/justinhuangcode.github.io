@@ -2,8 +2,8 @@
 title: "Paper Reading: Scaling Laws for Neural Language Models"
 date: "2026-03-01T16:45:39+08:00"
 category: "Paper Reading"
-description: The mathematics of scale — why bigger models are predictably better, with core code reimplemented in Rust
-tags: [paper-reading, scaling-laws, AI, LLM, rust]
+description: The mathematics of scale — why bigger models are predictably better, with real Python code examples
+tags: [paper-reading, scaling-laws, AI, LLM, python]
 pinned: false
 ---
 
@@ -46,34 +46,21 @@ Do not panic at the notation. Let's break it down:
 
 The key insight: these are power laws, not logarithmic curves. A logarithmic curve flattens out quickly — doubling the input barely moves the output. A power law is far more generous: at least within the range the paper measured, performance showed no sign of hitting a wall, improving steadily along the power-law trend. The paper is careful to note that this cannot continue forever — loss will eventually flatten — but within the observed range, the trend held cleanly.
 
-```rust
-// Rust
+```python
+def power_law_loss(x: float, x_c: float, alpha: float) -> float:
+    return (x_c / x) ** alpha
 
-/// Power-law scaling: loss as a function of a single variable
-/// L(x) = (x_c / x)^alpha
-/// On a log-log plot, this is a straight line with slope -alpha
-fn power_law_loss(x: f64, x_c: f64, alpha: f64) -> f64 {
-    (x_c / x).powf(alpha)
-}
 
-/// The three scaling laws from the paper
-fn scaling_laws() {
-    let alpha_n = 0.076;  // exponent for model size
-    let alpha_d = 0.095;  // exponent for dataset size
-    let alpha_c = 0.050;  // exponent for compute
+def scaling_law_examples() -> dict[str, float]:
+    alpha_n = 0.076
+    alpha_d = 0.095
+    alpha_c = 0.050
 
-    // Example: if you 10x the number of parameters
-    let improvement_n = (10.0_f64).powf(alpha_n);
-    // loss decreases by a factor of ~1.19 (about 19% better)
-
-    // Example: if you 10x the dataset
-    let improvement_d = (10.0_f64).powf(alpha_d);
-    // loss decreases by a factor of ~1.24 (about 24% better)
-
-    // Example: if you 10x the compute
-    let improvement_c = (10.0_f64).powf(alpha_c);
-    // loss decreases by a factor of ~1.12 (about 12% better)
-}
+    return {
+        "10x_params": 10.0 ** alpha_n,
+        "10x_data": 10.0 ** alpha_d,
+        "10x_compute": 10.0 ** alpha_c,
+    }
 ```
 
 The exponents tell a story. Dataset size (α = 0.095) yields the most improvement per factor of scaling. Model size (α = 0.076) is next. Compute (α = 0.050) yields the least — because scaling compute without properly allocating it between model size and training time is wasteful. The real leverage comes from scaling the right thing.
@@ -86,32 +73,23 @@ The team tested Transformers with different depths (number of layers), widths (h
 
 A Transformer with 2 layers and a massive hidden dimension? Roughly the same loss as one with 40 layers and a small hidden dimension — given a comparable non-embedding parameter budget.
 
-```rust
-// Rust
+```python
+from dataclasses import dataclass
 
-/// The paper's finding: architecture shape has minimal effect on performance
-/// What matters is the total number of non-embedding parameters
-struct ArchitectureExperiment {
-    n_layers: usize,
-    d_model: usize,
-    n_heads: usize,
-    d_ff: usize,
-}
 
-fn non_embedding_params(config: &ArchitectureExperiment) -> u64 {
-    let n = config.n_layers as u64;
-    let d = config.d_model as u64;
-    let ff = config.d_ff as u64;
-    // Each Transformer layer has:
-    // - attention: 4 * d_model^2 parameters (Q, K, V projections + output projection)
-    // - feed-forward: 2 * d_model * d_ff parameters (two linear layers)
-    // - layer norms: 4 * d_model parameters
-    n * (4 * d * d + 2 * d * ff + 4 * d)
-}
+@dataclass(frozen=True)
+class ArchitectureExperiment:
+    n_layers: int
+    d_model: int
+    n_heads: int
+    d_ff: int
 
-// The point: two configs with different shapes but same non_embedding_params()
-// will have approximately the same test loss.
-// Architecture is not destiny. Scale is.
+
+def non_embedding_params(config: ArchitectureExperiment) -> int:
+    n = config.n_layers
+    d = config.d_model
+    d_ff = config.d_ff
+    return n * (4 * d * d + 2 * d * d_ff + 4 * d)
 ```
 
 This has a profound implication: you do not need to spend weeks searching for the "optimal" architecture. Just pick a reasonable Transformer shape, then focus your energy on scaling it up. The paper explicitly excluded embedding parameters from N because they found embedding parameters contributed far less to performance than non-embedding parameters — the model's "thinking" capacity lives in the Transformer layers, not the vocabulary table.
@@ -130,31 +108,18 @@ From this relationship, the paper derives a rough rule of thumb for when overfit
 
 In plain language: as you make the model bigger, the amount of data you need grows — but sublinearly. A model that is 10 times larger needs only about 10^0.74 ≈ 5.5 times more data. Bigger models are more sample-efficient: they extract more information from each token of training data.
 
-```rust
-// Rust
+```python
+def loss_nd(n_params: float, n_tokens: float) -> float:
+    n_c = 8.8e13
+    d_c = 5.4e13
+    alpha_n = 0.076
+    alpha_d = 0.095
+    ratio = alpha_n / alpha_d
+    return ((n_c / n_params) ** ratio + d_c / n_tokens) ** alpha_d
 
-/// The paper's unified two-variable loss formula
-/// L(N, D) = [(N_c / N)^(alpha_N / alpha_D) + D_c / D]^alpha_D
-fn loss_nd(n_params: f64, n_tokens: f64) -> f64 {
-    let n_c = 8.8e13;       // reference constant for model size
-    let d_c = 5.4e13;       // reference constant for dataset size
-    let alpha_n = 0.076;
-    let alpha_d = 0.095;
-    let ratio = alpha_n / alpha_d;
-    ((n_c / n_params).powf(ratio) + d_c / n_tokens).powf(alpha_d)
-}
 
-/// Rough overfitting threshold from the paper
-/// D_min ≈ 5000 * N^0.74
-fn min_dataset_tokens(n_params: f64) -> f64 {
-    5000.0 * n_params.powf(0.74)
-}
-
-/// Example: for a 1B parameter model
-/// min_dataset_tokens(1e9) ≈ 5000 * (1e9)^0.74 ≈ 2.3 × 10^10 tokens (~23B tokens)
-///
-/// For a 175B parameter model (GPT-3 scale)
-/// min_dataset_tokens(175e9) ≈ 5000 * (175e9)^0.74 ≈ ~1.0 × 10^12 tokens (~1T tokens)
+def min_dataset_tokens(n_params: float) -> float:
+    return 5_000.0 * n_params ** 0.74
 ```
 
 By this rough estimate, a 175-billion-parameter model would need close to a trillion tokens to keep overfitting within the paper's discussed threshold. GPT-3 was trained on approximately 300 billion tokens — well below that figure. In hindsight, GPT-3's data budget was not generous; it was arguably tight. This is one reason the industry later revisited the model-size-to-data ratio, most notably in the Chinchilla paper (Hoffmann et al., 2022), which argued that many large models had been undertrained relative to their optimal data allocation.
@@ -175,35 +140,28 @@ Translation: if your compute budget grows 10x, you should make the model ~5.4x b
 
 The counterintuitive part: **you should train very large models and stop significantly before convergence.** Most people's instinct is to fully train a smaller model. The scaling laws say the opposite — a partially trained large model outperforms a fully trained small model, given the same compute budget.
 
-```rust
-// Rust
+```python
+from dataclasses import dataclass
 
-/// Compute-optimal allocation: given a compute budget C,
-/// how to distribute it across model size, batch size, and training steps
-struct ComputeAllocation {
-    n_params: f64,        // model parameters
-    batch_size: f64,      // tokens per batch
-    training_steps: f64,  // number of optimization steps
-}
 
-fn optimal_allocation(compute: f64) -> ComputeAllocation {
-    // These exponents are from the paper's empirical fits
-    ComputeAllocation {
-        n_params: compute.powf(0.73),       // most of the budget goes to model size
-        batch_size: compute.powf(0.24),      // batch size scales slowly
-        training_steps: compute.powf(0.03),  // training steps barely change
-    }
-}
+@dataclass(frozen=True)
+class ComputeAllocation:
+    n_params: float
+    batch_size: float
+    training_steps: float
 
-/// The implication: compute-efficient frontier
-/// For each compute budget, there is ONE optimal model size.
-/// Larger models trained for fewer steps beat smaller models trained to convergence.
-fn is_compute_efficient(n_params: f64, compute: f64) -> bool {
-    let optimal_n = compute.powf(0.73);
-    // If your model is much smaller than optimal, you're wasting compute
-    // on training steps that yield diminishing returns
-    (n_params / optimal_n - 1.0).abs() < 0.5  // within ~50% of optimal
-}
+
+def optimal_allocation(compute: float) -> ComputeAllocation:
+    return ComputeAllocation(
+        n_params=compute ** 0.73,
+        batch_size=compute ** 0.24,
+        training_steps=compute ** 0.03,
+    )
+
+
+def is_compute_efficient(n_params: float, compute: float) -> bool:
+    optimal_n = compute ** 0.73
+    return abs(n_params / optimal_n - 1.0) < 0.5
 ```
 
 This result shaped the entire industry. GPT-3, which came five months after this paper, directly followed this logic: train a 175-billion-parameter model that was enormous for its time, rather than fully training a smaller model. The later "Chinchilla" paper (Hoffmann et al., 2022) updated these exponents and argued that most large models were actually undertrained relative to optimal data allocation — but the core insight, that there is a computable optimal trade-off, originated here.
@@ -218,23 +176,9 @@ As training progresses and loss decreases, the critical batch size grows. Early 
 
 Below the critical batch size, doubling the batch roughly halves training time (perfect parallelism). Above it, doubling the batch barely helps — you are just burning compute.
 
-```rust
-// Rust
-
-/// Critical batch size: the threshold between compute-efficient and time-efficient training
-/// B_crit(L) ∝ L^(-4.8)
-fn critical_batch_size(loss: f64, b_star: f64, l_star: f64) -> f64 {
-    // b_star and l_star are reference constants from empirical fitting
-    b_star * (l_star / loss).powf(4.8)
-}
-
-/// Below B_crit: each step gives a strong gradient signal.
-///   Doubling batch size ≈ halving training time. Compute stays roughly constant.
-/// Above B_crit: gradient signal per additional sample diminishes.
-///   Doubling batch size barely speeds up training. You're wasting compute.
-///
-/// Practical implication: as training progresses and loss drops,
-/// you can (and should) increase the batch size to maintain efficiency.
+```python
+def critical_batch_size(loss: float, b_star: float, l_star: float) -> float:
+    return b_star * (l_star / loss) ** 4.8
 ```
 
 This is practical engineering wisdom. Many teams train with a fixed batch size throughout. The scaling laws say you should increase it as training progresses — start small, scale up as the model gets better.

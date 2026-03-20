@@ -3,7 +3,7 @@ title: "기술 리포트 읽기: 《Attention Residuals》 (어텐션 잔차)"
 date: "2026-03-19T16:49:27+08:00"
 category: "Technical Report Reading"
 description: "Kimi Team의 Attention Residuals 기술 리포트 읽기: 왜 residual connection도 attention처럼 바뀌어야 하는지, 그리고 Full AttnRes / Block AttnRes가 그 아이디어를 어떻게 학습 가능하고 배포 가능한 시스템으로 만드는지"
-tags: [technical-report-reading, residual-connections, transformer, AI, LLM, rust]
+tags: [technical-report-reading, residual-connections, transformer, AI, LLM, python]
 pinned: false
 ---
 
@@ -100,33 +100,24 @@ attention을 처음 접한다면 가장 쉬운 직관은 이렇다:
 셋째, **key 앞에 RMSNorm을 붙인다.**  
 이건 작은 설계 같지만 꽤 중요하다. 정규화를 하지 않으면 크기가 큰 층이 점곱에서 자동으로 유리해진다. 그러면 attention 가중치는 "누가 더 relevant 한가"보다 "누가 더 크게 말하는가"를 반영하게 된다.
 
-Rust 스타일의 의사코드로 쓰면 대략 이렇게 된다:
+Python(PyTorch 기반)으로 쓰면 대략 이렇게 된다:
 
-```rust
-// Rust
+```python
+import torch
+from torch import nn
 
-fn attention_residual(
-    sources: &[Tensor],   // embedding + all previous layer outputs
-    pseudo_query: &Tensor, // current layer's learned vector w_l
-    norm: &RmsNorm,
-) -> Tensor {
-    let keys: Vec<Tensor> = sources
-        .iter()
-        .map(|x| norm.forward(x))
-        .collect();
 
-    let logits: Vec<Tensor> = keys
-        .iter()
-        .map(|k| pseudo_query.dot(k))
-        .collect();
+def attention_residual(
+    sources: list[torch.Tensor],
+    pseudo_query: torch.Tensor,
+    norm: nn.RMSNorm,
+) -> torch.Tensor:
+    keys = torch.stack([norm(source) for source in sources], dim=0)
+    values = torch.stack(sources, dim=0)
 
-    let weights = Tensor::stack(&logits, 0).softmax(0);
-
-    weights
-        .iter()
-        .zip(sources.iter())
-        .fold(Tensor::zeros_like(&sources[0]), |acc, (w, v)| acc + w * v)
-}
+    logits = keys @ pseudo_query
+    weights = torch.softmax(logits, dim=0)
+    return (weights.unsqueeze(-1) * values).sum(dim=0)
 ```
 
 겉으로 보면 이것은 "attention을 residual 위에 올린 것"처럼 보인다. 하지만 나는 더 정확한 표현이 따로 있다고 본다:

@@ -2,8 +2,8 @@
 title: "Paper Reading: Sequence to Sequence Learning with Neural Networks"
 date: "2026-01-24T16:41:08+08:00"
 category: "Paper Reading"
-description: Establishing the encoder-decoder paradigm, with core code reimplemented in Rust
-tags: [paper-reading, seq2seq, AI, LLM, rust]
+description: Establishing the encoder-decoder paradigm, with real Python code examples
+tags: [paper-reading, seq2seq, AI, LLM, python]
 pinned: false
 ---
 
@@ -42,41 +42,49 @@ The probability formula from the paper:
 
 In plain language: given a source sentence x, the probability of generating target sentence y equals the product of the probability of generating each next word at every step. Each step's prediction depends on two things: the vector v compressed by the encoder, and all previously generated words.
 
-```rust
-// Rust
+```python
+import torch
+from torch import nn
 
-struct Seq2Seq {
-    encoder: DeepLSTM,  // 4-layer LSTM, responsible for reading
-    decoder: DeepLSTM,  // 4-layer LSTM, responsible for writing
-    output_proj: Linear, // maps hidden state to vocabulary probabilities
-}
 
-impl Seq2Seq {
-    fn encode(&self, source: &[Token]) -> Tensor {
-        let mut state = self.encoder.init_state();
-        // encoder reads the source sentence word by word
-        for token in source {
-            state = self.encoder.step(token, &state);
-        }
-        state // the final hidden state is the "compressed representation of the entire sentence"
-    }
+class Seq2Seq(nn.Module):
+    def __init__(self, vocab_size: int, hidden_size: int) -> None:
+        super().__init__()
+        self.embedding = nn.Embedding(vocab_size, hidden_size)
+        self.encoder = nn.LSTM(hidden_size, hidden_size, num_layers=4, batch_first=True)
+        self.decoder = nn.LSTM(hidden_size, hidden_size, num_layers=4, batch_first=True)
+        self.output_proj = nn.Linear(hidden_size, vocab_size)
 
-    fn decode(&self, encoder_state: &Tensor) -> Vec<Token> {
-        let mut state = encoder_state.clone(); // initialize decoder with encoder's final state
-        let mut output = Vec::new();
-        let mut prev_token = Token::BOS;       // start from beginning-of-sentence marker
+    def encode(
+        self,
+        source_tokens: torch.Tensor,
+    ) -> tuple[torch.Tensor, tuple[torch.Tensor, torch.Tensor]]:
+        embedded = self.embedding(source_tokens)
+        outputs, state = self.encoder(embedded)
+        return outputs, state
 
-        loop {
-            state = self.decoder.step(&prev_token, &state);
-            let probs = self.output_proj.forward(&state).softmax(-1);
-            let next_token = probs.argmax();   // pick the highest-probability word
-            if next_token == Token::EOS { break; } // stop at end-of-sentence
-            output.push(next_token);
-            prev_token = next_token;
-        }
-        output
-    }
-}
+    def decode(
+        self,
+        encoder_state: tuple[torch.Tensor, torch.Tensor],
+        max_steps: int,
+        bos_token_id: int,
+        eos_token_id: int,
+    ) -> list[int]:
+        prev_token = torch.tensor([[bos_token_id]], dtype=torch.long, device=encoder_state[0].device)
+        state = encoder_state
+        generated: list[int] = []
+
+        for _ in range(max_steps):
+            embedded = self.embedding(prev_token)
+            output, state = self.decoder(embedded, state)
+            logits = self.output_proj(output[:, -1, :])
+            next_token_id = int(logits.argmax(dim=-1).item())
+            if next_token_id == eos_token_id:
+                break
+            generated.append(next_token_id)
+            prev_token = torch.tensor([[next_token_id]], dtype=torch.long, device=logits.device)
+
+        return generated
 ```
 
 The architecture itself is not complicated. The paper's contribution was not in inventing a new component, but in proving that this simple framework actually worked -- and worked well enough to compete with carefully tuned traditional systems.
@@ -93,18 +101,17 @@ The paper identified three design choices with major impact on performance:
 
 Why does reversal help? The paper's explanation: in normal order, the first word of the source sentence is far from the first word of the target sentence (the entire source sentence sits in between). After reversal, the first few words of the source and target sentences are temporally close, creating more "short-range dependencies" for the gradient (the signal the model uses to adjust its parameters), making optimization easier.
 
-```rust
-// Rust
+```python
+import torch
 
-fn reverse_source(source: &[Token]) -> Vec<Token> {
-    // as simple as it gets: reverse the source sentence
-    source.iter().rev().cloned().collect()
-}
 
-// during training:
-let reversed = reverse_source(&source_sentence);
-let encoded = model.encode(&reversed);
-let translation = model.decode(&encoded);
+def reverse_source(source_tokens: list[int]) -> list[int]:
+    return list(reversed(source_tokens))
+
+
+source_sentence = [11, 23, 37, 42]
+reversed_source = reverse_source(source_sentence)
+source_tensor = torch.tensor([reversed_source], dtype=torch.long)
 ```
 
 This trick is so simple it barely seems like a legitimate research contribution, but it genuinely worked, and it revealed a deeper issue: RNNs are sensitive to the distance between elements in a sequence -- the closer, the easier to learn. This problem was later solved fundamentally by the attention mechanism.
@@ -158,7 +165,7 @@ Second, the source reversal finding is quite instructive. It is not an elegant s
 
 Third, this paper and Bahdanau's paper were published almost simultaneously (both in September 2014). Sutskever established the encoder-decoder paradigm; Bahdanau identified the fixed-length vector bottleneck and solved it with the attention mechanism. The two papers are like two sides of the same coin: one is the framework, the other is the fix for the framework's biggest flaw.
 
-Fourth, reimplementing this in Rust, you can feel how minimal the architecture is. The encoder just loops through the input; the decoder just loops out the output. But precisely because of this simplicity, its ceiling is obvious: all information must squeeze through a fixed-length vector. This bottleneck becomes especially visceral when you are writing the code yourself.
+Fourth, rewriting this in real Python, you can feel how minimal the architecture is. The encoder just loops through the input; the decoder just loops out the output. But precisely because of this simplicity, its ceiling is obvious: all information must squeeze through a fixed-length vector. This bottleneck becomes especially visceral when you are writing the code yourself.
 
 How much information can a single vector hold? That is the implicit question of this paper.
 
