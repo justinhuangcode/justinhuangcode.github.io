@@ -309,6 +309,8 @@ People used to say attention rewrote sequence modeling.
 
 This report is trying to rewrite residuals.
 
+In spring 2026, the Kimi team's work already makes one thing clear: when the existing Scaling Laws begin to show signs of nearing a bottleneck, structural innovation in LLMs will continue to emerge.
+
 ---
 
 **Further Reading**
