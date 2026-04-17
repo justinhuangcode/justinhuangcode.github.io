@@ -1,0 +1,152 @@
+---
+title: 为什么 Elixir 是最适合 AI 的编程语言
+description: José Valim 从不可变性、文档质量、生态稳定性、工具反馈与运行时自省几个角度，解释为什么 Elixir 特别适合 AI 时代的代码生成与智能体迭代。
+date: '2026-04-18'
+category: 翻译
+tags:
+  - 翻译
+  - Elixir
+  - AI
+  - 编码智能体
+  - 文档
+sourceLanguage: English
+sourceTitle: Why Elixir is the best language for AI
+sourceUrl: https://dashbit.co/blog/why-elixir-best-language-for-ai?ref=georgeguimaraes.com
+translator: Justin Huang
+---
+
+[腾讯最近的一项研究](https://autocodebench.github.io)表明，在对比 20 种不同编程语言时，Elixir 在各模型中的题目完成率最高。综合 30 余个被评估模型的结果，97.5% 的 Elixir 问题至少能被其中一个模型解决，位居所有语言之首。
+
+即便对单个模型逐一评估，Elixir 在推理模式与非推理模式下均是大多数模型的最高分。例如，Claude Opus 4 在 Elixir 上的得分为 80.3%，其次是 C# 的 74.9% 和 Kotlin 的 72.5%，Sonnet 在非推理模式下的结果也与此相近。
+
+这篇研究报告近来颇受关注，[Theo 也专门就此发布了一期视频](https://www.youtube.com/watch?v=iV1EcfZSdCM)。因此，我想就 Elixir 表现如此出色的可能原因，分享一些我自己的见解。本文将分两部分展开：首先探讨语言特性，然后聚焦工具生态。
+
+---
+
+## 语言与生态：Elixir 为何易于写对
+
+第一部分将介绍那些对模型训练和大语言模型（LLM）代码生成产生积极影响的语言特性。这与腾讯的论文直接相关——该论文评估了不同模型在各语言上的单次生成解题能力。
+
+### 不可变性与可读性
+
+不可变性（Immutability）大概是我在所有编程语言中最钟爱的特性，它直接影响着人类和 AI 智能体对代码的理解方式。举个例子，看下面这段面向对象的代码：
+
+```text
+manager = project.getManager()
+project.updateVersion()
+```
+
+在调用 `project.updateVersion()` 之后，`manager` 的值会是什么？你根本无从判断——因为如果 `project` 对象持有对 `manager` 的引用，`manager` 就可能被修改，甚至被撤销管理员身份。换言之，在可变语言中，每一个方法或过程都可能影响系统中的任意对象，这使得局部推理（local reasoning）变得极为困难，无论对人类还是 AI 智能体皆是如此。这意味着你往往需要同时将 `getManager` 和 `updateVersion` 的实现都纳入上下文，才能理解程序的行为。
+
+而在以不可变性为首要原则的语言中，比如 Elixir，函数所需的一切必须作为输入传入，函数所改变的一切必须作为输出返回。这意味着，如果上述代码只修改 project，你会这样写：
+
+```text
+manager = Project.get_manager(project)
+project = Project.update_version(project)
+```
+
+如果 `update_version` 需要同时修改 project 和 manager，你可以这样写：
+
+```text
+manager = Project.get_manager(project)
+{project, manager} = Project.update_version(project, manager)
+```
+
+数据的流入与流出始终清晰可见，不存在任何"幽灵式的远程作用"（spooky action at a distance）。Elixir 还让 `get_manager` 和 `update_version` 的来源一目了然，无需猜测。
+
+Elixir 将这些理念融为一体的最典型体现，是管道操作符（pipe operator）。它定义了数据经由一系列步骤被依次变换的方式，类似于 Unix 命令的管道机制。以下是直接取自 [Elixir 官网](https://elixir-lang.org/) 的示例：
+
+```text
+iex> "Elixir is awesome" |> String.split() |> Enum.frequencies()
+%{"Elixir" => 1, "is" => 1, "awesome" => 1}
+```
+
+这种数据流风格提升了局部推理的清晰度，推迟了引入额外代码上下文的必要性，从而有效避免上下文膨胀。
+
+### 文档
+
+我在设计 Elixir 时，始终将学习体验列为核心关注点之一，而文档质量对学习体验有着直接影响。
+
+首先，Elixir 明确区分了文档（documentation）与代码注释（code comments），因为二者面向不同的受众，服务于不同的目的。以下是一个示例：
+
+```elixir
+@doc """
+去除给定字符串首尾的空白字符。
+
+### 示例
+
+    iex> String.trim("foo")
+    "foo"
+
+"""
+@doc since: "1.4.0"
+
+# 这里才是代码注释
+
+def trim(string) do
+  ...
+end
+```
+
+从上述代码中，我们可以得出以下结论：
+
+- 函数的公开契约（public contract）与实现细节之间没有混淆，更易于提取有效信号。
+- 文档中的 `iex>` 代码片段可以作为测试套件的一部分加以验证，这鼓励开发者在文档中添加"示例"章节，同时也意味着训练数据很可能是正确的。
+- 额外收益：文档以普通 Elixir 数据结构的形式编写，这意味着即便在生成代码时（元编程），也能生成正确的文档。
+
+上述特性造就了一个将文档视为一等公民的生态系统。事实上，你可以在 [HexDocs](https://hexdocs.pm) 上找到任何 Elixir 项目的文档，[包括 Elixir 本身](https://hexdocs.pm/elixir)。这意味着你只需前往一处，便能获取关于 Elixir 及其生态的一切所需信息。
+
+近来，我们更进一步，用 [TypeSense](https://typesense.org/) 为所有文档建立了索引。这意味着 Elixir 开发者只需运行一条命令 `mix hex.search`，便可获得一个专为其项目中确切依赖版本量身定制的搜索引擎（[这里有一个来自 Livebook 包的示例](https://hexdocs.pm/?q=link&packages=aws_credentials%3A0.3.2%2Cbandit%3A1.6.8%2Cbypass%3A2.1.0%2Ccastore%3A1.0.15%2Ccc_precompiler%3A0.1.11%2Ccircular_buffer%3A1.0.0%2Ccowboy%3A2.13.0%2Ccowboy_telemetry%3A0.4.0%2Ccowlib%3A2.15.0%2Cdecimal%3A2.3.0%2Cdns_cluster%3A0.1.3%2Cearmark_parser%3A1.4.43%2Cecto%3A3.12.5%2Ceini_beam%3A2.2.4%2Celixir_make%3A0.9.0%2Cex_doc%3A0.37.3%2Cfile_system%3A1.1.1%2Cfinch%3A0.20.0%2Cfine%3A0.1.4%2Cfresh%3A0.4.4%2Chpax%3A1.0.3%2Ciso8601%3A1.3.4%2Cjason%3A1.4.4%2Cjose%3A1.11.10%2Cjsx%3A3.1.0%2Ckubereq%3A0.3.2%2Clazy_html%3A0.1.0%2Clogger_json%3A6.2.1%2Cmakeup%3A1.2.1%2Cmakeup_elixir%3A1.0.1%2Cmakeup_erlang%3A1.0.2%2Cmime%3A2.0.7%2Cmint%3A1.7.1%2Cmint_web_socket%3A1.0.4%2Cnimble_options%3A1.1.1%2Cnimble_parsec%3A1.4.2%2Cnimble_pool%3A1.1.0%2Cphoenix%3A1.8.0%2Cphoenix_ecto%3A4.6.3%2Cphoenix_html%3A4.2.1%2Cphoenix_live_dashboard%3A0.8.6%2Cphoenix_live_reload%3A1.6.1%2Cphoenix_live_view%3A1.1.11%2Cphoenix_pubsub%3A2.1.3%2Cphoenix_template%3A1.0.4%2Cplug%3A1.18.0%2Cplug_cowboy%3A2.7.4%2Cplug_crypto%3A2.1.0%2Cpluggable%3A1.1.0%2Cprotobuf%3A0.13.0%2Cpythonx%3A0.4.4%2Cranch%3A1.8.1%2Creq%3A0.5.8%2Ctelemetry%3A1.3.0%2Ctelemetry_metrics%3A1.1.0%2Ctelemetry_poller%3A1.1.0%2Cthousand_island%3A1.4.1%2Ctidewave%3A0.5.0%2Cwebsock%3A0.5.3%2Cwebsock_adapter%3A0.5.8%2Cyamerl%3A0.10.0%2Cyaml_elixir%3A2.11.0)）。当然，我们也已将其作为 [Tidewave MCP](https://github.com/tidewave-ai/tidewave_phoenix) 暴露给编码智能体使用。
+
+### 稳定性
+
+稳定性常常被许多维护者所忽视——他们往往优先发布新特性，即便以牺牲兼容性为代价。然而，Elixir 生态系统一直保持着极高的稳定性：
+
+- Erlang 虚拟机及其底层理念已存在数十年之久。
+- Elixir v1.0 发布于 2014 年，12 年后的今天，我们仍处于 v1.x 阶段。
+- 同样，Phoenix Web 框架于 2014 年发布，目前版本为 v1.8。
+- 就连我们的数据库集成工具包 Ecto，目前处于 v3，其最后一次主版本更新也停留在 2018 年。
+
+这意味着过去十年间所有关于 Elixir 或 Phoenix 的文章至今仍然适用。训练数据中不存在关于"哪些能用、哪些不能用""什么是新的、什么是旧的"的混乱与歧义。在同等时间跨度内，其他语言已历经多个主版本迭代，其他 Web 框架更是经历了数十次含破坏性变更的主版本发布。
+
+当然，这并不意味着 Elixir 或 Phoenix 停滞不前，而是说这个生态系统允许我们在不引入破坏性变更的前提下持续演进。每当我们发现更好的做法，旧有方式会被标记为废弃（deprecated），并发出警告，指引开发者迁移至新版本。如果你正在使用编码智能体，它会捕获这些警告并自动为你修复。
+
+---
+
+## 工具生态：Elixir 为何易于迭代
+
+[腾讯的研究](https://autocodebench.github.io)表明，Elixir 在没有编码智能体辅助的单次生成中表现出色。这固然极具价值（一次写对，胜过反复修改），但在日常工作中，我们还是会借助 Claude Code 和 Codex 等工具。这一次，我们没有数据佐证，但仍可以从直觉上推断工具生态如何契合智能体工作流。
+
+### 快速而精准的反馈
+
+Elixir 是一门编译型语言，这意味着在每一个步骤中，编译器都会检查未使用的变量、未定义的函数、冗余的子句，等等。我们在[类型系统上的近期进展](https://elixir-lang.org/blog/2026/01/09/type-inference-of-all-and-next-15/)，使得编译器能够以极低的误报率自动发现 bug，同时保留动态语言更具表达力的特性。
+
+Elixir 还致力于将大多数违规行为报告为警告（warning），而非编译错误（compilation error）。这意味着你可以持续迭代和完善程序，而不会立即被阻塞（在预提交和 CI 阶段，启用 `--warnings-as-errors` 可确保这些警告不会被忽视）。
+
+不仅如此，作为一门并发语言，Elixir 的工具链在充分利用机器资源方面表现卓越。编译并行执行，测试亦然。一旦出现问题，错误信息和测试套件的失败报告都清晰而详尽。
+
+### 低运维复杂度
+
+得益于 Erlang 虚拟机编写并发与分布式软件的能力，我们说 Elixir 提供了低运维复杂度（low operational complexity）。
+
+举例来说，如果你用 Elixir 构建一个 Web 应用，通常只需要 Phoenix 和一个数据库，仅此而已。其他技术栈往往会给你带来额外的复杂性：需要缓存？那就得引入 Redis。需要消息传递？是时候上 RabbitMQ 了。需要后台处理任务？调用 Amazon Lambda 吧。而在 Elixir 中，这一切都在语言本身及其运行时内完成。
+
+当编码智能体产出的代码无法正常运行时，它无需调试多个组件（数据库、应用服务器、队列系统等）及其相互之间的交互，需要排查的范围要小得多，问题定位也因此更加容易。
+
+此外，你还可以通过 `mix phx.server` 在本地运行一切，开发环境与生产环境高度一致，无需用 Docker Compose 编排三个额外的服务，无需运行 Amazon Lambda 或云服务商的模拟版本。
+
+到了生产部署阶段，需要管理的活动部件同样更少！
+
+### 运行时自省
+
+最后，Erlang 虚拟机（以及 Elixir）提供了极为丰富的运行时自省（introspection）能力。所有 Elixir 代码都运行在轻量级执行线程中，称为"进程"（process），你可以在任意时刻对每个进程进行自省：它在做什么、它的状态是什么、它有哪些待处理的任务。
+
+开发者可以通过 [GUI 应用](https://hexdocs.pm/elixir/dynamic-supervisor.html#observer) 和 [Web 界面](https://github.com/phoenixframework/phoenix_live_dashboard) 访问这些接口，但所有 API 同样可以通过编程方式供智能体调用。这实际上也是我们创建 [Tidewave MCP](https://github.com/tidewave-ai/tidewave_phoenix) 的原因之一——它将你正在运行的应用暴露给编码智能体，使其能够在开发过程中进行调试和自省，就像一位经验丰富的工程师在生产环境中运行 REPL 来诊断问题一样。
+
+---
+
+## 总结
+
+在本文中，我阐述了 Elixir 在 20 种语言中获得最高模型完成率的理由。最令人瞩目的是，这些特性最初是以开发者体验为出发点而设计的，却在面对大语言模型时相辅相成、形成合力：不可变性赋能局部推理，文档质量保证了优质的训练信号，而稳定性则确保这一训练信号经久不衰。
+
+超越单次生成，Elixir 的工具生态——快速编译、详尽警告、低运维复杂度与运行时自省——同样使其非常契合编码智能体的迭代工作流。在这种工作流中，快速获得有效反馈的重要性，几乎与一次性写对不相上下。
