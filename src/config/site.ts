@@ -32,7 +32,7 @@ export const siteConfig = defineAitherSiteConfig({
   social: [
     {
       title: 'GitHub',
-      href: 'https://github.com/justinhuangcode',
+      href: 'https://github.com/justinhuangai',
       icon: 'github',
     },
     {
@@ -104,7 +104,7 @@ export const siteConfig = defineAitherSiteConfig({
         items: [
           {
             title: 'GitHub',
-            href: 'https://github.com/justinhuangcode',
+            href: 'https://github.com/justinhuangai',
             external: true,
           },
         ],

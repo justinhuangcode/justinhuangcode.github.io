@@ -47,7 +47,7 @@ export const id = {
   },
   about: {
     title: 'Tentang',
-    description: 'Blog minimalis yang dibuat dengan <a href="https://github.com/justinhuangcode/astro-theme-aither">Astro-Theme-Aither</a>.',
+    description: 'Blog minimalis yang dibuat dengan <a href="https://github.com/justinhuangai/astro-theme-aither">Astro-Theme-Aither</a>.',
   },
   forAgents: {
     title: 'AI Access',

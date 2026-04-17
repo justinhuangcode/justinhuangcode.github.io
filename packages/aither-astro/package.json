@@ -9,14 +9,14 @@
     "access": "public",
     "provenance": true
   },
-  "homepage": "https://github.com/justinhuangcode/astro-theme-aither/tree/main/packages/aither-astro",
+  "homepage": "https://github.com/justinhuangai/astro-theme-aither/tree/main/packages/aither-astro",
   "repository": {
     "type": "git",
-    "url": "https://github.com/justinhuangcode/astro-theme-aither.git",
+    "url": "https://github.com/justinhuangai/astro-theme-aither.git",
     "directory": "packages/aither-astro"
   },
   "bugs": {
-    "url": "https://github.com/justinhuangcode/astro-theme-aither/issues"
+    "url": "https://github.com/justinhuangai/astro-theme-aither/issues"
   },
   "keywords": [
     "astro",

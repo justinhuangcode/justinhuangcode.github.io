@@ -46,7 +46,7 @@ For the release-to-release workflow and file-ownership heuristic, see [UPGRADING
 Suggested local setup:
 
 ```bash
-git remote add upstream https://github.com/justinhuangcode/astro-theme-aither.git
+git remote add upstream https://github.com/justinhuangai/astro-theme-aither.git
 git fetch upstream --tags
 ```
 

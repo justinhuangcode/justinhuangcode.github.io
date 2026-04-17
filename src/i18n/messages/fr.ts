@@ -47,7 +47,7 @@ export const fr = {
   },
   about: {
     title: 'À propos',
-    description: 'Un blog minimaliste propulsé par <a href="https://github.com/justinhuangcode/astro-theme-aither">Astro-Theme-Aither</a>.',
+    description: 'Un blog minimaliste propulsé par <a href="https://github.com/justinhuangai/astro-theme-aither">Astro-Theme-Aither</a>.',
   },
   forAgents: {
     title: 'AI Access',

@@ -47,7 +47,7 @@ export const ru = {
   },
   about: {
     title: 'О нас',
-    description: 'Минималистичный блог на базе <a href="https://github.com/justinhuangcode/astro-theme-aither">Astro-Theme-Aither</a>.',
+    description: 'Минималистичный блог на базе <a href="https://github.com/justinhuangai/astro-theme-aither">Astro-Theme-Aither</a>.',
   },
   forAgents: {
     title: 'AI Access',
