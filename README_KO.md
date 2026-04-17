@@ -41,7 +41,7 @@ pnpm validate
 
 이제 `pnpm validate`는 전체 배포 안전 체인을 실행합니다.
 
-- `pnpm check:content`: 설정된 locale 간 게시글 커버리지 확인
+- `pnpm check:content`: 설정된 locale 간 게시글 커버리지를 확인하고 게시글 안의 수상한 수식 마크업도 잡아냅니다
 - `pnpm check`: Astro 진단 실행
 - `pnpm typecheck`: TypeScript 무출력 검사
 - `pnpm build`: 정적 사이트 빌드

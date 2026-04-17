@@ -38,7 +38,9 @@ The specific workflow:
 
 The probability formula from the paper:
 
-> p(y_1, ..., y_T' | x_1, ..., x_T) = ∏ p(y_t | v, y_1, ..., y_{t-1})
+$$
+p(y_1, \ldots, y_{T'} \mid x_1, \ldots, x_T) = \prod_t p(y_t \mid v, y_1, \ldots, y_{t-1})
+$$
 
 In plain language: given a source sentence x, the probability of generating target sentence y equals the product of the probability of generating each next word at every step. Each step's prediction depends on two things: the vector v compressed by the encoder, and all previously generated words.
 

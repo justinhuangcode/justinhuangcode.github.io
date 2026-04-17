@@ -41,7 +41,7 @@ pnpm validate
 
 現在 `pnpm validate` 會串起完整發佈檢查：
 
-- `pnpm check:content`：檢查各 locale 的文章覆蓋是否一致
+- `pnpm check:content`：檢查各 locale 的文章覆蓋是否一致，並攔截文章裡可疑的數學公式標記寫法
 - `pnpm check`：執行 Astro 診斷
 - `pnpm typecheck`：執行 TypeScript 無輸出檢查
 - `pnpm build`：建構靜態站點

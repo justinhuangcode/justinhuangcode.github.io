@@ -46,13 +46,17 @@ Hoffmann 팀은 단순한 질문을 던졌다: 그것이 정말 맞는가?
 
 **접근법 3: 파라메트릭 손실 함수 피팅.** 모든 학습 실행에 다음 방정식을 피팅했다:
 
-> L̂(N, D) = E + A / N^α + B / D^β
+$$
+\hat{L}(N, D) = E + \frac{A}{N^\alpha} + \frac{B}{D^\beta}
+$$
 
 여기서 E는 비가역적 손실(자연 언어의 엔트로피 — 어떤 모델도 이보다 더 나을 수 없다), A/N^α는 모델 크기 병목, B/D^β는 데이터 병목을 포착한다. 피팅된 파라미터에서 최적의 N과 D를 컴퓨팅의 함수로 도출했다.
 
 세 가지 접근법 모두 일치했다:
 
-> N_opt ∝ C^a, D_opt ∝ C^b, where a ≈ 0.50, b ≈ 0.50
+$$
+N_{\mathrm{opt}} \propto C^a, \quad D_{\mathrm{opt}} \propto C^b, \quad a \approx 0.50, \quad b \approx 0.50
+$$
 
 ```python
 def optimal_scaling(compute: float) -> tuple[float, float]:
@@ -91,7 +95,9 @@ class TrainingConfig:
 
 논문의 접근법 3은 성능에 대한 완전한 수학적 모델을 제공하기 때문에 더 자세히 살펴볼 가치가 있다:
 
-> L̂(N, D) = E + A / N^α + B / D^β
+$$
+\hat{L}(N, D) = E + \frac{A}{N^\alpha} + \frac{B}{D^\beta}
+$$
 
 피팅된 상수는 다음과 같다:
 

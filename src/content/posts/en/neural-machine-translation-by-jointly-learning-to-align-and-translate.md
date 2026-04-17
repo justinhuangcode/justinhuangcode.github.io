@@ -37,17 +37,23 @@ Specifically, it works in three steps:
 
 The scoring function used in the paper:
 
-> e_{ij} = a(s_{i-1}, h_j) = v_a^T tanh(W_a s_{i-1} + U_a h_j)
+$$
+e_{ij} = a(s_{i-1}, h_j) = v_a^T \tanh(W_a s_{i-1} + U_a h_j)
+$$
 
 This is called "additive attention." The decoder state and encoder state each undergo a linear transformation (multiply by a matrix), the results are added together, passed through tanh (a function that squashes values to between -1 and 1), and then dot-producted with a vector v_a to produce a scalar score.
 
 **Step 2: Normalization.** Softmax converts all position scores into probabilities that sum to 1:
 
-> α_{ij} = softmax(e_{ij}) = exp(e_{ij}) / Σ exp(e_{ik})
+$$
+\alpha_{ij} = \operatorname{softmax}(e_{ij}) = \frac{\exp(e_{ij})}{\sum_k \exp(e_{ik})}
+$$
 
 **Step 3: Weighted sum.** These probabilities are used to compute a weighted sum of the encoder's hidden states, producing a "context vector" c_i:
 
-> c_i = Σ α_{ij} h_j
+$$
+c_i = \sum_j \alpha_{ij} h_j
+$$
 
 This context vector is the key information the decoder extracts from the source sentence when generating the i-th word. The context vector is different for each generated word, because the model focuses on different source positions each time.
 

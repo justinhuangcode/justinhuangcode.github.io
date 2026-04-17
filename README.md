@@ -41,7 +41,7 @@ pnpm validate
 
 `pnpm validate` now runs the full publish safety chain:
 
-- `pnpm check:content` checks post coverage across the configured locales
+- `pnpm check:content` checks post coverage across the configured locales and flags suspicious math markup in posts
 - `pnpm check` runs Astro diagnostics
 - `pnpm typecheck` runs TypeScript without emit
 - `pnpm build` produces the static site

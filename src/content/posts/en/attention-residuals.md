@@ -36,20 +36,24 @@ If the formula below is not your favorite thing in the world, do not get stuck o
 
 The standard residual rule is simple:
 
-> h_l = h_{l-1} + f_{l-1}(h_{l-1})
+$$
+h_l = h_{l-1} + f_{l-1}(h_{l-1})
+$$
 
 You can split it into two parts:
 
-- `h_{l-1}`: the old content, meaning the representation already produced by the previous layer
-- `f_{l-1}(h_{l-1})`: the new increment computed by the current layer, which is closer to what "residual" means as a word
+- $h_{l-1}$: the old content, meaning the representation already produced by the previous layer
+- $f_{l-1}(h_{l-1})$: the new increment computed by the current layer, which is closer to what "residual" means as a word
 
 And the act of adding those two parts back together is what is more precisely called the residual connection.
 
 If you expand the recurrence, you get:
 
-> h_l = h_1 + \sum_{i=1}^{l-1} f_i(h_i)
+$$
+h_l = h_1 + \sum_{i=1}^{l-1} f_i(h_i)
+$$
 
-In plain English, that means: the input seen by layer `l` is basically "the embedding plus the uniform sum of all previous layer outputs." Every earlier layer gets weight 1. There is no selection, no suppression, no way to say "for this step I should care more about layer 3 than layer 17."
+In plain English, that means: the input seen by layer $l$ is basically "the embedding plus the uniform sum of all previous layer outputs." Every earlier layer gets weight 1. There is no selection, no suppression, no way to say "for this step I should care more about layer 3 than layer 17."
 
 The core idea of AttnRes is just one sentence:
 
@@ -63,7 +67,7 @@ Standard residual connections have long been treated as optimization infrastruct
 
 Imagine you are working on a document that keeps being revised. At each round, instead of selecting the most relevant parts of older versions and merging them thoughtfully, you just append the full text of every previous draft to the end. By revision 20, the important insights from revision 3 are still technically there, but they are buried inside an ever-thickening pile.
 
-That is the PreNorm problem the report highlights. It builds on observations from SiameseNorm and argues that under PreNorm, the magnitude of the `hidden state` grows approximately like `O(L)` with depth. Here, hidden state is just the model's internal running note at each layer. The result is:
+That is the PreNorm problem the report highlights. It builds on observations from SiameseNorm and argues that under PreNorm, the magnitude of the `hidden state` grows approximately like $O(L)$ with depth. Here, hidden state is just the model's internal running note at each layer. The result is:
 
 - later layers see an increasingly bloated historical sum
 - early-layer information does not disappear, but it gets diluted
@@ -75,13 +79,17 @@ There is a line of reasoning under the surface here that I really like: along th
 
 ## 3. What AttnRes Actually Does
 
-The form of AttnRes is clean. Layer `l` no longer mechanically receives the sum of all previous outputs. Instead, it performs a weighted selection over those historical representations:
+The form of AttnRes is clean. Layer $l$ no longer mechanically receives the sum of all previous outputs. Instead, it performs a weighted selection over those historical representations:
 
-> h_l = \sum_{i=0}^{l-1} \alpha_{i \to l} \cdot v_i
+$$
+h_l = \sum_{i=0}^{l-1} \alpha_{i \to l} \cdot v_i
+$$
 
-The weights `α_{i -> l}` come from a softmax. If you are not used to that term, the easiest working definition is: softmax turns a set of scores into weights that add up to 1, which lets the model say clearly "look more here, less there":
+The weights $\alpha_{i \to l}$ come from a softmax. If you are not used to that term, the easiest working definition is: softmax turns a set of scores into weights that add up to 1, which lets the model say clearly "look more here, less there":
 
-> α_{i -> l} = softmax(w_l^T RMSNorm(k_i))
+$$
+\alpha_{i \to l} = \operatorname{softmax}\left(w_l^T \operatorname{RMSNorm}(k_i)\right)
+$$
 
 If you have never worked with attention before, here is the cheapest way to think about it:
 
@@ -91,7 +99,7 @@ If you have never worked with attention before, here is the cheapest way to thin
 
 Three details in the design matter a lot.
 
-First, **the query is not computed from the current hidden state. It is a learned pseudo-query vector `w_l` for each layer.**  
+First, **the query is not computed from the current hidden state. It is a learned pseudo-query vector $w_l$ for each layer.**  
 This is slightly counterintuitive. Normally, when we see attention, we assume the query must come from the current input. Here the authors intentionally make it layer-specific rather than token-specific. The upside is that multiple queries inside the same block can be computed in batches ahead of time, which opens the door for later infrastructure optimizations.
 
 Second, **the keys and values come directly from previous layer outputs.**  
@@ -128,7 +136,7 @@ At first glance, this looks like "put attention on top of residuals." But I thin
 
 If the report stopped at Full AttnRes, this would still be just a beautiful research idea.
 
-Full AttnRes lets every layer attend to all previous layers. Theoretically, it is easy to understand, and even the raw arithmetic cost is not terrifying, because network depth `L` is usually much smaller than sequence length `T`. So the authors argue that `O(L^2 d)` arithmetic alone is not the scariest part.
+Full AttnRes lets every layer attend to all previous layers. Theoretically, it is easy to understand, and even the raw arithmetic cost is not terrifying, because network depth $L$ is usually much smaller than sequence length $T$. So the authors argue that $O(L^2 d)$ arithmetic alone is not the scariest part.
 
 The real problems show up in large-scale training:
 
@@ -138,7 +146,7 @@ The real problems show up in large-scale training:
 
 That is why they introduce **Block AttnRes**.
 
-The idea is to divide the `L` layers into `N` blocks. Inside a block, you first use ordinary summation to accumulate a block representation. Across blocks, you then apply attention. So:
+The idea is to divide the $L$ layers into $N$ blocks. Inside a block, you first use ordinary summation to accumulate a block representation. Across blocks, you then apply attention. So:
 
 - Full AttnRes attends to every historical layer
 - Block AttnRes attends to summaries of historical blocks, plus the partial sum inside the current block
@@ -175,9 +183,9 @@ The authors first run scaling-law experiments across five model sizes, comparing
 
 The fitted curves are:
 
-- Baseline: `1.891 × C^-0.057`
-- Block AttnRes: `1.870 × C^-0.058`
-- Full AttnRes: `1.865 × C^-0.057`
+- Baseline: $1.891 \times C^{-0.057}$
+- Block AttnRes: $1.870 \times C^{-0.058}$
+- Full AttnRes: $1.865 \times C^{-0.057}$
 
 The most important thing here is not which slope differs by how much. It is this:
 

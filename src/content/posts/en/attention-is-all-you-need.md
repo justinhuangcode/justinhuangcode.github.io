@@ -43,7 +43,9 @@ Each word's Query is matched against every other word's Key. High match scores p
 
 The formula the paper gives is called Scaled Dot-Product Attention:
 
-> Attention(Q, K, V) = softmax(QK^T / sqrt(d_k))V
+$$
+\operatorname{Attention}(Q, K, V) = \operatorname{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V
+$$
 
 Do not panic at the formula. Let's break it down step by step:
 
@@ -85,7 +87,9 @@ Asking one head to juggle all these layers at once is a tall order. The paper's 
 
 The formula from the paper:
 
-> MultiHead(Q, K, V) = Concat(head_1, ..., head_h) W^O
+$$
+\operatorname{MultiHead}(Q, K, V) = \operatorname{Concat}(\text{head}_1, \ldots, \text{head}_h)\, W^O
+$$
 
 Breaking it down:
 - **head_1, ..., head_h**: 8 heads each independently run one attention computation, producing 8 separate results
@@ -145,9 +149,13 @@ The fix: generate a unique "address code" for each position and add it to the wo
 
 The paper uses sine and cosine functions to generate this encoding:
 
-> PE(pos, 2i) = sin(pos / 10000^(2i/d_model))
->
-> PE(pos, 2i+1) = cos(pos / 10000^(2i/d_model))
+$$
+\operatorname{PE}(pos, 2i) = \sin\left(\frac{pos}{10000^{2i / d_{\text{model}}}}\right)
+$$
+
+$$
+\operatorname{PE}(pos, 2i + 1) = \cos\left(\frac{pos}{10000^{2i / d_{\text{model}}}}\right)
+$$
 
 The formula looks intimidating, but the core idea is intuitive:
 - **pos**: the word's position in the sentence (1st, 2nd, 3rd, ...)

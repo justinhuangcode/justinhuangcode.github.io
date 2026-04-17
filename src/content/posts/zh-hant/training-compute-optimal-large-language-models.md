@@ -46,13 +46,17 @@ Hoffmann 的團隊問了一個簡單的問題：這真的對嗎？
 
 **方法三：擬合參數化損失函數。** 他們把以下方程式擬合到所有訓練結果：
 
-> L̂(N, D) = E + A / N^α + B / D^β
+$$
+\hat{L}(N, D) = E + \frac{A}{N^\alpha} + \frac{B}{D^\beta}
+$$
 
 其中 E 是不可約損失（自然語言的熵：任何模型都無法做得更好），A/N^α 反映模型大小的瓶頸，B/D^β 反映資料量的瓶頸。從擬合出的參數，他們推導出最優的 N 和 D 作為算力的函數。
 
 三種方法一致同意：
 
-> N_opt ∝ C^a, D_opt ∝ C^b，其中 a ≈ 0.50，b ≈ 0.50
+$$
+N_{\mathrm{opt}} \propto C^a, \quad D_{\mathrm{opt}} \propto C^b, \quad a \approx 0.50, \quad b \approx 0.50
+$$
 
 ```python
 def optimal_scaling(compute: float) -> tuple[float, float]:
@@ -91,7 +95,9 @@ class TrainingConfig:
 
 論文的方法三值得細看，因為它給出了一個完整的性能數學模型：
 
-> L̂(N, D) = E + A / N^α + B / D^β
+$$
+\hat{L}(N, D) = E + \frac{A}{N^\alpha} + \frac{B}{D^\beta}
+$$
 
 其中擬合出的常數是：
 

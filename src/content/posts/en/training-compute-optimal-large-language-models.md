@@ -35,13 +35,17 @@ What makes this paper unusually convincing is its methodology. The team did not 
 
 **Approach 3: Fit a parametric loss function.** They fit the following equation to all their training runs:
 
-> L̂(N, D) = E + A / N^α + B / D^β
+$$
+\hat{L}(N, D) = E + \frac{A}{N^\alpha} + \frac{B}{D^\beta}
+$$
 
 Where E is the irreducible loss (the entropy of natural language — no model can do better), A/N^α captures the model-size bottleneck, and B/D^β captures the data bottleneck. From the fitted parameters, they derived optimal N and D as functions of compute.
 
 All three approaches agreed:
 
-> N_opt ∝ C^a, D_opt ∝ C^b, where a ≈ 0.50, b ≈ 0.50
+$$
+N_{\mathrm{opt}} \propto C^a, \quad D_{\mathrm{opt}} \propto C^b, \quad a \approx 0.50, \quad b \approx 0.50
+$$
 
 ```python
 def optimal_scaling(compute: float) -> tuple[float, float]:
@@ -80,7 +84,9 @@ class TrainingConfig:
 
 The paper's Approach 3 deserves a closer look because it gives a complete mathematical model of performance:
 
-> L̂(N, D) = E + A / N^α + B / D^β
+$$
+\hat{L}(N, D) = E + \frac{A}{N^\alpha} + \frac{B}{D^\beta}
+$$
 
 Where the fitted constants are:
 

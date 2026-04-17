@@ -47,17 +47,23 @@ pinned: false
 
 논문에서 사용한 점수 함수:
 
-> e_{ij} = a(s_{i-1}, h_j) = v_a^T tanh(W_a s_{i-1} + U_a h_j)
+$$
+e_{ij} = a(s_{i-1}, h_j) = v_a^T \tanh(W_a s_{i-1} + U_a h_j)
+$$
 
 이것을 "additive attention"이라 부른다. Decoder 상태와 encoder 상태에 각각 선형 변환(행렬 곱)을 적용하고, 그 결과를 더한 뒤, tanh(값을 -1에서 1 사이로 압축하는 함수)를 통과시키고, 벡터 v_a와 내적하여 스칼라 점수를 만든다.
 
 **2단계: 정규화.** Softmax가 모든 위치의 점수를 합이 1이 되는 확률로 변환한다:
 
-> α_{ij} = softmax(e_{ij}) = exp(e_{ij}) / Σ exp(e_{ik})
+$$
+\alpha_{ij} = \operatorname{softmax}(e_{ij}) = \frac{\exp(e_{ij})}{\sum_k \exp(e_{ik})}
+$$
 
 **3단계: 가중합.** 이 확률을 사용하여 encoder의 hidden state에 대한 가중합을 계산하고, "context 벡터" c_i를 만든다:
 
-> c_i = Σ α_{ij} h_j
+$$
+c_i = \sum_j \alpha_{ij} h_j
+$$
 
 이 context 벡터가 decoder가 i번째 단어를 생성할 때 원문에서 추출한 핵심 정보다. 모델이 매번 원문의 서로 다른 위치에 집중하기 때문에, context 벡터는 생성되는 단어마다 다르다.
 

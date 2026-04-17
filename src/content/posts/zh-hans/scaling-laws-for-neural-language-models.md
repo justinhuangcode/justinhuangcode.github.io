@@ -46,11 +46,17 @@ pinned: false
 
 三个方程概括了整篇论文：
 
-> L(N) ≈ (N_c / N)^α_N，α_N ≈ 0.076
->
-> L(D) ≈ (D_c / D)^α_D，α_D ≈ 0.095
->
-> L(C) ≈ (C_c / C)^α_C，α_C ≈ 0.050
+$$
+L(N) \approx \left(\frac{N_c}{N}\right)^{\alpha_N}, \quad \alpha_N \approx 0.076
+$$
+
+$$
+L(D) \approx \left(\frac{D_c}{D}\right)^{\alpha_D}, \quad \alpha_D \approx 0.095
+$$
+
+$$
+L(C) \approx \left(\frac{C_c}{C}\right)^{\alpha_C}, \quad \alpha_C \approx 0.050
+$$
 
 别被符号吓到。拆开就是几个简单的角色：
 
@@ -127,13 +133,17 @@ def non_embedding_params(config: ArchitectureExperiment) -> int:
 
 论文这里真正漂亮的地方，是给出了一个统一公式，把「模型多大」和「数据多少」如何共同决定表现写进了一个式子：
 
-> L(N, D) = [(N_c / N)^(α_N / α_D) + D_c / D]^α_D
+$$
+L(N, D) = \left[\left(\frac{N_c}{N}\right)^{\alpha_N / \alpha_D} + \frac{D_c}{D}\right]^{\alpha_D}
+$$
 
 这个公式说的是：模型的考试成绩不是由「个头」或「课本厚度」单独决定的，而是两者一起。如果模型够大但数据不够，性能就卡在数据上；如果数据够多但模型太小，性能就卡在模型上。过拟合，就是「个头大、课本薄」这对矛盾的自然结果。
 
 从这个关系出发，论文还给了一个粗略的经验门槛：「课本至少要多厚，才不会让这个学生背书」：
 
-> D ≳ 5 × 10³ × N^0.74 词元
+$$
+D \gtrsim 5 \times 10^3 \times N^{0.74}
+$$
 
 用大白话说：模型大 10 倍，课本只需要厚大约 5.5 倍就够了。更大的模型学习效率更高：同样看一页书，它能悟到更多。
 
@@ -159,11 +169,17 @@ def min_dataset_tokens(n_params: float) -> float:
 
 论文发现最优分配遵循：
 
-> N_opt ∝ C^0.73（模型大小应该随算力增长最快）
->
-> B_opt ∝ C^0.24（每次喂给模型的数据批量增长缓慢）
->
-> S_opt ∝ C^0.03（训练轮数几乎不增加）
+$$
+N_{\mathrm{opt}} \propto C^{0.73}
+$$
+
+$$
+B_{\mathrm{opt}} \propto C^{0.24}
+$$
+
+$$
+S_{\mathrm{opt}} \propto C^{0.03}
+$$
 
 翻译成人话：如果你的预算涨了 10 倍，你应该把模型做大约 5.4 倍，每次喂的数据量增加约 1.7 倍，训练时间几乎不延长（大约只多 7%）。
 
@@ -205,7 +221,9 @@ def is_compute_efficient(n_params: float, compute: float) -> bool:
 
 论文发现，批大小存在一个「甜蜜点」：
 
-> B_crit ∝ L^(-4.8)
+$$
+B_{\mathrm{crit}} \propto L^{-4.8}
+$$
 
 训练刚开始的时候，模型还很「菜」，每批数据都能给它很大启发，小批量就够了。但训练到后期，简单的规律都学完了，每批数据带来的新信息越来越少，这时候就需要更大的批量来「凑够信号」。
 

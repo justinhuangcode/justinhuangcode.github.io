@@ -61,6 +61,7 @@ pnpm validate
 That currently covers:
 
 - `node scripts/check-post-coverage.mjs`
+- `node scripts/check-post-math-markup.mjs`
 - `astro check`
 - `tsc --noEmit`
 - `astro build`

@@ -29,11 +29,17 @@ The paper's central finding is that language model performance follows **power l
 
 Three equations summarize the entire paper:
 
-> L(N) ≈ (N_c / N)^α_N, where α_N ≈ 0.076
->
-> L(D) ≈ (D_c / D)^α_D, where α_D ≈ 0.095
->
-> L(C) ≈ (C_c / C)^α_C, where α_C ≈ 0.050
+$$
+L(N) \approx \left(\frac{N_c}{N}\right)^{\alpha_N}, \quad \alpha_N \approx 0.076
+$$
+
+$$
+L(D) \approx \left(\frac{D_c}{D}\right)^{\alpha_D}, \quad \alpha_D \approx 0.095
+$$
+
+$$
+L(C) \approx \left(\frac{C_c}{C}\right)^{\alpha_C}, \quad \alpha_C \approx 0.050
+$$
 
 Do not panic at the notation. Let's break it down:
 
@@ -98,13 +104,17 @@ This has a profound implication: you do not need to spend weeks searching for th
 
 Bigger is not always better — not if your dataset is too small. The paper's real elegance here is a unified two-variable formula that captures how model size and dataset size jointly determine performance:
 
-> L(N, D) = [(N_c / N)^(α_N / α_D) + D_c / D]^α_D
+$$
+L(N, D) = \left[\left(\frac{N_c}{N}\right)^{\alpha_N / \alpha_D} + \frac{D_c}{D}\right]^{\alpha_D}
+$$
 
 This formula says: loss is not just a function of model size or data size alone — it is a function of both at once. When N is large enough that the first term vanishes, the remaining term shows loss bottlenecked by data. When D is large enough, what remains is the model-size bottleneck. The formula smoothly interpolates between these two regimes and captures overfitting as a natural consequence of the two terms competing.
 
 From this relationship, the paper derives a rough rule of thumb for when overfitting begins to bite:
 
-> D ≳ 5 × 10³ × N^0.74 tokens to keep overfitting within the paper's threshold
+$$
+D \gtrsim 5 \times 10^3 \times N^{0.74}
+$$
 
 In plain language: as you make the model bigger, the amount of data you need grows — but sublinearly. A model that is 10 times larger needs only about 10^0.74 ≈ 5.5 times more data. Bigger models are more sample-efficient: they extract more information from each token of training data.
 
@@ -130,11 +140,17 @@ If you have a fixed compute budget, how should you spend it? This is the most pr
 
 The paper found that optimal allocation follows:
 
-> N_opt ∝ C^0.73 (model size should scale fastest with compute)
->
-> B_opt ∝ C^0.24 (batch size scales slowly)
->
-> S_opt ∝ C^0.03 (training steps barely increase)
+$$
+N_{\mathrm{opt}} \propto C^{0.73}
+$$
+
+$$
+B_{\mathrm{opt}} \propto C^{0.24}
+$$
+
+$$
+S_{\mathrm{opt}} \propto C^{0.03}
+$$
 
 Translation: if your compute budget grows 10x, you should make the model ~5.4x bigger, increase the batch size ~1.7x, and barely train longer (~1.07x more steps).
 
@@ -170,7 +186,9 @@ This result shaped the entire industry. GPT-3, which came five months after this
 
 The paper also discovered that there is a "sweet spot" for batch size, and it depends on the current loss:
 
-> B_crit ∝ L^(-4.8)
+$$
+B_{\mathrm{crit}} \propto L^{-4.8}
+$$
 
 As training progresses and loss decreases, the critical batch size grows. Early in training, when loss is high, small batches are fine — each batch provides a strong enough gradient signal. Later, when the model has already learned the easy patterns, you need larger batches to average out noise and make progress.
 

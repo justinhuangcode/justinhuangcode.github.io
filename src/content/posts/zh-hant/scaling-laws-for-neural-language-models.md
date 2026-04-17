@@ -40,11 +40,17 @@ pinned: false
 
 三個方程式總結了整篇論文：
 
-> L(N) ≈ (N_c / N)^α_N, where α_N ≈ 0.076
->
-> L(D) ≈ (D_c / D)^α_D, where α_D ≈ 0.095
->
-> L(C) ≈ (C_c / C)^α_C, where α_C ≈ 0.050
+$$
+L(N) \approx \left(\frac{N_c}{N}\right)^{\alpha_N}, \quad \alpha_N \approx 0.076
+$$
+
+$$
+L(D) \approx \left(\frac{D_c}{D}\right)^{\alpha_D}, \quad \alpha_D \approx 0.095
+$$
+
+$$
+L(C) \approx \left(\frac{C_c}{C}\right)^{\alpha_C}, \quad \alpha_C \approx 0.050
+$$
 
 不用被符號嚇到，拆開來看：
 
@@ -109,13 +115,17 @@ def non_embedding_params(config: ArchitectureExperiment) -> int:
 
 更大不一定更好：如果你的資料集太小的話。論文這裡真正漂亮的地方，是給出了一個統一的二維公式，把模型規模和資料規模如何共同決定性能寫進了一個式子：
 
-> L(N, D) = [(N_c / N)^(α_N / α_D) + D_c / D]^α_D
+$$
+L(N, D) = \left[\left(\frac{N_c}{N}\right)^{\alpha_N / \alpha_D} + \frac{D_c}{D}\right]^{\alpha_D}
+$$
 
 這個公式說的是：損失不是單獨由模型大小或資料大小決定的：而是由兩者共同決定。當 N 大到第一項消失時，剩下的項表明損失被資料卡住了。當 D 大到第二項消失時，剩下的是模型規模的瓶頸。公式在兩種情況之間平滑過渡，過擬合就是兩項競爭的自然結果。
 
 從這個關係出發，論文給出了一個粗略的經驗門檻：過擬合開始明顯影響性能的臨界點：
 
-> D ≳ 5 × 10³ × N^0.74 詞元，可將過擬合控制在論文討論的閾值附近
+$$
+D \gtrsim 5 \times 10^3 \times N^{0.74}
+$$
 
 白話翻譯：模型越大，需要的資料就越多：但增長是次線性的。大 10 倍的模型只需要約 10^0.74 ≈ 5.5 倍的資料。更大的模型樣本效率更高：它們能從每個訓練詞元中提取更多資訊。
 
@@ -141,11 +151,17 @@ def min_dataset_tokens(n_params: float) -> float:
 
 論文發現最優分配遵循：
 
-> N_opt ∝ C^0.73 (模型大小應該隨算力增長得最快)
->
-> B_opt ∝ C^0.24 (批次大小增長較慢)
->
-> S_opt ∝ C^0.03 (訓練步數幾乎不增加)
+$$
+N_{\mathrm{opt}} \propto C^{0.73}
+$$
+
+$$
+B_{\mathrm{opt}} \propto C^{0.24}
+$$
+
+$$
+S_{\mathrm{opt}} \propto C^{0.03}
+$$
 
 翻譯一下：如果算力預算增加 10 倍，你應該把模型做大約 5.4 倍，批次大小增加約 1.7 倍，訓練時長幾乎不變（約多 1.07 倍的步數）。
 
@@ -181,7 +197,9 @@ def is_compute_efficient(n_params: float, compute: float) -> bool:
 
 論文還發現批次大小存在一個「甜蜜點」，而且它取決於當前的損失值：
 
-> B_crit ∝ L^(-4.8)
+$$
+B_{\mathrm{crit}} \propto L^{-4.8}
+$$
 
 隨著訓練推進、損失降低，臨界批次大小會增長。訓練初期損失高，小批次就夠用：每個批次提供的梯度信號夠強。後期模型已經學完了簡單的模式，需要更大的批次來平均掉噪聲才能繼續進步。
 

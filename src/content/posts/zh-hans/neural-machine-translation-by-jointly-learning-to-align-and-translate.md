@@ -47,17 +47,23 @@ pinned: false
 
 论文用的打分函数是：
 
-> e_{ij} = a(s_{i-1}, h_j) = v_a^T tanh(W_a s_{i-1} + U_a h_j)
+$$
+e_{ij} = a(s_{i-1}, h_j) = v_a^T \tanh(W_a s_{i-1} + U_a h_j)
+$$
 
 这叫「加性注意力」（additive attention）。把解码器状态和编码器状态各自做一次线性变换（乘以矩阵），加起来，过一个 tanh（一种把数值压缩到 -1 到 1 之间的函数），再和一个向量 v_a 做点积，得到一个标量分数。
 
 **第二步，归一化。** 用 softmax 把所有位置的分数转成概率，加起来等于 1：
 
-> α_{ij} = softmax(e_{ij}) = exp(e_{ij}) / Σ exp(e_{ik})
+$$
+\alpha_{ij} = \operatorname{softmax}(e_{ij}) = \frac{\exp(e_{ij})}{\sum_k \exp(e_{ik})}
+$$
 
 **第三步，加权求和。** 用这些概率对编码器的隐藏状态做加权求和，得到一个「上下文向量」c_i：
 
-> c_i = Σ α_{ij} h_j
+$$
+c_i = \sum_j \alpha_{ij} h_j
+$$
 
 这个上下文向量就是解码器在生成第 i 个词时，从源句子里提取到的关键信息。每生成一个词，上下文向量都不一样，因为模型关注的源句子位置不一样。
 
