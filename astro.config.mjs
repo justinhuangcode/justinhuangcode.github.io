@@ -4,13 +4,14 @@ import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
 
 import tailwindcss from '@tailwindcss/vite';
+import { defaultLocale, locales } from './config/locale-meta.mjs';
 
 export default defineConfig({
-  site: 'https://justinhuangcode.github.io',
+  site: 'https://justinhuangai.github.io',
   integrations: [react(), mdx(), sitemap()],
   i18n: {
-    defaultLocale: 'en',
-    locales: ['en', 'zh-hans', 'zh-hant', 'ko'],
+    defaultLocale,
+    locales,
     routing: {
       prefixDefaultLocale: false,
     },

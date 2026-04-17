@@ -45,7 +45,7 @@ export const siteConfig = {
     name: 'Justin Huang',
     avatar: '' as ImageMetadata | string, // Import from src/assets/ for optimization, or use URL string
   },
-  url: import.meta.env.SITE || 'https://justinhuangcode.github.io',
+  url: import.meta.env.SITE || 'https://justinhuangai.github.io',
   ogImage: '/og/index.png',
   images: {
     logoLight: '/logo.svg',

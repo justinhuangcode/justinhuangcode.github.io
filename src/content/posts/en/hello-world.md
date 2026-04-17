@@ -29,7 +29,7 @@ Getting up and running takes just a few minutes:
 4. **Set up services** — copy `.env.example` to `.env` and fill in your API keys (GA, Crisp, Giscus)
 5. **Replace sample content** — swap the posts in `src/content/posts/` with your own Markdown files
 6. **Start developing** — run `pnpm dev` to launch the local dev server with hot reloading
-7. **Deploy** — push to GitHub and let the included CI workflow handle deployment to Cloudflare Pages
+7. **Deploy** — push to `gh-pages` and let the included GitHub Pages workflow publish the site
 
 ### Project Structure
 
@@ -66,7 +66,7 @@ Your content starts here.
 
 The `title`, `date`, and `category` fields are required. Use ISO 8601 for `date`, including seconds and a timezone offset, for example `2026-01-15T16:27:43+08:00`. The `description` field is strongly recommended because it populates the meta description tag and Open Graph previews. Tags are optional. Set `pinned: false` to pin a post to the top of the list.
 
-For multilingual content, create the same file in each locale directory (`zh-hans/`, `ko/`, `fr/`, etc.) with translated content.
+For multilingual content, create the same file in each locale directory (`zh-hans/`, `zh-hant/`, `ko/`) with translated content.
 
 ## What You Get
 
@@ -95,8 +95,8 @@ Out of the box, you have a production-ready blogging platform with every feature
 - **TypeScript throughout** — strict mode, fully typed components and utilities
 - **Content Collections** — type-safe Markdown with frontmatter validation at build time
 - **Tailwind CSS v4** — `@theme` design tokens for easy customization
-- **Vitest + Playwright** — unit tests and end-to-end tests in CI
-- **Deploy** — GitHub Pages (default) + Cloudflare Pages (optional)
+- **Validation workflow** — content coverage checks plus agent protocol smoke tests through `pnpm validate`
+- **Deploy** — GitHub Pages workflow included
 - **Google Analytics** — optional, via environment variable
 - **Crisp Chat** — optional live chat, via environment variable
 - **Giscus Comments** — optional GitHub Discussions powered comments

@@ -58,9 +58,11 @@ pnpm validate
 
 That currently covers:
 
+- `node scripts/check-post-coverage.mjs`
 - `astro check`
 - `tsc --noEmit`
 - `astro build`
+- `node scripts/smoke-agent-protocol.mjs`
 
 After deploy, verify at least:
 
@@ -70,8 +72,11 @@ After deploy, verify at least:
 - `/api/posts.json`
 - `/rss.xml`
 - `/llms.txt`
+- `/protocol.json`
+- `/agent/home.json`
 
 ## Notes
 
 - GitHub Pages HTML can be cached briefly, so prefer checking response headers or machine-readable endpoints instead of relying on a visual refresh alone.
 - The local `upstream` remote is a developer convenience. It is not stored by GitHub and must be added per clone.
+- Locale metadata now lives in `config/locale-meta.mjs`; keep Astro config, runtime i18n, and validation scripts aligned by updating that file first.

@@ -2,6 +2,10 @@ import { en } from './messages/en';
 import { zhHans } from './messages/zh-hans';
 import { zhHant } from './messages/zh-hant';
 import { ko } from './messages/ko';
+import {
+  defaultLocale as configuredDefaultLocale,
+  localeMeta as configuredLocaleMeta,
+} from '../../config/locale-meta.mjs';
 
 export type Messages = typeof en;
 
@@ -12,12 +16,20 @@ const messages: Record<string, Messages> = {
   ko,
 };
 
-export const locales = ['en', 'zh-hans', 'zh-hant', 'ko'] as const;
-export type Locale = (typeof locales)[number];
-export const defaultLocale: Locale = 'en';
-export const nonDefaultLocales = locales.filter(
-  (locale): locale is Exclude<Locale, typeof defaultLocale> => locale !== defaultLocale,
-);
+const localeMeta = configuredLocaleMeta;
+
+export type Locale = (typeof localeMeta)[number]['code'];
+export const locales = localeMeta.map((entry) => entry.code) as readonly Locale[];
+export const defaultLocale = configuredDefaultLocale as Locale;
+export const nonDefaultLocales = locales.filter((locale) => locale !== defaultLocale);
+
+function buildLocaleRecord<T>(
+  mapper: (entry: (typeof localeMeta)[number]) => T,
+): Record<Locale, T> {
+  return Object.fromEntries(
+    localeMeta.map((entry) => [entry.code, mapper(entry)]),
+  ) as Record<Locale, T>;
+}
 
 function escapeForRegex(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -28,10 +40,7 @@ const localePrefixPattern = new RegExp(
 );
 
 export const localeLabels: Record<Locale, string> = {
-  en: 'English',
-  'zh-hans': '简体中文',
-  'zh-hant': '繁體中文',
-  ko: '한국어',
+  ...buildLocaleRecord((entry) => entry.label),
 };
 
 export function getMessages(locale: string = 'en'): Messages {
@@ -57,20 +66,14 @@ export function translateCategory(key: string, locale: string = 'en'): string {
 }
 
 /** Map internal locale to Intl/BCP-47 locale for date formatting etc. */
-export const intlLocales: Record<Locale, string> = {
-  en: 'en-US',
-  'zh-hans': 'zh-CN',
-  'zh-hant': 'zh-TW',
-  ko: 'ko-KR',
-};
+export const intlLocales: Record<Locale, string> = buildLocaleRecord(
+  (entry) => entry.intl,
+);
 
 /** Map internal locale to HTML lang attribute / inLanguage value */
-export const htmlLangs: Record<Locale, string> = {
-  en: 'en',
-  'zh-hans': 'zh-Hans',
-  'zh-hant': 'zh-Hant',
-  ko: 'ko',
-};
+export const htmlLangs: Record<Locale, string> = buildLocaleRecord(
+  (entry) => entry.htmlLang,
+);
 
 export function getLocalizedPath(path: string, locale: Locale): string {
   const cleanPath = stripLocalePrefix(path);

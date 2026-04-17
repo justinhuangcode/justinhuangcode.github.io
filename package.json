@@ -5,11 +5,13 @@
   "packageManager": "pnpm@10.32.1",
   "scripts": {
     "dev": "astro dev",
+    "check:content": "node scripts/check-post-coverage.mjs",
+    "check:agent": "node scripts/smoke-agent-protocol.mjs",
     "check": "astro check",
     "typecheck": "tsc --noEmit",
     "build": "astro build",
     "preview": "astro preview",
-    "validate": "pnpm check && pnpm typecheck && pnpm build",
+    "validate": "pnpm check:content && pnpm check && pnpm typecheck && pnpm build && pnpm check:agent",
     "astro": "astro"
   },
   "dependencies": {

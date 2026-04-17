@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
+import { defaultLocale, locales } from '../config/locale-meta.mjs';
 
 const distDir = path.join(process.cwd(), 'dist');
 
@@ -39,52 +40,59 @@ assert.deepEqual(protocol.recommended_discovery_order.slice(0, 5), [
   'policy.md',
   'reading.md',
 ]);
-assert.ok(protocol.localized_documents.en, 'protocol.json should expose English documents');
-assert.ok(
-  protocol.localized_documents['zh-hans'],
-  'protocol.json should expose Simplified Chinese documents',
-);
-assert.equal(
-  protocol.localized_documents.en.protocolSchema,
-  protocolSchema.$id,
-  'localized English docs should expose protocol schema',
-);
-assert.equal(
-  protocol.localized_documents.en.agentHomeSchema,
-  agentHomeSchema.$id,
-  'localized English docs should expose agent home schema',
-);
+for (const locale of locales) {
+  assert.ok(
+    protocol.localized_documents[locale],
+    `protocol.json should expose localized documents for ${locale}`,
+  );
+  assert.equal(
+    protocol.localized_documents[locale].protocolSchema,
+    protocolSchema.$id,
+    `${locale} docs should expose protocol schema`,
+  );
+  assert.equal(
+    protocol.localized_documents[locale].agentHomeSchema,
+    agentHomeSchema.$id,
+    `${locale} docs should expose agent home schema`,
+  );
+}
 
-const agentHome = await readJson(path.join('agent', 'home.json'));
+const defaultAgentHome = await readJson(path.join('agent', 'home.json'));
 
-assert.equal(agentHome.$schema, agentHomeSchema.$id);
-assert.equal(agentHome.protocol_version, protocol.version);
-assert.equal(agentHome.capabilities.structured_protocol_manifest, true);
-assert.equal(agentHome.access_policy.mode, 'read_only');
-assert.equal(agentHome.documents.protocol, protocol.canonical_documents.protocol);
-assert.equal(agentHome.documents.protocolSchema, protocolSchema.$id);
-assert.equal(agentHome.documents.agentHomeSchema, agentHomeSchema.$id);
+assert.equal(defaultAgentHome.$schema, agentHomeSchema.$id);
+assert.equal(defaultAgentHome.protocol_version, protocol.version);
+assert.equal(defaultAgentHome.capabilities.structured_protocol_manifest, true);
+assert.equal(defaultAgentHome.access_policy.mode, 'read_only');
+assert.equal(defaultAgentHome.documents.protocol, protocol.canonical_documents.protocol);
+assert.equal(defaultAgentHome.documents.protocolSchema, protocolSchema.$id);
+assert.equal(defaultAgentHome.documents.agentHomeSchema, agentHomeSchema.$id);
 assert.ok(
-  agentHome.collections.posts.total >= 1,
+  defaultAgentHome.collections.posts.total >= 1,
   'agent/home.json should expose at least one post',
 );
 assert.ok(
-  agentHome.collections.posts.latest.length >= 1,
+  defaultAgentHome.collections.posts.latest.length >= 1,
   'agent/home.json should expose latest posts',
 );
 
-const zhHansAgentHome = await readJson(path.join('zh-hans', 'agent', 'home.json'));
+for (const locale of locales) {
+  const relativePath =
+    locale === defaultLocale
+      ? path.join('agent', 'home.json')
+      : path.join(locale, 'agent', 'home.json');
+  const agentHome = await readJson(relativePath);
 
-assert.equal(zhHansAgentHome.site.locale, 'zh-hans');
-assert.equal(
-  zhHansAgentHome.documents.policy,
-  protocol.localized_documents['zh-hans'].policy,
-);
-assert.equal(zhHansAgentHome.documents.protocol, protocol.canonical_documents.protocol);
-assert.equal(
-  zhHansAgentHome.documents.agentHomeSchema,
-  agentHomeSchema.$id,
-);
+  assert.equal(agentHome.site.locale, locale);
+  assert.equal(
+    agentHome.documents.policy,
+    protocol.localized_documents[locale].policy,
+  );
+  assert.equal(agentHome.documents.protocol, protocol.canonical_documents.protocol);
+  assert.equal(
+    agentHome.documents.agentHomeSchema,
+    agentHomeSchema.$id,
+  );
+}
 
 const skill = await readText('skill.md');
 
