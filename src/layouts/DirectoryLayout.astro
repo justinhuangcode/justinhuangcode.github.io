@@ -1,11 +1,9 @@
 ---
-import type { Locale } from '@/i18n';
 import type { DirectoryGroup } from '@/lib/directory';
 import DirectoryNav from '@/components/directory/DirectoryNav.astro';
 import Layout from '@/layouts/Layout.astro';
 
 interface Props {
-  locale: Locale;
   pageTitle: string;
   description: string;
   backgroundColor: string;
@@ -24,7 +22,6 @@ interface Props {
 }
 
 const {
-  locale,
   pageTitle,
   description,
   backgroundColor,

@@ -4,13 +4,21 @@ interface Props {
   slug: string;
   title: string;
   date: Date;
-  locale?: string;
   basePath?: string;
   pinned?: boolean;
   section?: string;
+  titleLang?: string;
 }
 
-const { slug, title, date, basePath = '', pinned = false, section = 'posts' } = Astro.props;
+const {
+  slug,
+  title,
+  date,
+  basePath = '',
+  pinned = false,
+  section = 'posts',
+  titleLang,
+} = Astro.props;
 ---
 
 <li class="blog-card group px-5 sm:px-6 py-[17px] sm:py-[19px] border-b border-border last:border-b-0 cursor-pointer hover:bg-[var(--color-bg-hover)]">
@@ -19,6 +27,7 @@ const { slug, title, date, basePath = '', pinned = false, section = 'posts' } = 
     <span>{formatDate(date)}</span>
   </div>
   <a
+    lang={titleLang}
     class="blog-card-title block text-[1.06rem] sm:text-[1.14rem] leading-[1.28] font-semibold text-[var(--color-link)] hover:text-[var(--color-link-hover)] py-0.5"
     href={`${basePath}/${section}/${slug}`}
   >

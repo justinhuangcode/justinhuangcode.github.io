@@ -4,13 +4,18 @@ import {
   getPaginatedPosts,
   getPaginationStaticPaths,
 } from '@/lib/site-content';
+import { createRootStaticPaths, rootLocale } from '@/lib/route-helpers';
 
-export async function getStaticPaths() {
-  return getPaginationStaticPaths('en');
-}
+export const getStaticPaths = createRootStaticPaths(getPaginationStaticPaths);
 
 const currentPage = Number(Astro.params.num);
-const { posts, totalPages } = await getPaginatedPosts('en', currentPage);
+const { posts, totalPages, allPosts } = await getPaginatedPosts(rootLocale, currentPage);
 ---
 
-<BlogIndexPage locale="en" currentPage={currentPage} posts={posts} totalPages={totalPages} />
+<BlogIndexPage
+  locale={rootLocale}
+  currentPage={currentPage}
+  posts={posts}
+  totalPages={totalPages}
+  totalPostCount={allPosts.length}
+/>

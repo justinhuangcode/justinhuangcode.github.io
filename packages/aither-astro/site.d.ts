@@ -24,6 +24,7 @@ export interface FooterSection {
 export interface ContentSection {
   id: CollectionKey;
   labelKey: string;
+  contentLocale?: string;
 }
 
 export interface SiteNavItem {

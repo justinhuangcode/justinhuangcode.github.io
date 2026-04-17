@@ -75,7 +75,9 @@ export const siteConfig = defineAitherSiteConfig({
     themeLight: 'light',
     themeDark: 'dark',
   },
-  sections: [] as ContentSection[],
+  sections: [
+    { id: 'translations', labelKey: 'translations', contentLocale: 'zh-hans' },
+  ] as ContentSection[],
   nav: [
     { labelKey: 'blog' as const, href: '/' },
     { labelKey: 'gallery' as const, href: '/photos' },
@@ -88,6 +90,7 @@ export const siteConfig = defineAitherSiteConfig({
       {
         title: 'Navigate',
         items: [
+          { title: 'Translations', href: '/translations', labelKey: 'translations' },
           { title: 'About', href: '/about', labelKey: 'about' },
           { title: 'Photos', href: '/photos', labelKey: 'gallery' },
           { title: 'Directory', href: '/directory', labelKey: 'directory' },
@@ -113,7 +116,7 @@ export const siteConfig = defineAitherSiteConfig({
   },
   photosGallery: {
     paginationSize: 20,
-    ogImage: '/og/index.png',
+    ogImage: '/photos/library/2023/04/2023-04-20-001.webp',
   },
   directoryPage: {
     indexTitle: 'Directory | Justin Huang',

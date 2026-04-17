@@ -1,0 +1,137 @@
+---
+import type { ImageMetadata, MarkdownHeading } from 'astro';
+import type { render } from 'astro:content';
+import BlogCoverImage from '@/components/BlogCoverImage.astro';
+import CategoryPill from '@/components/CategoryPill.astro';
+import Container from '@/components/Container.astro';
+import Giscus from '@/components/Giscus.astro';
+import { IconArrowLeft as ArrowLeft } from '@/components/icons';
+import { IconArrowRight as ArrowRight } from '@/components/icons';
+import Prose from '@/components/Prose.astro';
+import TableOfContents from '@/components/TableOfContents.astro';
+import Tag from '@/components/Tag.astro';
+import { formatDate, readingTime, wordCount } from '@/lib/formatter';
+import { getMessages, type Locale } from '@/i18n';
+
+type RenderedEntry = Awaited<ReturnType<typeof render>>;
+
+interface ArticlePageEntry {
+  body?: string;
+  data: {
+    title: string;
+    date: Date;
+    description?: string;
+    image?: ImageMetadata;
+    category: string;
+    tags?: string[];
+  };
+}
+
+interface ArticleNavigationLink {
+  href: string;
+  title: string;
+}
+
+interface Props {
+  locale: Locale;
+  entry: ArticlePageEntry;
+  content: RenderedEntry['Content'];
+  headings: MarkdownHeading[];
+  prevLink: ArticleNavigationLink | null;
+  nextLink: ArticleNavigationLink | null;
+  contentLang?: string;
+}
+
+const {
+  locale,
+  entry,
+  content: Content,
+  headings,
+  prevLink,
+  nextLink,
+  contentLang,
+} = Astro.props as Props;
+const m = getMessages(locale);
+const entryBody = entry.body ?? '';
+const entryWordCount = wordCount(entryBody);
+const entryReadingTime = readingTime(entryBody);
+---
+
+<Container class="py-16 px-4">
+  <div class="xl:grid xl:grid-cols-[1fr_220px] xl:gap-8">
+    <article>
+      <div class="mb-4 flex flex-wrap items-center gap-2">
+        <CategoryPill category={entry.data.category} locale={locale} />
+        {entry.data.tags?.map((tag) => <Tag tag={tag} locale={locale} />)}
+      </div>
+
+      <h1 lang={contentLang} class="text-xl sm:text-2xl md:text-[31px] font-semibold mb-4 leading-[1.4] text-[var(--color-link)] break-words">{entry.data.title}</h1>
+
+      <div class="mb-8 flex flex-wrap items-center gap-x-3 gap-y-1 text-muted-foreground/60 text-xs font-mono" title={m.blog.readingTimeTooltip.replace('{words}', String(entryWordCount)).replace('{minutes}', String(entryReadingTime))}>
+        <span>{formatDate(entry.data.date)}</span>
+        <span>&middot;</span>
+        <span>{entryWordCount} {m.blog.wordCount}</span>
+        <span>&middot;</span>
+        <span>{entryReadingTime} {m.blog.minRead}</span>
+      </div>
+
+      <slot name="above-description" />
+
+      {
+        entry.data.description && (
+          <p lang={contentLang} class="mt-4 text-muted-foreground text-lg leading-relaxed">
+            {entry.data.description}
+          </p>
+        )
+      }
+
+      {entry.data.image && (
+        <div class="mt-6">
+          <BlogCoverImage image={entry.data.image} alt={entry.data.title} />
+        </div>
+      )}
+
+      <div lang={contentLang} class="mt-6 pt-10 border-t border-border">
+        <Prose>
+          <Content />
+        </Prose>
+      </div>
+
+      <div class="mt-10 flex items-center gap-4">
+        <span class="flex-1 border-t border-border"></span>
+        <span class="text-sm text-muted-foreground">{m.blog.endOfPost}{m.blog.thanksForReading}</span>
+        <span class="flex-1 border-t border-border"></span>
+      </div>
+
+      <nav class="mt-6 flex flex-col sm:flex-row items-stretch justify-between gap-4">
+        {prevLink ? (
+          <a
+            href={prevLink.href}
+            class="group flex flex-col items-start text-sm hover:text-foreground sm:max-w-[45%] py-2"
+          >
+            <span class="inline-flex items-center gap-1 text-muted-foreground group-hover:text-foreground">
+              <ArrowLeft className="size-3.5" />
+              {m.blog.prevPost}
+            </span>
+            <span class="mt-1 text-[var(--color-link)] group-hover:text-[var(--color-link-hover)]">{prevLink.title}</span>
+          </a>
+        ) : <span />}
+        {nextLink ? (
+          <a
+            href={nextLink.href}
+            class="group flex flex-col items-start sm:items-end text-sm hover:text-foreground sm:max-w-[45%] sm:ml-auto py-2"
+          >
+            <span class="inline-flex items-center gap-1 text-muted-foreground group-hover:text-foreground">
+              {m.blog.nextPost}
+              <ArrowRight className="size-3.5" />
+            </span>
+            <span class="mt-1 text-[var(--color-link)] group-hover:text-[var(--color-link-hover)]">{nextLink.title}</span>
+          </a>
+        ) : <span />}
+      </nav>
+
+      <Giscus locale={locale} />
+    </article>
+    <TableOfContents headings={headings} label={m.blog.onThisPage} />
+  </div>
+</Container>

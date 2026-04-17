@@ -1,3 +1,4 @@
+// @ts-nocheck
 var directoryUi = {
   initNavLink: function() {
     // 获取所有的导航链接，排除nav_postchat类

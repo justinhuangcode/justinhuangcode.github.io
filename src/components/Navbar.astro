@@ -1,11 +1,15 @@
 ---
-import Container from './Container.astro';
 import LanguageSwitcher from './LanguageSwitcher.astro';
 import ModeSwitcher from './ModeSwitcher.astro';
 import NavbarMobile from './NavbarMobile.astro';
 import { siteConfig } from '@/config/site';
 import { getLocalizedThemeLabels } from '@/config/themes';
-import { getMessages, getLocalizedPath, type Locale } from '@/i18n';
+import {
+  getMessages,
+  getLocalizedPath,
+  translateNav,
+  type Locale,
+} from '@/i18n';
 
 interface Props {
   locale: Locale;
@@ -15,7 +19,6 @@ const { locale } = Astro.props;
 const m = getMessages(locale);
 const themeLabels = getLocalizedThemeLabels(locale);
 const currentPath = Astro.url.pathname;
-const navLabels = m.nav as Record<string, string>;
 const showModeSwitch = siteConfig.ui.enableModeSwitch;
 const showMoreThemes = siteConfig.ui.showMoreThemesMenu;
 
@@ -24,26 +27,28 @@ const sectionNavItems = siteConfig.sections.map((s) => ({
   labelKey: s.labelKey,
   href: `/${s.id}`,
 }));
-// Insert section items before the last nav item (About)
+// Insert section items right after the primary reading entry (Blog)
+const primaryNavItem = siteConfig.nav.slice(0, 1);
+const trailingNavItems = siteConfig.nav.slice(1);
 const allNavItems = [
-  ...siteConfig.nav.slice(0, -1),
+  ...primaryNavItem,
   ...sectionNavItems,
-  ...siteConfig.nav.slice(-1),
+  ...trailingNavItems,
 ];
 ---
 
 <header
   class="site-nav fixed inset-x-0 top-0 z-40 min-h-[58px] border-b border-[var(--color-nav-border)]"
 >
-  <Container class="px-4">
+  <div class="mx-auto px-4 lg:px-0">
     <nav
       aria-label="Main navigation"
-      class="hidden lg:flex lg:items-center lg:justify-between"
+      class="hidden lg:flex lg:items-center lg:justify-between lg:pl-[16px] lg:pr-[32px]"
     >
       <a
         href={getLocalizedPath('/', locale)}
         aria-label="Home"
-        class="site-brand text-[18px] font-semibold leading-5 py-[19px] pr-[18px] text-[var(--color-nav-text-active)] hover:text-[var(--color-nav-text-hover)]"
+        class="site-brand text-[18px] font-semibold leading-5 py-[19px] pr-[18px] lg:pl-[16px] text-[var(--color-nav-text-active)] hover:text-[var(--color-nav-text-hover)]"
       >
         <span class="flex items-center gap-2"><span aria-hidden="true">✍️</span><span>{siteConfig.name}</span></span>
       </a>
@@ -66,9 +71,9 @@ const allNavItems = [
                         ? 'nav-link-active font-semibold text-[var(--color-nav-text-active)]'
                         : 'text-[var(--color-nav-text)]',
                     ]}
-                    data-text={navLabels[item.labelKey] ?? item.labelKey}
+                    data-text={translateNav(item.labelKey, locale)}
                   >
-                    <span class="col-start-1 row-start-1">{navLabels[item.labelKey] ?? item.labelKey}</span>
+                    <span class="col-start-1 row-start-1">{translateNav(item.labelKey, locale)}</span>
                   </a>
                 </li>
               );
@@ -95,7 +100,7 @@ const allNavItems = [
       locale={locale}
       currentPath={currentPath}
       siteName={siteConfig.name}
-      navLinks={allNavItems.map((item) => ({ title: navLabels[item.labelKey] ?? item.labelKey, href: getLocalizedPath(item.href, locale) }))}
+      navLinks={allNavItems.map((item) => ({ title: translateNav(item.labelKey, locale), href: getLocalizedPath(item.href, locale) }))}
       languageLabel={m.common.language}
       modeLabels={m.common.mode}
       themeLabels={themeLabels}
@@ -104,7 +109,7 @@ const allNavItems = [
       defaultMode={siteConfig.ui.defaultMode}
       defaultStyle={siteConfig.ui.defaultStyle}
     />
-  </Container>
+  </div>
 </header>
 
 <div class="h-[58px]" aria-hidden="true" data-navbar-spacer></div>

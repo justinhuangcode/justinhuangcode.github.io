@@ -29,10 +29,22 @@ const gallery = defineCollection({
     }),
 });
 
-// --- Add new sections below (copy & rename) ---
-// const translations = defineCollection({
-//   loader: glob({ pattern: '**/*.mdx', base: './src/content/translations' }),
-//   schema: contentSchema,
-// });
+const translations = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/translations' }),
+  schema: ({ image }) =>
+    createAitherContentSchema({ image }).extend({
+      sourceLanguage: z.string().optional(),
+      sourceTitle: z.string().optional(),
+      sourceUrl: z
+        .string()
+        .refine(
+          (value) =>
+            value.startsWith('/') || z.url().safeParse(value).success,
+          'sourceUrl must be an absolute URL or a site-relative path',
+        )
+        .optional(),
+      translator: z.string().optional(),
+    }),
+});
 
-export const collections = { posts, gallery };
+export const collections = { posts, gallery, translations };

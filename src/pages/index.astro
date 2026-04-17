@@ -1,8 +1,15 @@
 ---
 import BlogIndexPage from '@/components/pages/BlogIndexPage.astro';
 import { getPaginatedPosts } from '@/lib/site-content';
+import { rootLocale } from '@/lib/route-helpers';
 
-const { posts, totalPages } = await getPaginatedPosts('en', 1);
+const { posts, totalPages, allPosts } = await getPaginatedPosts(rootLocale, 1);
 ---
 
-<BlogIndexPage locale="en" currentPage={1} posts={posts} totalPages={totalPages} />
+<BlogIndexPage
+  locale={rootLocale}
+  currentPage={1}
+  posts={posts}
+  totalPages={totalPages}
+  totalPostCount={allPosts.length}
+/>

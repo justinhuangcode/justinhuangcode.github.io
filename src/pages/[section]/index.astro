@@ -1,45 +1,18 @@
 ---
-import Layout from '@/layouts/Layout.astro';
-import Container from '@/components/Container.astro';
-import BlogGrid from '@/components/BlogGrid.astro';
-import BlogCard from '@/components/BlogCard.astro';
-import { siteConfig, type ContentSection } from '@/config/site';
-import { getLocaleBasePath, getMessages } from '@/i18n';
-import { getContentByLocale, getSlug } from '@/lib/posts';
+import ContentSectionIndexPage from '@/components/pages/ContentSectionIndexPage.astro';
+import { type ContentSection } from '@/config/site';
+import {
+  createRootStaticPaths,
+  createSectionIndexStaticPaths,
+  rootLocale,
+} from '@/lib/route-helpers';
+import { getContentByLocale } from '@/lib/posts';
 
-export async function getStaticPaths() {
-  return siteConfig.sections.map((s) => ({
-    params: { section: s.id },
-    props: { section: s },
-  }));
-}
+export const getStaticPaths = createRootStaticPaths(createSectionIndexStaticPaths);
 
 const { section } = Astro.props as { section: ContentSection };
-const m = getMessages('en');
-const navLabels = m.nav as Record<string, string>;
-const entries = await getContentByLocale(section.id, 'en');
-const title = navLabels[section.labelKey] ?? section.labelKey;
+const locale = rootLocale;
+const entries = await getContentByLocale(section.id, locale);
 ---
 
-<Layout title={`${title} | ${siteConfig.name}`}>
-  <Container class="px-4">
-    <div class="mt-8">
-      <h1 class="text-2xl font-semibold mb-6 text-[var(--color-link)]">{title}</h1>
-      <BlogGrid>
-        {
-          entries.map((entry) => (
-            <BlogCard
-              slug={getSlug(entry.id)}
-              title={entry.data.title}
-              date={entry.data.date}
-              locale="en-US"
-              basePath={getLocaleBasePath('en')}
-              section={section.id}
-              pinned={entry.data.pinned}
-            />
-          ))
-        }
-      </BlogGrid>
-    </div>
-  </Container>
-</Layout>
+<ContentSectionIndexPage locale={locale} section={section} entries={entries} />

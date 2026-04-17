@@ -22,6 +22,8 @@ export type Locale = (typeof localeMeta)[number]['code'];
 export const locales = localeMeta.map((entry) => entry.code) as readonly Locale[];
 export const defaultLocale = configuredDefaultLocale as Locale;
 export const nonDefaultLocales = locales.filter((locale) => locale !== defaultLocale);
+export const preferredLocaleStorageKey = 'aither-preferred-locale';
+export const localeBannerDismissedSessionKey = 'aither-locale-banner-dismissed';
 
 function buildLocaleRecord<T>(
   mapper: (entry: (typeof localeMeta)[number]) => T,
@@ -51,8 +53,38 @@ export const giscusLocales: Record<Locale, string> = buildLocaleRecord(
   (entry) => entry.giscusLocale,
 );
 
+export function isLocale(value: string): value is Locale {
+  return locales.includes(value as Locale);
+}
+
+export function resolveLocale(value: string): Locale {
+  const normalized = value.trim().toLowerCase();
+
+  if (isLocale(normalized)) {
+    return normalized;
+  }
+
+  if (normalized === 'zh' || normalized.startsWith('zh-cn') || normalized.startsWith('zh-sg')) {
+    return 'zh-hans';
+  }
+
+  if (normalized.startsWith('zh-tw') || normalized.startsWith('zh-hk') || normalized.startsWith('zh-mo')) {
+    return 'zh-hant';
+  }
+
+  if (normalized.startsWith('ko')) {
+    return 'ko';
+  }
+
+  if (normalized.startsWith('en')) {
+    return 'en';
+  }
+
+  return defaultLocale;
+}
+
 export function getMessages(locale: string = defaultLocale): Messages {
-  return messages[locale] ?? en;
+  return messages[resolveLocale(locale)] ?? en;
 }
 
 export function getLocaleFromUrl(url: URL): Locale {
@@ -71,6 +103,12 @@ export function translateTag(key: string, locale: string = 'en'): string {
 export function translateCategory(key: string, locale: string = 'en'): string {
   const m = getMessages(locale);
   return m.categories[key] ?? key;
+}
+
+export function translateNav(key: string, locale: string = defaultLocale): string {
+  const m = getMessages(locale);
+  const nav = m.nav as Record<string, string>;
+  return nav[key] ?? key;
 }
 
 /** Map internal locale to Intl/BCP-47 locale for date formatting etc. */
@@ -95,4 +133,8 @@ export function getLocaleBasePath(locale: Locale): string {
 export function stripLocalePrefix(path: string): string {
   const cleanPath = path.replace(localePrefixPattern, '');
   return cleanPath || '/';
+}
+
+export function detectLocaleFromLanguageTag(value: string): Locale {
+  return resolveLocale(value);
 }

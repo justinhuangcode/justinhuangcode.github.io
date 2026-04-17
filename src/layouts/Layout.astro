@@ -27,10 +27,12 @@ interface Props {
   description?: string;
   image?: string | ImageMetadata;
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+  canonicalUrl?: string;
   enableCrisp?: boolean;
   hideNavbar?: boolean;
   hideFooter?: boolean;
   hideLocaleBanner?: boolean;
+  hideLocaleAlternates?: boolean;
   hideThemeEffects?: boolean;
   bodyClass?: string;
   mainClass?: string;
@@ -59,10 +61,12 @@ const {
   description = siteConfig.description,
   image: imageProp,
   jsonLd,
+  canonicalUrl: canonicalUrlOverride,
   enableCrisp = true,
   hideNavbar = false,
   hideFooter = false,
   hideLocaleBanner = false,
+  hideLocaleAlternates = false,
   hideThemeEffects = false,
   bodyClass = '',
   mainClass = '',
@@ -80,6 +84,8 @@ function createOgImageAlt(pageTitle: string): string {
     ? siteConfig.name
     : `${normalizedTitle} - ${siteConfig.name}`;
 }
+
+const ogImageAlt = createOgImageAlt(title);
 
 function inferOgImageType(pathname: string): string | undefined {
   const normalizedPath = pathname.toLowerCase();
@@ -114,14 +120,15 @@ function createSquareOgPath(pathname: string): string | undefined {
   return pathname.replace('/og/', '/og-square/');
 }
 
+// Resolve share images: keep 1.91:1 primary, add square secondary when available
 const imageSource = imageProp ?? siteConfig.ogImage;
-const ogImageAlt = createOgImageAlt(title);
 const shareImages: ShareImage[] = [];
 
 if (typeof imageSource === 'string') {
   const primarySourceUrl = imageSource.startsWith('http')
     ? new URL(imageSource)
     : new URL(imageSource, siteConfig.url);
+
   const primaryUrl = createVersionedUrl(primarySourceUrl, [
     title,
     description,
@@ -200,25 +207,22 @@ if (typeof imageSource === 'string') {
     });
   }
 }
-const primaryShareImage =
-  shareImages[0] ??
-  {
-    url: new URL(siteConfig.ogImage, siteConfig.url).href,
-    alt: ogImageAlt,
-  };
+const primaryShareImage = shareImages[0];
 const wechatShareImage =
   shareImages.find((image) => image.width && image.height && image.width === image.height) ??
   primaryShareImage;
 
 // Canonical URL
 const pathname = Astro.url.pathname;
-const canonicalUrl = new URL(pathname, siteConfig.url).href;
+const canonicalUrl = canonicalUrlOverride ?? new URL(pathname, siteConfig.url).href;
 
 const cleanPath = stripLocalePrefix(pathname);
-const alternateUrls = locales.map((l) => ({
-  hreflang: htmlLangs[l],
-  href: new URL(l === defaultLocale ? cleanPath : `/${l}${cleanPath}`, siteConfig.url).href,
-}));
+const alternateUrls = hideLocaleAlternates
+  ? []
+  : locales.map((l) => ({
+      hreflang: htmlLangs[l],
+      href: new URL(l === defaultLocale ? cleanPath : `/${l}${cleanPath}`, siteConfig.url).href,
+    }));
 
 ---
 
@@ -237,7 +241,9 @@ const alternateUrls = locales.map((l) => ({
     {alternateUrls.map(({ hreflang, href }) => (
       <link rel="alternate" hreflang={hreflang} href={href} />
     ))}
-    <link rel="alternate" hreflang="x-default" href={new URL(cleanPath, siteConfig.url).href} />
+    {!hideLocaleAlternates && (
+      <link rel="alternate" hreflang="x-default" href={new URL(cleanPath, siteConfig.url).href} />
+    )}
     {alternateFormats?.map(({ type, href, title: t }) => (
       <link rel="alternate" type={type} href={href} title={t} />
     ))}
@@ -382,12 +388,8 @@ const alternateUrls = locales.map((l) => ({
         );
       };
 
-      const themeWindow = window as Window & {
-        __aitherSystemThemeListenerBound?: boolean;
-      };
-
-      if (!themeWindow.__aitherSystemThemeListenerBound) {
-        themeWindow.__aitherSystemThemeListenerBound = true;
+      if (!window.__aitherSystemThemeListenerBound) {
+        window.__aitherSystemThemeListenerBound = true;
         mediaQuery.addEventListener('change', syncSystemTheme);
       }
     </script>

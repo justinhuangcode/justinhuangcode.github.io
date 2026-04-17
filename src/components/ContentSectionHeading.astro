@@ -1,0 +1,23 @@
+---
+interface Props {
+  as?: 'h1' | 'h2' | 'h3';
+}
+
+const { as = 'h2' } = Astro.props as Props;
+const Tag = as;
+---
+
+<Tag class="content-section-heading">
+  <slot />
+</Tag>
+
+<style>
+  .content-section-heading {
+    margin: 0 0 1.35rem;
+    font-size: clamp(1.3rem, 2.1vw, 1.55rem);
+    font-weight: 700;
+    line-height: 1.12;
+    letter-spacing: -0.035em;
+    color: var(--foreground);
+  }
+</style>

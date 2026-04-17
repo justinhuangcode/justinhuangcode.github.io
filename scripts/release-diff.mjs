@@ -66,7 +66,7 @@ const { from, to } = parseArgs(process.argv.slice(2));
 
 assert.ok(
   from && to,
-  'Usage: pnpm upgrade:diff -- --from v2026.03.20 --to v2026.04.08',
+  'Usage: pnpm upgrade:diff -- --from v2026.04.08 --to v2026.04.17',
 );
 
 await ensureRefExists(from);

@@ -1,0 +1,185 @@
+---
+import { getTranslationsUiCopy } from '@/lib/translations-ui';
+import type { Locale } from '@/i18n';
+
+interface Props {
+  locale: Locale;
+  sourceLanguage?: string;
+  sourceTitle?: string;
+  sourceUrl?: string;
+  translator?: string;
+}
+
+const {
+  locale,
+  sourceLanguage,
+  sourceTitle,
+  sourceUrl,
+  translator,
+} = Astro.props;
+const copy = getTranslationsUiCopy(locale);
+---
+
+<section class="translation-entry-context" aria-label={copy.detailEyebrow}>
+  <p class="translation-entry-kicker">{copy.detailEyebrow}</p>
+  <div class="translation-entry-hero">
+    <div class="translation-entry-origin">
+      {
+        sourceTitle && (
+          <Fragment>
+            <p class="translation-entry-origin-label">{copy.originalTitleLabel}</p>
+            <p class="translation-entry-origin-title">{sourceTitle}</p>
+          </Fragment>
+        )
+      }
+    </div>
+    {
+      sourceUrl && (
+        <a class="translation-entry-primary-link" href={sourceUrl} target="_blank" rel="noreferrer">
+          <span>{copy.originalLinkAction}</span>
+          <span aria-hidden="true">↗</span>
+        </a>
+      )
+    }
+  </div>
+  <dl class="translation-entry-facts">
+    <div class="translation-entry-fact">
+      <dt>{copy.contentLanguageLabel}</dt>
+      <dd>{copy.contentLanguageValue}</dd>
+    </div>
+    {
+      sourceLanguage && (
+        <div class="translation-entry-fact">
+          <dt>{copy.originalLanguageLabel}</dt>
+          <dd>{sourceLanguage}</dd>
+        </div>
+      )
+    }
+    {
+      translator && (
+        <div class="translation-entry-fact">
+          <dt>{copy.translatorLabel}</dt>
+          <dd>{translator}</dd>
+        </div>
+      )
+    }
+  </dl>
+</section>
+
+<style>
+  .translation-entry-context {
+    margin: 0 0 1.15rem;
+    padding: 1rem 1.05rem 1.08rem;
+    border: 1px solid color-mix(in srgb, var(--border) 92%, transparent);
+    border-radius: 0;
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--background) 99%, white 1%), var(--background));
+    box-shadow: 0 1px 0 rgba(15, 23, 42, 0.015);
+  }
+
+  .translation-entry-kicker {
+    margin: 0;
+    color: color-mix(in srgb, var(--muted-foreground) 84%, transparent);
+    font-family: var(--font-code);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .translation-entry-hero {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 0.7rem;
+  }
+
+  .translation-entry-origin {
+    min-width: 0;
+  }
+
+  .translation-entry-origin-label {
+    margin: 0;
+    color: color-mix(in srgb, var(--muted-foreground) 90%, transparent);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .translation-entry-origin-title {
+    margin: 0.28rem 0 0;
+    color: var(--foreground);
+    font-family: var(--font-serif);
+    font-size: 1.18rem;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .translation-entry-primary-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.28rem;
+    width: fit-content;
+    color: var(--color-link);
+    font-size: 0.84rem;
+    font-weight: 600;
+    text-decoration: none;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-link) 22%, transparent);
+  }
+
+  .translation-entry-primary-link:hover {
+    color: var(--color-link-hover);
+    border-bottom-color: color-mix(in srgb, var(--color-link-hover) 40%, transparent);
+  }
+
+  .translation-entry-facts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    gap: 0.85rem 1rem;
+    margin: 0.95rem 0 0;
+    padding-top: 0.9rem;
+    border-top: 1px solid color-mix(in srgb, var(--border) 88%, transparent);
+  }
+
+  .translation-entry-fact {
+    min-width: 0;
+  }
+
+  .translation-entry-fact dt {
+    margin: 0;
+    color: color-mix(in srgb, var(--muted-foreground) 86%, transparent);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .translation-entry-fact dd {
+    margin: 0.28rem 0 0;
+    color: var(--foreground);
+    font-size: 0.98rem;
+    font-weight: 500;
+    line-height: 1.45;
+    word-break: break-word;
+  }
+
+  @media (min-width: 768px) {
+    .translation-entry-context {
+      padding: 1.05rem 1.15rem 1.15rem;
+    }
+
+    .translation-entry-hero {
+      flex-direction: row;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1.2rem;
+    }
+
+    .translation-entry-primary-link {
+      margin-top: 0.1rem;
+      flex-shrink: 0;
+    }
+  }
+</style>

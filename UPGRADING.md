@@ -6,7 +6,7 @@ That means:
 
 - New Aither sites should start from the upstream template.
 - This repo does not upgrade via `pnpm up astro-theme-aither`.
-- The safe upgrade unit is an upstream release tag, for example `v2026.03.20 -> v2026.04.08`.
+- The safe upgrade unit is an upstream release tag, for example `v2026.04.08 -> v2026.04.17`.
 
 Because this site lives on the `gh-pages` branch and carries site-specific content/config, the right workflow is a release-to-release diff, not a blind overwrite from upstream `main`.
 
@@ -27,15 +27,15 @@ Suggested local setup:
 ```bash
 git remote add upstream https://github.com/justinhuangai/astro-theme-aither.git
 git fetch upstream --tags
-pnpm upgrade:diff -- --from v2026.03.20 --to v2026.04.08
+pnpm upgrade:diff -- --from v2026.04.08 --to v2026.04.17
 ```
 
 If you want a clean side-by-side comparison instead:
 
 ```bash
-git clone --depth 1 --branch v2026.03.20 https://github.com/justinhuangai/astro-theme-aither.git ../aither-v2026.03.20
 git clone --depth 1 --branch v2026.04.08 https://github.com/justinhuangai/astro-theme-aither.git ../aither-v2026.04.08
-diff -ru ../aither-v2026.03.20 ../aither-v2026.04.08
+git clone --depth 1 --branch v2026.04.17 https://github.com/justinhuangai/astro-theme-aither.git ../aither-v2026.04.17
+diff -ru ../aither-v2026.04.08 ../aither-v2026.04.17
 ```
 
 ## File Ownership Heuristic

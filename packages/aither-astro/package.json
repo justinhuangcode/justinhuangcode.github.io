@@ -1,6 +1,6 @@
 {
   "name": "@aither/astro",
-  "version": "2026.4.8",
+  "version": "2026.4.17",
   "description": "Astro integration and shared runtime helpers for Aither sites.",
   "type": "module",
   "types": "./integration.d.ts",

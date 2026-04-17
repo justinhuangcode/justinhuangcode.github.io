@@ -39,7 +39,6 @@ const emptyCopy =
 ---
 
 <DirectoryLayout
-  locale={locale}
   pageTitle={content.pageTitle}
   description={siteConfig.description}
   backgroundColor={content.backgroundColor}
@@ -106,7 +105,8 @@ const emptyCopy =
                             alt={link.spec.displayName}
                             loading="lazy"
                             decoding="async"
-                            onerror="this.onerror=null;this.src='/directory/assets/logo-fallback.svg';"
+                            data-directory-card-logo
+                            data-fallback-src="/directory/assets/logo-fallback.svg"
                           />
                         </div>
                         <div class="link_group_content_item_info">
@@ -190,3 +190,35 @@ const emptyCopy =
     line-height: 1.7;
   }
 </style>
+
+<script>
+  import { bootstrapRootInit } from '@/lib/dom-init';
+
+  bootstrapRootInit(
+    'directory-logo-fallback',
+    '[data-directory-card]',
+    (root, signal) => {
+      const image = root.querySelector('[data-directory-card-logo]');
+
+      if (!(image instanceof HTMLImageElement)) {
+        return;
+      }
+
+      const fallbackSrc =
+        image.dataset.fallbackSrc?.trim() || '/directory/assets/logo-fallback.svg';
+
+      image.addEventListener(
+        'error',
+        () => {
+          if (image.dataset.logoFallbackApplied === 'true') {
+            return;
+          }
+
+          image.dataset.logoFallbackApplied = 'true';
+          image.src = fallbackSrc;
+        },
+        { signal },
+      );
+    },
+  );
+</script>

@@ -1,0 +1,124 @@
+---
+import type { CollectionKey } from 'astro:content';
+import { render } from 'astro:content';
+import ArticlePageBody from '@/components/pages/ArticlePageBody.astro';
+import TranslationEntryContext from '@/components/translations/TranslationEntryContext.astro';
+import Layout from '@/layouts/Layout.astro';
+import { siteConfig, type ContentSection } from '@/config/site';
+import {
+  getSectionContentLang,
+  resolveSectionContentLocale,
+  sectionHasFixedContentLocale,
+} from '@/lib/content-sections';
+import { getSlug, type LocalizedEntry } from '@/lib/posts';
+import {
+  getLocalizedPath,
+  getLocaleBasePath,
+  translateNav,
+  type Locale,
+} from '@/i18n';
+
+interface Props {
+  locale: Locale;
+  section: ContentSection;
+  entry: LocalizedEntry<CollectionKey>;
+  prevEntry: LocalizedEntry<CollectionKey> | null;
+  nextEntry: LocalizedEntry<CollectionKey> | null;
+}
+
+const {
+  locale,
+  section,
+  entry,
+  prevEntry,
+  nextEntry,
+} = Astro.props;
+const { Content, headings } = await render(entry);
+const slug = getSlug(entry.id);
+const basePath = getLocaleBasePath(locale);
+const contentLocale = resolveSectionContentLocale(section, locale);
+const usesFixedContentLocale = sectionHasFixedContentLocale(section);
+const canonicalPath = getLocalizedPath(`/${section.id}/${slug}`, contentLocale);
+const entryUrl = `${siteConfig.url}${usesFixedContentLocale ? canonicalPath : `${basePath}/${section.id}/${slug}/`}`;
+const sectionTitle = translateNav(section.labelKey, locale);
+const sectionIndexUrl = `${siteConfig.url}${getLocalizedPath(`/${section.id}`, contentLocale)}`;
+const prevLink = prevEntry
+  ? { href: `${basePath}/${section.id}/${getSlug(prevEntry.id)}/`, title: prevEntry.data.title }
+  : null;
+const nextLink = nextEntry
+  ? { href: `${basePath}/${section.id}/${getSlug(nextEntry.id)}/`, title: nextEntry.data.title }
+  : null;
+const translationMeta = entry.data as typeof entry.data & {
+  sourceLanguage?: string;
+  sourceTitle?: string;
+  sourceUrl?: string;
+  translator?: string;
+};
+const sourceUrl = translationMeta.sourceUrl
+  ? new URL(translationMeta.sourceUrl, siteConfig.url).toString()
+  : undefined;
+const contentLang = usesFixedContentLocale
+  ? getSectionContentLang(section, locale)
+  : undefined;
+
+const articleJsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: entry.data.title,
+    description: entry.data.description,
+    datePublished: entry.data.date.toISOString(),
+    inLanguage: contentLang,
+    author: { '@type': 'Person', name: siteConfig.author.name },
+    publisher: { '@type': 'Organization', name: siteConfig.name },
+    url: entryUrl,
+    ...(sourceUrl ? { isBasedOn: sourceUrl } : {}),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: siteConfig.name, item: siteConfig.url },
+      { '@type': 'ListItem', position: 2, name: sectionTitle, item: sectionIndexUrl },
+      { '@type': 'ListItem', position: 3, name: entry.data.title, item: entryUrl },
+    ],
+  },
+];
+---
+
+<Layout
+  title={`${entry.data.title} | ${siteConfig.name}`}
+  description={entry.data.description}
+  image={entry.data.image ?? siteConfig.ogImage}
+  jsonLd={articleJsonLd}
+  canonicalUrl={entryUrl}
+  hideLocaleAlternates={usesFixedContentLocale}
+  article={{
+    publishedTime: entry.data.date.toISOString(),
+    author: siteConfig.author.name,
+    tags: entry.data.tags,
+  }}
+>
+  <ArticlePageBody
+    locale={locale}
+    entry={entry}
+    content={Content}
+    headings={headings}
+    prevLink={prevLink}
+    nextLink={nextLink}
+    contentLang={contentLang}
+  >
+    {
+      section.id === 'translations' && (
+        <TranslationEntryContext
+          slot="above-description"
+          locale={locale}
+          sourceLanguage={translationMeta.sourceLanguage}
+          sourceTitle={translationMeta.sourceTitle}
+          sourceUrl={sourceUrl}
+          translator={translationMeta.translator}
+        />
+      )
+    }
+  </ArticlePageBody>
+</Layout>

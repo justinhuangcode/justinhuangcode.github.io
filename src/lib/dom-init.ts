@@ -4,6 +4,7 @@ declare global {
   interface Window {
     __aitherDomInitBootstrapped?: Set<string>;
     __aitherDomInitRegistries?: Map<string, Map<HTMLElement, AbortController>>;
+    __aitherSystemThemeListenerBound?: boolean;
   }
 }
 
