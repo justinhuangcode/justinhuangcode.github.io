@@ -13,6 +13,6 @@ Not because I want technical writing to feel softer, but because I believe taste
 I want this place to be more than a technical archive. I want it to feel like a personal workspace in motion: analysis, judgment, execution, and life itself.
 
 Website:
-[https://justinhuangcode.github.io](https://justinhuangcode.github.io)
+[https://justinhuangai.github.io](https://justinhuangai.github.io)
 
 If you care about AI, technology, writing, life, and how to turn ideas into results, feel free to stop by.

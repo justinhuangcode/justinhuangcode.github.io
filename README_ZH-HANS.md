@@ -13,6 +13,6 @@
 我希望这里不只是一个技术资料库，更像一个持续进化中的个人工作台：有分析，有判断，有执行，也有生活本身。
 
 博客地址：
-[https://justinhuangcode.github.io](https://justinhuangcode.github.io)
+[https://justinhuangai.github.io](https://justinhuangai.github.io)
 
 如果你也对 AI、技术、写作、生活，以及如何把想法真正做成结果感兴趣，欢迎来访。
