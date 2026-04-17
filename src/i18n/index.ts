@@ -43,7 +43,15 @@ export const localeLabels: Record<Locale, string> = {
   ...buildLocaleRecord((entry) => entry.label),
 };
 
-export function getMessages(locale: string = 'en'): Messages {
+export const crispLocales: Record<Locale, string> = buildLocaleRecord(
+  (entry) => entry.crispLocale,
+);
+
+export const giscusLocales: Record<Locale, string> = buildLocaleRecord(
+  (entry) => entry.giscusLocale,
+);
+
+export function getMessages(locale: string = defaultLocale): Messages {
   return messages[locale] ?? en;
 }
 

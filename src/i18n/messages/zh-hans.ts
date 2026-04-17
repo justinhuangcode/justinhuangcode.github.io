@@ -1,6 +1,8 @@
 export const zhHans = {
   nav: {
     blog: '博客',
+    gallery: '照片',
+    directory: '导航',
     about: '关于',
   },
   blog: {
@@ -44,10 +46,32 @@ export const zhHans = {
     },
     language: '语言',
     builtWith: '构建于',
+    copy: '复制',
+    copied: '已复制',
   },
   about: {
     title: '关于',
     description: '这是 Justin Huang 的个人博客，写 AI、技术、写作，也写生活。',
+  },
+  galleryPage: {
+    name: '照片',
+    subtitle: '一个安静的图像优先页面',
+    embeddedToolbarName: '定格生活里的美好瞬间',
+    description: '这是本站里的一个安静、图像优先的页面，适合沉浸式浏览与安静展示。',
+    aboutHtml: '这是本站里的一个安静、图像优先的页面，适合沉浸式浏览与安静展示。',
+    bottomToolbarLabel: '底部操作栏',
+    categoriesLabel: '分类',
+    allLabel: '全部',
+    fullscreen: '进入全屏',
+    exitFullscreen: '退出全屏',
+    aboutLinkLabel: '关于',
+    aboutTitle: '关于{name}',
+    contactTitle: '联系我',
+    previousLabel: '上一页',
+    nextLabel: '下一页',
+    emptyTitle: '暂无照片',
+    emptyDescription: '这个页面里还没有照片内容。',
+    themeLabel: '站点',
   },
   forAgents: {
     title: 'AI 接入',

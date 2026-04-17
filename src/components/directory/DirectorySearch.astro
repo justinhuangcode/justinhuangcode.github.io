@@ -1,0 +1,422 @@
+---
+interface Props {
+  placeholder: string;
+  locale: string;
+  emptyTitle: string;
+  emptyDescription: string;
+}
+
+const { placeholder, locale, emptyTitle, emptyDescription } = Astro.props;
+const searchUi =
+  locale === 'zh-hant'
+    ? {
+        clearLabel: '清除搜尋',
+        searchingLabel: '搜尋中...',
+      }
+    : locale === 'zh-hans'
+      ? {
+          clearLabel: '清除搜索',
+          searchingLabel: '搜索中...',
+        }
+      : {
+          clearLabel: 'Clear search',
+          searchingLabel: 'Searching...',
+        };
+---
+
+<div class="widget_search">
+  <form id="searchForm" method="get" role="search" autocomplete="off">
+    <div class="search-engine-icon">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <circle cx="11" cy="11" r="6.5" />
+        <path d="M16 16L20 20" />
+      </svg>
+    </div>
+    <input type="text" id="searchInput" placeholder={placeholder} aria-label={placeholder} />
+    <div class="directory-search-actions">
+      <button
+        class="directory-search-clear"
+        id="directorySearchClear"
+        type="button"
+        aria-label={searchUi.clearLabel}
+        hidden
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path
+            d="M7 7L17 17M17 7L7 17"
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+          />
+        </svg>
+      </button>
+    </div>
+  </form>
+
+  <div class="directory-search-meta" id="directorySearchMeta" hidden>
+    <span class="directory-search-status" id="directorySearchStatus"></span>
+  </div>
+</div>
+
+<style>
+  .widget_search {
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .widget_search #searchForm {
+    position: relative;
+    min-height: 44px;
+  }
+
+  .widget_search #searchForm .search-engine-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+
+  .widget_search #searchForm .search-engine-icon svg {
+    width: 18px;
+    height: 18px;
+    display: block;
+    color: #1f2937;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-width: 2;
+  }
+
+  .widget_search #searchForm input {
+    padding-left: 48px;
+    padding-right: 56px;
+  }
+
+  .widget_search #searchForm .directory-search-actions {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transform: translateY(-50%);
+  }
+
+  .widget_search #searchForm button {
+    position: static;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    margin: 0;
+    padding: 0;
+    border-radius: 999px;
+    color: #4b5563;
+    transition:
+      background-color 160ms ease,
+      color 160ms ease,
+      opacity 160ms ease;
+  }
+
+  .widget_search #searchForm button svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .widget_search #searchForm .directory-search-clear {
+    background: rgb(226 232 240 / 72%);
+    color: #64748b;
+  }
+
+  .widget_search #searchForm .directory-search-clear:hover {
+    background: rgb(203 213 225 / 88%);
+    color: #334155;
+  }
+
+  .directory-search-meta {
+    display: flex;
+    align-items: center;
+    min-height: 1.25rem;
+    padding-left: 0;
+    color: #64748b;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  .directory-search-meta[hidden] {
+    display: none;
+  }
+
+  .directory-search-status {
+    color: inherit;
+  }
+</style>
+
+<script is:inline define:vars={{ locale, emptyTitle, emptyDescription, searchUi }}>
+  function initDirectorySearch() {
+    const form = document.getElementById('searchForm');
+    const input = document.getElementById('searchInput');
+    const clearButton = document.getElementById('directorySearchClear');
+    const emptyState = document.getElementById('directorySearchEmpty');
+    const meta = document.getElementById('directorySearchMeta');
+    const status = document.getElementById('directorySearchStatus');
+    const root = document.body;
+    const cards = Array.from(document.querySelectorAll('[data-directory-card]'));
+    const groups = Array.from(document.querySelectorAll('[data-directory-group]'));
+    const navLinks = Array.from(document.querySelectorAll('[data-directory-nav-link]'));
+
+    if (
+      !(form instanceof HTMLFormElement) ||
+      !(input instanceof HTMLInputElement) ||
+      !(clearButton instanceof HTMLButtonElement) ||
+      !(meta instanceof HTMLElement) ||
+      !(status instanceof HTMLElement) ||
+      !(emptyState instanceof HTMLElement)
+    ) {
+      return;
+    }
+
+    if (form.dataset.pagefindInitialized === 'true') {
+      return;
+    }
+
+    form.dataset.pagefindInitialized = 'true';
+    input.disabled = false;
+    input.onclick = null;
+    form.onsubmit = null;
+
+    const state = {
+      pagefind: null,
+      debounceTimer: 0,
+    };
+
+    const getResultLabel = (total) => {
+      if (locale === 'zh-hant') {
+        return `找到 ${total} 個結果`;
+      }
+
+      if (locale === 'zh-hans') {
+        return `找到 ${total} 个结果`;
+      }
+
+      return `${total} matches`;
+    };
+
+    const setVisibility = (element, visible) => {
+      if (!(element instanceof HTMLElement)) {
+        return;
+      }
+      element.hidden = !visible;
+    };
+
+    const setMeta = (query, total, isSearching = false) => {
+      const trimmed = query.trim();
+      clearButton.hidden = trimmed.length === 0;
+      meta.hidden = trimmed.length === 0;
+      root.classList.toggle('directory-search-active', trimmed.length > 0);
+
+      if (!trimmed) {
+        status.textContent = '';
+        form.dataset.searchState = 'idle';
+        return;
+      }
+
+      status.textContent = isSearching ? searchUi.searchingLabel : getResultLabel(total);
+      form.dataset.searchState = isSearching ? 'searching' : 'active';
+    };
+
+    const applyVisibleCardIds = (visibleCardIds) => {
+      const visibleGroups = new Set();
+      let visibleCardCount = 0;
+
+      for (const card of cards) {
+        if (!(card instanceof HTMLElement)) {
+          continue;
+        }
+
+        const cardId = card.dataset.directoryCardId || '';
+        const groupId = card.dataset.directoryCardGroupId || '';
+        const visible = visibleCardIds === null || visibleCardIds.has(cardId);
+        setVisibility(card, visible);
+
+        if (visible && groupId) {
+          visibleGroups.add(groupId);
+          visibleCardCount += 1;
+        }
+      }
+
+      for (const group of groups) {
+        if (!(group instanceof HTMLElement)) {
+          continue;
+        }
+        const groupId = group.dataset.directoryGroupId || '';
+        const visible = visibleCardIds === null || visibleGroups.has(groupId);
+        setVisibility(group, visible);
+      }
+
+      for (const link of navLinks) {
+        if (!(link instanceof HTMLElement)) {
+          continue;
+        }
+        const groupId = link.dataset.directoryNavGroupId || '';
+        const visible = visibleCardIds === null || visibleGroups.has(groupId);
+        setVisibility(link.closest('.left_nav_item'), visible);
+      }
+
+      emptyState.hidden = visibleCardIds === null || visibleCardCount > 0;
+      return visibleCardCount;
+    };
+
+    const fallbackSearch = (query) => {
+      const normalizedQuery = query.trim().toLowerCase();
+      if (!normalizedQuery) {
+        return new Set();
+      }
+
+      const visibleCardIds = new Set();
+
+      for (const card of cards) {
+        if (!(card instanceof HTMLElement)) {
+          continue;
+        }
+
+        const cardId = card.dataset.directoryCardId || '';
+        const cardText = (card.textContent || '').toLowerCase();
+
+        if (cardId && cardText.includes(normalizedQuery)) {
+          visibleCardIds.add(cardId);
+        }
+      }
+
+      return visibleCardIds;
+    };
+
+    const syncQueryParam = (query) => {
+      const url = new URL(window.location.href);
+      if (query) {
+        url.searchParams.set('q', query);
+      } else {
+        url.searchParams.delete('q');
+      }
+      window.history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`);
+    };
+
+    const ensurePagefind = async () => {
+      if (state.pagefind) {
+        return state.pagefind;
+      }
+
+      state.pagefind = await import('/pagefind/pagefind.js');
+      return state.pagefind;
+    };
+
+    const restoreAll = () => {
+      applyVisibleCardIds(null);
+      setMeta('', 0, false);
+    };
+
+    const runSearch = async (rawQuery) => {
+      const query = rawQuery.trim();
+      syncQueryParam(query);
+
+      if (!query) {
+        restoreAll();
+        return;
+      }
+
+      setMeta(query, 0, true);
+
+      try {
+        const pagefind = await ensurePagefind();
+        const search = await pagefind.search(query, {
+          filters: {
+            locale,
+          },
+        });
+
+        const visibleCardIds = new Set();
+
+        for (const result of search.results) {
+          const data = await result.data();
+          const cardId = data?.meta?.cardId;
+          if (typeof cardId === 'string' && cardId) {
+            visibleCardIds.add(cardId);
+          }
+        }
+
+        let visibleCardCount = applyVisibleCardIds(visibleCardIds);
+
+        if (visibleCardIds.size > 0 && visibleCardCount === 0) {
+          const fallbackVisibleCardIds = fallbackSearch(query);
+          visibleCardCount = applyVisibleCardIds(fallbackVisibleCardIds);
+        }
+
+        setMeta(query, visibleCardCount, false);
+      } catch (error) {
+        console.warn('Directory search failed, falling back to full list.', error);
+        emptyState.querySelector('h3')?.replaceChildren(emptyTitle);
+        emptyState.querySelector('p')?.replaceChildren(emptyDescription);
+        restoreAll();
+      }
+    };
+
+    const scheduleSearch = () => {
+      window.clearTimeout(state.debounceTimer);
+      state.debounceTimer = window.setTimeout(() => {
+        void runSearch(input.value);
+      }, 120);
+    };
+
+    form.onsubmit = function (event) {
+      event.preventDefault();
+      const firstVisibleCard = document.querySelector('[data-directory-card]:not([hidden])');
+      if (firstVisibleCard instanceof HTMLElement) {
+        firstVisibleCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
+      const firstVisibleGroup = document.querySelector('[data-directory-group]:not([hidden])');
+      if (firstVisibleGroup instanceof HTMLElement) {
+        firstVisibleGroup.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    };
+
+    input.addEventListener('input', scheduleSearch);
+    input.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        input.value = '';
+        syncQueryParam('');
+        restoreAll();
+      }
+    });
+    clearButton.addEventListener('click', () => {
+      input.value = '';
+      syncQueryParam('');
+      restoreAll();
+      input.focus();
+    });
+
+    const initialQuery = new URL(window.location.href).searchParams.get('q') || '';
+    if (initialQuery) {
+      input.value = initialQuery;
+      void runSearch(initialQuery);
+    } else {
+      restoreAll();
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', initDirectorySearch);
+  document.addEventListener('astro:page-load', initDirectorySearch);
+  document.addEventListener('pjax:complete', initDirectorySearch);
+</script>

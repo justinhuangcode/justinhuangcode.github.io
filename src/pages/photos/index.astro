@@ -1,0 +1,15 @@
+---
+import PhotosIndexPage from '@/components/pages/PhotosIndexPage.astro';
+import { getPaginatedGallery } from '@/lib/gallery';
+import { rootLocale } from '@/lib/route-helpers';
+
+const { entries, categories, totalPages } = await getPaginatedGallery(rootLocale, 1);
+---
+
+<PhotosIndexPage
+  locale={rootLocale}
+  entries={entries}
+  categories={categories}
+  currentPage={1}
+  totalPages={totalPages}
+/>

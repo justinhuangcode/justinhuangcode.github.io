@@ -1,0 +1,176 @@
+---
+import type { DirectoryGroup } from '@/lib/directory';
+
+interface Props {
+  heroHref: string;
+  siteTitle: string;
+  footerThemeAttribution: string;
+  footerThemeUrl: string;
+  footerIcp: string;
+  footerIcp2: string;
+  postchatEnabled: boolean;
+  postchatButtonText: string;
+  postchatButtonHref: string;
+  consoleHref?: string;
+  consoleTitle?: string;
+  groups: DirectoryGroup[];
+}
+
+const {
+  heroHref,
+  siteTitle,
+  footerThemeAttribution,
+  footerThemeUrl,
+  footerIcp,
+  footerIcp2,
+  postchatEnabled,
+  postchatButtonText,
+  postchatButtonHref,
+  consoleHref = '',
+  consoleTitle = '管理后台',
+  groups,
+} = Astro.props;
+
+const visibleGroups = groups.filter(
+  (group) => group.annotations.show_in_directory === 'true' && group.spec.displayName !== '',
+);
+---
+
+<div class="nav">
+  <a class="show_nav" onclick="showNav()" href="javascript:void(0)" aria-label="Open navigation">
+    <i class="ri-menu-line"></i>
+  </a>
+  <a class="nav_site_name" href={heroHref}>
+    {siteTitle}
+  </a>
+</div>
+
+<div class="nav_list nav_list--no-logo" id="nav_list">
+  <div class="left_nav_group" id="left_nav_group">
+    {
+      visibleGroups.map((group) => (
+        <div
+          class:list={[
+            'left_nav_item',
+            group.annotations.icon === 'ri-' || group.annotations.icon === '' ? 'nav_center' : '',
+          ]}
+        >
+          <a
+            class="left_nav_link_group_title"
+            data-target={group.anchorId}
+            data-directory-nav-link
+            data-directory-nav-group-id={group.anchorId}
+            href={`${heroHref}#${group.anchorId}`}
+            onclick="hideNav()"
+          >
+            {group.annotations.icon !== 'ri-' && group.annotations.icon !== '' ? (
+              <i class={group.annotations.icon}></i>
+            ) : null}
+            <span>{group.spec.displayName}</span>
+          </a>
+        </div>
+      ))
+    }
+
+    {
+      postchatEnabled ? (
+        <div class="left_nav_item nav_postchat">
+          {postchatButtonHref ? (
+            <a
+              class="left_nav_link_group_title notneedjump"
+              href={postchatButtonHref}
+              target="_blank"
+              rel="noreferrer noopener"
+            >
+              <i class="ri-chat-ai-fill"></i>
+              <span>{postchatButtonText}</span>
+            </a>
+          ) : (
+            <a
+              class="left_nav_link_group_title notneedjump"
+              href="javascript:void(0)"
+              data-directory-postchat-trigger
+            >
+              <i class="ri-chat-ai-fill"></i>
+              <span>{postchatButtonText}</span>
+            </a>
+          )}
+        </div>
+      ) : null
+    }
+  </div>
+
+  <div class="footer">
+    <div class="footer_icp_group">
+      {
+        footerIcp ? (
+          <a href="https://beian.miit.gov.cn/" target="_blank" rel="noreferrer noopener">
+            <span>{footerIcp}</span>
+          </a>
+        ) : null
+      }
+      {
+        footerIcp2 ? (
+          <a
+            href="https://beian.mps.gov.cn/#/query/webSearch"
+            target="_blank"
+            rel="noreferrer noopener"
+          >
+            <span>{footerIcp2}</span>
+          </a>
+        ) : null
+      }
+    </div>
+
+    <div class="footer_console">
+      {
+        consoleHref ? (
+          <a
+            href={consoleHref}
+            target="_blank"
+            rel="noreferrer noopener"
+            title={consoleTitle}
+            data-pjax-state="external"
+          >
+            <i class="ri-settings-4-fill"></i>
+          </a>
+        ) : null
+      }
+      {
+        footerThemeAttribution && footerThemeUrl ? (
+          <a
+            href={footerThemeUrl}
+            target="_blank"
+            rel="noreferrer noopener"
+            class="theme_info"
+            title={footerThemeAttribution}
+            data-pjax-state="external"
+          >
+            {footerThemeAttribution}
+          </a>
+        ) : null
+      }
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  function initDirectoryNav() {
+    const trigger = document.querySelector('[data-directory-postchat-trigger]');
+    if (!(trigger instanceof HTMLAnchorElement)) {
+      return;
+    }
+
+    trigger.onclick = function (event) {
+      event.preventDefault();
+      if (typeof window.postChatUser !== 'undefined') {
+        window.postChatUser.setPostChatTag('chat');
+      }
+      return false;
+    };
+  }
+
+  document.addEventListener('DOMContentLoaded', initDirectoryNav);
+  document.addEventListener('astro:page-load', initDirectoryNav);
+  document.addEventListener('pjax:complete', initDirectoryNav);
+</script>

@@ -1,6 +1,8 @@
 export const en = {
   nav: {
     blog: 'Blog',
+    gallery: 'Photos',
+    directory: 'Directory',
     about: 'About',
   },
   blog: {
@@ -44,10 +46,32 @@ export const en = {
     },
     language: 'Language',
     builtWith: 'Built with',
+    copy: 'Copy',
+    copied: 'Copied',
   },
   about: {
     title: 'About',
     description: 'A personal blog by Justin Huang about AI, technology, writing, and life.',
+  },
+  galleryPage: {
+    name: 'Photos',
+    subtitle: 'A calm image-first gallery',
+    embeddedToolbarName: 'Framing beautiful moments from everyday life',
+    description: 'A calm, image-first gallery on this site, designed for immersive browsing and quiet presentation.',
+    aboutHtml: 'A calm, image-first gallery on this site, designed for immersive browsing and quiet presentation.',
+    bottomToolbarLabel: 'Bottom toolbar',
+    categoriesLabel: 'Categories',
+    allLabel: 'All',
+    fullscreen: 'Enter fullscreen',
+    exitFullscreen: 'Exit fullscreen',
+    aboutLinkLabel: 'About',
+    aboutTitle: 'About {name}',
+    contactTitle: 'Contact',
+    previousLabel: 'Previous',
+    nextLabel: 'Next',
+    emptyTitle: 'No photos yet',
+    emptyDescription: 'There are no photos in this gallery yet.',
+    themeLabel: 'Site',
   },
   forAgents: {
     title: 'AI Access',

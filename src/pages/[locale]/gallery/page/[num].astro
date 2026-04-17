@@ -1,0 +1,15 @@
+---
+import RedirectPage from '@/components/pages/RedirectPage.astro';
+import { type Locale, getLocalizedPath } from '@/i18n';
+import { getGalleryPaginationStaticPaths } from '@/lib/gallery';
+import { createLocalizedStaticPaths } from '@/lib/route-helpers';
+
+export async function getStaticPaths() {
+  return createLocalizedStaticPaths((locale) => getGalleryPaginationStaticPaths(locale));
+}
+
+const { locale } = Astro.props as { locale: Locale };
+const currentPage = Number(Astro.params.num);
+---
+
+<RedirectPage to={getLocalizedPath(`/photos/page/${currentPage}/`, locale)} />

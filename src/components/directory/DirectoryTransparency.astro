@@ -1,0 +1,587 @@
+---
+import { type Locale } from '@/i18n';
+
+interface Props {
+  locale: Locale;
+}
+
+type SourceCard = {
+  name: string;
+  href?: string;
+  hrefLabel?: string;
+  license: string;
+  licenseHref?: string;
+  description: string;
+};
+
+type TransparencyCopy = {
+  eyebrow: string;
+  title: string;
+  summary: string;
+  footerNote: string;
+  openLabel: string;
+  closeLabel: string;
+  policyTitle: string;
+  policyItems: [string, string, string];
+  sources: [SourceCard, SourceCard, SourceCard];
+};
+
+const { locale } = Astro.props;
+
+const copy: TransparencyCopy =
+  locale === 'zh-hant'
+    ? {
+        eyebrow: '來源與許可',
+        title: '圖標來源與使用說明',
+        summary:
+          '這裡集中保留目錄頁的圖標來源、授權線索與品牌說明，讓頁面維持乾淨，同時把署名與使用邊界交代清楚。',
+        footerNote: '圖標來源、授權與品牌說明。',
+        openLabel: '查看來源',
+        closeLabel: '關閉',
+        policyTitle: '使用邊界',
+        policyItems: [
+          '產品名稱、品牌標誌與商標仍歸其各自持有人所有，這裡僅用於辨識服務。',
+          '若使用 selfh.st/icons 等需署名的圖標集合，來源與授權連結會集中保留在這裡。',
+          '若有圖標需要更正、補充署名或移除，請聯絡站點維護者處理。',
+        ],
+        sources: [
+          {
+            name: 'selfh.st/icons',
+            href: 'https://selfh.st/icons-about/',
+            hrefLabel: '查看來源',
+            license: 'CC BY 4.0',
+            licenseHref: 'https://creativecommons.org/licenses/by/4.0/',
+            description:
+              '一套專為 dashboards 與 app directories 準備的高品質圖標集合。若此頁某個圖標來自該集合，署名會在這裡集中保留。',
+          },
+          {
+            name: '官方品牌素材',
+            license: '各品牌規則',
+            description:
+              '部分圖標可能直接來自產品官網、開源倉庫或品牌素材頁，僅用於幫助讀者快速辨識服務。',
+          },
+          {
+            name: '本地備援資產',
+            license: '站點內部整理',
+            description:
+              '當沒有合適的官方或授權圖標可用時，目錄頁會退回到本地整理資產或網站圖示，以保持版面完整與可辨識性。',
+          },
+        ],
+      }
+    : locale === 'zh-hans'
+      ? {
+          eyebrow: '来源与许可',
+          title: '图标来源与使用说明',
+          summary:
+            '这里集中保留目录页的图标来源、授权线索与品牌说明，让页面保持干净，同时把署名与使用边界交代清楚。',
+          footerNote: '图标来源、许可与品牌说明。',
+          openLabel: '查看来源',
+          closeLabel: '关闭',
+          policyTitle: '使用边界',
+          policyItems: [
+            '产品名称、品牌标识与商标仍归其各自持有人所有，这里仅用于识别服务。',
+            '如果使用 selfh.st/icons 等需要署名的图标集合，来源与许可链接会集中保留在这里。',
+            '如果某个图标需要更正、补充署名或移除，请联系站点维护者处理。',
+          ],
+          sources: [
+            {
+              name: 'selfh.st/icons',
+              href: 'https://selfh.st/icons-about/',
+              hrefLabel: '查看来源',
+              license: 'CC BY 4.0',
+              licenseHref: 'https://creativecommons.org/licenses/by/4.0/',
+              description:
+                '一套专门为 dashboards 与 app directories 准备的高质量图标集合。如果此页某个图标来自该集合，署名会集中保留在这里。',
+            },
+            {
+              name: '官方品牌素材',
+              license: '各品牌规则',
+              description:
+                '部分图标可能直接来自产品官网、开源仓库或品牌素材页，仅用于帮助读者快速识别服务。',
+            },
+            {
+              name: '本地兜底资源',
+              license: '站点内部整理',
+              description:
+                '当没有合适的官方或授权图标可用时，目录页会回退到本地整理资产或网站图标，以保持版面完整和可识别性。',
+            },
+          ],
+        }
+      : {
+          eyebrow: 'Directory Transparency',
+          title: 'Icon sources and usage policy',
+          summary:
+            'This page keeps icon sourcing, attribution, and brand-usage notes in one quiet place, so the directory stays clean while credit and licensing remain visible.',
+          footerNote: 'Icon sources, attribution, and brand notes.',
+          openLabel: 'View Credits',
+          closeLabel: 'Close',
+          policyTitle: 'Usage Boundaries',
+          policyItems: [
+            'Product names, logos, and trademarks remain the property of their respective owners and are shown here for recognition only.',
+            'When a source such as selfh.st/icons requires attribution, the credit and license links stay visible here instead of cluttering every card.',
+            'If an icon needs correction, a different credit, or removal, the site owner should update this directory accordingly.',
+          ],
+          sources: [
+            {
+              name: 'selfh.st/icons',
+              href: 'https://selfh.st/icons-about/',
+              hrefLabel: 'Open source',
+              license: 'CC BY 4.0',
+              licenseHref: 'https://creativecommons.org/licenses/by/4.0/',
+              description:
+                'A high-quality icon collection built for dashboards and app directories. If a mark on this page is sourced from that catalog, attribution is preserved here.',
+            },
+            {
+              name: 'Official brand assets',
+              license: 'Brand terms vary',
+              description:
+                'Some marks may come directly from official product sites, repositories, or brand kits and are displayed strictly to help people identify services.',
+            },
+            {
+              name: 'Local fallback assets',
+              license: 'Site-maintained',
+              description:
+                'When no suitable official or licensed mark is available, the directory can fall back to prepared local assets or generated site icons to keep the layout coherent.',
+            },
+          ],
+        };
+---
+
+<section class="directory-transparency" data-directory-transparency>
+  <footer class="directory-transparency__footer">
+    <div class="directory-transparency__footer-copy">
+      <p class="directory-transparency__eyebrow">{copy.eyebrow}</p>
+      <p class="directory-transparency__footer-note">{copy.footerNote}</p>
+    </div>
+
+    <button
+      type="button"
+      class="directory-transparency__button"
+      data-transparency-open
+      aria-haspopup="dialog"
+    >
+      <span>{copy.openLabel}</span>
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path
+          d="M8 5h8.5a2.5 2.5 0 0 1 2.5 2.5V16M9 15l10-10M13 5h6v6"
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="1.8"
+        />
+      </svg>
+    </button>
+  </footer>
+
+  <dialog class="directory-transparency__dialog" data-transparency-dialog>
+    <div class="directory-transparency__panel">
+      <div class="directory-transparency__panel-header">
+        <div>
+          <p class="directory-transparency__eyebrow">{copy.eyebrow}</p>
+          <h2>{copy.title}</h2>
+        </div>
+        <button
+          type="button"
+          class="directory-transparency__close"
+          data-transparency-close
+          aria-label={copy.closeLabel}
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path
+              d="M7 7L17 17M17 7L7 17"
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+            />
+          </svg>
+        </button>
+      </div>
+
+      <div class="directory-transparency__panel-copy">
+        <p>{copy.summary}</p>
+      </div>
+
+      <div class="directory-transparency__source-grid">
+        {
+          copy.sources.map((source) => (
+            <article class="directory-transparency__source-card">
+              <div class="directory-transparency__source-head">
+                <h3>{source.name}</h3>
+                <span class="directory-transparency__license">{source.license}</span>
+              </div>
+              <p>{source.description}</p>
+              <div class="directory-transparency__source-links">
+                {source.href ? (
+                  <a href={source.href} target="_blank" rel="noreferrer noopener">
+                    {source.hrefLabel}
+                  </a>
+                ) : null}
+                {source.licenseHref ? (
+                  <a href={source.licenseHref} target="_blank" rel="noreferrer noopener">
+                    {source.license}
+                  </a>
+                ) : null}
+              </div>
+            </article>
+          ))
+        }
+      </div>
+
+      <div class="directory-transparency__policy">
+        <h3>{copy.policyTitle}</h3>
+        <ul>
+          {copy.policyItems.map((item) => <li>{item}</li>)}
+        </ul>
+      </div>
+    </div>
+  </dialog>
+</section>
+
+<style>
+  .directory-transparency {
+    margin: 2rem 0 0;
+  }
+
+  .directory-transparency__footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.85rem 1.5rem;
+    padding: 1.1rem 0 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .directory-transparency__footer-copy {
+    display: grid;
+    gap: 0.18rem;
+    max-width: 32rem;
+  }
+
+  .directory-transparency__eyebrow {
+    margin: 0;
+    font-family: var(--font-code);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+  }
+
+  .directory-transparency__panel-header h2 {
+    margin: 0;
+    font-size: clamp(1.04rem, 1.8vw, 1.24rem);
+    line-height: 1.15;
+    color: var(--foreground);
+  }
+
+  .directory-transparency__footer-note,
+  .directory-transparency__panel-copy p,
+  .directory-transparency__source-card p,
+  .directory-transparency__policy li {
+    margin: 0;
+    line-height: 1.65;
+    color: var(--muted-foreground);
+  }
+
+  .directory-transparency__footer-note {
+    color: var(--foreground);
+    opacity: 0.7;
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+
+  .directory-transparency__license {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 1.85rem;
+    padding: 0 0.72rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--muted) 72%, var(--card) 28%);
+    border: 1px solid var(--border);
+    color: var(--muted-foreground);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+
+  .directory-transparency__button,
+  .directory-transparency__close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.48rem;
+    border: 0;
+    font: inherit;
+    cursor: pointer;
+    transition:
+      transform 180ms ease,
+      color 180ms ease,
+      opacity 180ms ease;
+  }
+
+  .directory-transparency__button {
+    align-self: center;
+    min-height: auto;
+    padding: 0.25rem 0;
+    background: transparent;
+    color: var(--color-link);
+    font-family: var(--font-code);
+    font-size: 0.76rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--color-link) 35%, transparent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.28em;
+  }
+
+  .directory-transparency__button:hover,
+  .directory-transparency__button:focus-visible {
+    transform: translateX(1px);
+    color: var(--color-link-hover);
+    opacity: 1;
+  }
+
+  .directory-transparency__button svg,
+  .directory-transparency__close svg {
+    width: 0.95rem;
+    height: 0.95rem;
+  }
+
+  .directory-transparency__dialog {
+    width: min(54rem, calc(100vw - 1.5rem));
+    max-width: min(54rem, calc(100vw - 1.5rem));
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+  }
+
+  .directory-transparency__dialog::backdrop {
+    background: rgb(15 23 42 / 0.34);
+    backdrop-filter: blur(12px);
+  }
+
+  .directory-transparency__panel {
+    display: grid;
+    gap: 1.25rem;
+    padding: 1.25rem;
+    border: 1px solid var(--border);
+    border-radius: 28px;
+    background:
+      radial-gradient(
+        circle at top left,
+        color-mix(in srgb, var(--color-link) 10%, var(--card) 90%),
+        transparent 34%
+      ),
+      linear-gradient(
+        145deg,
+        color-mix(in srgb, var(--card) 92%, var(--background) 8%),
+        color-mix(in srgb, var(--card) 72%, var(--muted) 28%)
+      );
+    box-shadow:
+      0 34px 70px rgb(15 23 42 / 0.18),
+      inset 0 1px 0 color-mix(in srgb, var(--background) 74%, transparent);
+  }
+
+  .directory-transparency__panel-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .directory-transparency__close {
+    width: 2.5rem;
+    min-width: 2.5rem;
+    padding: 0;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--muted) 82%, var(--card) 18%);
+    color: var(--muted-foreground);
+  }
+
+  .directory-transparency__close:hover,
+  .directory-transparency__close:focus-visible {
+    background: color-mix(in srgb, var(--muted) 94%, var(--card) 6%);
+    color: var(--foreground);
+  }
+
+  .directory-transparency__panel-copy {
+    padding: 1rem 1.05rem;
+    border-radius: 22px;
+    background: color-mix(in srgb, var(--card) 74%, var(--background) 26%);
+    border: 1px solid var(--border);
+  }
+
+  .directory-transparency__source-grid {
+    display: grid;
+    gap: 0.9rem;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .directory-transparency__source-card,
+  .directory-transparency__policy {
+    display: grid;
+    gap: 0.85rem;
+    padding: 1rem 1.05rem;
+    border-radius: 22px;
+    background: color-mix(in srgb, var(--card) 76%, var(--background) 24%);
+    border: 1px solid var(--border);
+  }
+
+  .directory-transparency__source-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  .directory-transparency__source-head h3,
+  .directory-transparency__policy h3 {
+    margin: 0;
+    font-size: 1rem;
+    color: var(--foreground);
+  }
+
+  .directory-transparency__source-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .directory-transparency__source-links a {
+    color: var(--color-link);
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .directory-transparency__source-links a:hover,
+  .directory-transparency__source-links a:focus-visible {
+    color: var(--color-link-hover);
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+  }
+
+  .directory-transparency__policy ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.7rem;
+  }
+
+  .directory-transparency__policy li {
+    position: relative;
+    padding-left: 1.15rem;
+  }
+
+  .directory-transparency__policy li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.68rem;
+    width: 0.42rem;
+    height: 0.42rem;
+    border-radius: 999px;
+    background: var(--color-link);
+    box-shadow: 0 0 0 0.22rem color-mix(in srgb, var(--color-link) 14%, transparent);
+  }
+
+  @media (max-width: 900px) {
+    .directory-transparency__source-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 680px) {
+    .directory-transparency {
+      margin-top: 1.6rem;
+    }
+
+    .directory-transparency__panel {
+      padding: 1rem;
+      border-radius: 22px;
+    }
+
+    .directory-transparency__footer {
+      align-items: stretch;
+    }
+
+    .directory-transparency__button {
+      align-self: flex-start;
+    }
+
+    .directory-transparency__source-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>
+
+<script>
+  import { bootstrapRootInit } from '@/lib/dom-init';
+
+  bootstrapRootInit(
+    'directory-transparency',
+    '[data-directory-transparency]',
+    (root, signal) => {
+      const dialog = root.querySelector('[data-transparency-dialog]');
+      const openButton = root.querySelector('[data-transparency-open]');
+      const closeButton = root.querySelector('[data-transparency-close]');
+
+      if (
+        !(dialog instanceof HTMLDialogElement) ||
+        !(openButton instanceof HTMLButtonElement) ||
+        !(closeButton instanceof HTMLButtonElement)
+      ) {
+        return;
+      }
+
+      const closeDialog = () => {
+        if (dialog.open) {
+          dialog.close();
+        } else {
+          dialog.removeAttribute('open');
+        }
+      };
+
+      const openDialog = () => {
+        if (typeof dialog.showModal === 'function') {
+          if (!dialog.open) dialog.showModal();
+        } else {
+          dialog.setAttribute('open', '');
+        }
+      };
+
+      openButton.addEventListener('click', openDialog, { signal });
+      closeButton.addEventListener('click', closeDialog, { signal });
+
+      dialog.addEventListener(
+        'click',
+        (event) => {
+          if (event.target === dialog) {
+            closeDialog();
+          }
+        },
+        { signal },
+      );
+
+      dialog.addEventListener(
+        'keydown',
+        (event) => {
+          if (event.key === 'Escape') {
+            closeDialog();
+          }
+        },
+        { signal },
+      );
+    },
+  );
+</script>

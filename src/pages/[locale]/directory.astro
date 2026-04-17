@@ -1,0 +1,11 @@
+---
+import DirectoryPage from '@/components/pages/DirectoryPage.astro';
+import { type Locale } from '@/i18n';
+import { createLocaleOnlyStaticPaths } from '@/lib/route-helpers';
+
+export const getStaticPaths = createLocaleOnlyStaticPaths;
+
+const { locale } = Astro.props as { locale: Locale };
+---
+
+<DirectoryPage locale={locale} />

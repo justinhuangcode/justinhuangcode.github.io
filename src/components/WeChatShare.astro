@@ -1,0 +1,149 @@
+---
+import { siteConfig } from '@/config/site';
+
+interface Props {
+  title: string;
+  description: string;
+  link: string;
+  imgUrl: string;
+}
+
+const { title, description, link, imgUrl } = Astro.props;
+const wechatShare = siteConfig.wechatShare;
+const shouldEnable =
+  wechatShare.enabled &&
+  Boolean(wechatShare.appId) &&
+  Boolean(wechatShare.signatureEndpoint);
+---
+
+{shouldEnable && (
+  <script
+    is:inline
+    define:vars={{
+      appId: wechatShare.appId,
+      signatureEndpoint: wechatShare.signatureEndpoint,
+      jsSdkUrl: wechatShare.jsSdkUrl,
+      shareTitle: title,
+      shareDescription: description,
+      shareLink: link,
+      shareImage: imgUrl,
+    }}
+  >
+    (async function () {
+      var ua = navigator.userAgent.toLowerCase();
+      if (ua.indexOf('micromessenger') === -1) return;
+
+      function buildSignatureUrl(baseUrl, currentUrl) {
+        var separator = baseUrl.indexOf('?') === -1 ? '?' : '&';
+        return baseUrl + separator + 'url=' + encodeURIComponent(currentUrl);
+      }
+
+      async function requestJson(url) {
+        if (window.fetch) {
+          return fetch(url, { credentials: 'omit' }).then(function (response) {
+            if (!response.ok) {
+              throw new Error('Failed to fetch WeChat signature: ' + response.status);
+            }
+            return response.json();
+          });
+        }
+
+        return new Promise(function (resolve, reject) {
+          var xhr = new XMLHttpRequest();
+          xhr.open('GET', url, true);
+          xhr.onreadystatechange = function () {
+            if (xhr.readyState !== 4) return;
+            if (xhr.status >= 200 && xhr.status < 300) {
+              try {
+                resolve(JSON.parse(xhr.responseText));
+              } catch (error) {
+                reject(error);
+              }
+              return;
+            }
+            reject(new Error('Failed to fetch WeChat signature: ' + xhr.status));
+          };
+          xhr.send();
+        });
+      }
+
+      function loadSdk() {
+        if (window.wx) return Promise.resolve(window.wx);
+        if (window.__aitherWeChatSdkPromise) return window.__aitherWeChatSdkPromise;
+
+        window.__aitherWeChatSdkPromise = new Promise(function (resolve, reject) {
+          var script = document.createElement('script');
+          script.src = jsSdkUrl;
+          script.async = true;
+          script.onload = function () {
+            if (window.wx) {
+              resolve(window.wx);
+              return;
+            }
+            reject(new Error('WeChat JS-SDK loaded without exposing wx'));
+          };
+          script.onerror = function () {
+            reject(new Error('Failed to load WeChat JS-SDK'));
+          };
+          document.head.appendChild(script);
+        });
+
+        return window.__aitherWeChatSdkPromise;
+      }
+
+      function applyShareData(wx) {
+        var appMessageData = {
+          title: shareTitle,
+          desc: shareDescription,
+          link: shareLink,
+          imgUrl: shareImage,
+        };
+        var timelineData = {
+          title: shareTitle,
+          link: shareLink,
+          imgUrl: shareImage,
+        };
+
+        if (typeof wx.updateAppMessageShareData === 'function') {
+          wx.updateAppMessageShareData(appMessageData);
+        }
+        if (typeof wx.updateTimelineShareData === 'function') {
+          wx.updateTimelineShareData(timelineData);
+        }
+        if (typeof wx.onMenuShareAppMessage === 'function') {
+          wx.onMenuShareAppMessage(appMessageData);
+        }
+        if (typeof wx.onMenuShareTimeline === 'function') {
+          wx.onMenuShareTimeline(timelineData);
+        }
+      }
+
+      try {
+        var wx = await loadSdk();
+        var currentUrl = window.location.href.split('#')[0];
+        var payload = await requestJson(buildSignatureUrl(signatureEndpoint, currentUrl));
+        wx.config({
+          debug: false,
+          appId: payload.appId || appId,
+          timestamp: payload.timestamp,
+          nonceStr: payload.nonceStr,
+          signature: payload.signature,
+          jsApiList: [
+            'updateAppMessageShareData',
+            'updateTimelineShareData',
+            'onMenuShareAppMessage',
+            'onMenuShareTimeline',
+          ],
+        });
+        wx.ready(function () {
+          applyShareData(wx);
+        });
+        wx.error(function (error) {
+          console.warn('[Aither] WeChat JS-SDK config failed.', error);
+        });
+      } catch (error) {
+        console.warn('[Aither] WeChat share setup failed.', error);
+      }
+    })();
+  </script>
+)}

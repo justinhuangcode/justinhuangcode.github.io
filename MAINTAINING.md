@@ -41,6 +41,8 @@ This site is an instance of `astro-theme-aither`, but it does not use `main` as 
 6. Push to `gh-pages`
 7. Verify the GitHub Pages deployment and the live URLs
 
+For the release-to-release workflow and file-ownership heuristic, see [UPGRADING.md](./UPGRADING.md).
+
 Suggested local setup:
 
 ```bash

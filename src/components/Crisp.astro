@@ -4,7 +4,7 @@
  * Renders nothing when the ID is empty.
  */
 import { siteConfig } from '@/config/site';
-import type { Locale } from '@/i18n';
+import { crispLocales, type Locale } from '@/i18n';
 
 interface Props {
   locale: Locale;
@@ -12,13 +12,7 @@ interface Props {
 
 const { locale } = Astro.props;
 const crispId = siteConfig.crisp.websiteId;
-const crispLocaleMap: Record<Locale, string> = {
-  en: 'en',
-  'zh-hans': 'zh',
-  'zh-hant': 'zh',
-  ko: 'ko',
-};
-const crispLocale = crispLocaleMap[locale];
+const crispLocale = crispLocales[locale];
 ---
 
 {crispId && (

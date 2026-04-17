@@ -1,0 +1,18 @@
+---
+import PhotosIndexPage from '@/components/pages/PhotosIndexPage.astro';
+import { getPaginatedGallery, getGalleryPaginationStaticPaths } from '@/lib/gallery';
+import { createRootStaticPaths, rootLocale } from '@/lib/route-helpers';
+
+export const getStaticPaths = createRootStaticPaths(getGalleryPaginationStaticPaths);
+
+const currentPage = Number(Astro.params.num);
+const { entries, categories, totalPages } = await getPaginatedGallery(rootLocale, currentPage);
+---
+
+<PhotosIndexPage
+  locale={rootLocale}
+  entries={entries}
+  categories={categories}
+  currentPage={currentPage}
+  totalPages={totalPages}
+/>

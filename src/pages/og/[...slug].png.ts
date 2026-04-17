@@ -1,7 +1,7 @@
 import { getPostsByLocale, getSlug } from '@/lib/posts';
 import { generateOgImage } from '@/lib/og-image';
 import { formatDate } from '@/lib/formatter';
-import { locales } from '@/i18n';
+import { defaultLocale, locales } from '@/i18n';
 
 export async function getStaticPaths() {
   const paths = [];
@@ -9,7 +9,7 @@ export async function getStaticPaths() {
     const posts = await getPostsByLocale(locale);
     for (const post of posts) {
       const slug = getSlug(post.id);
-      const prefix = locale === 'en' ? '' : `${locale}/`;
+      const prefix = locale === defaultLocale ? '' : `${locale}/`;
       paths.push({
         params: { slug: `${prefix}${slug}` },
         props: {

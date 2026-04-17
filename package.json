@@ -1,20 +1,25 @@
 {
   "name": "astro-theme-aither",
   "type": "module",
-  "version": "2026.03.20",
+  "version": "2026.04.08",
   "packageManager": "pnpm@10.32.1",
   "scripts": {
+    "predev": "pnpm dev:directory-search",
     "dev": "astro dev",
+    "dev:directory-search": "node ./scripts/build-directory-pagefind.mjs --output public/pagefind",
     "check:content": "node scripts/check-post-coverage.mjs",
     "check:agent": "node scripts/smoke-agent-protocol.mjs",
     "check": "astro check",
     "typecheck": "tsc --noEmit",
-    "build": "astro build",
+    "build": "astro build && pnpm build:directory-search",
+    "build:directory-search": "node ./scripts/build-directory-pagefind.mjs --output dist/pagefind",
     "preview": "astro preview",
+    "upgrade:diff": "node scripts/release-diff.mjs",
     "validate": "pnpm check:content && pnpm check && pnpm typecheck && pnpm build && pnpm check:agent",
     "astro": "astro"
   },
   "dependencies": {
+    "@aither/astro": "workspace:^2026.4.8",
     "@astrojs/mdx": "^5.0.0",
     "@astrojs/react": "^5.0.0",
     "@astrojs/rss": "^4.0.17",
@@ -24,6 +29,9 @@
     "@tailwindcss/typography": "^0.5.16",
     "@tailwindcss/vite": "^4.1.8",
     "astro": "^6.0.4",
+    "katex": "^0.16.40",
+    "markmap-lib": "^0.18.12",
+    "markmap-view": "^0.18.12",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "satori": "^0.25.0",
@@ -39,9 +47,12 @@
     ]
   },
   "devDependencies": {
+    "@expressive-code/plugin-line-numbers": "^0.41.7",
     "@astrojs/check": "^0.9.8",
     "@types/react": "^19.1.6",
     "@types/react-dom": "^19.1.6",
+    "astro-expressive-code": "^0.41.7",
+    "pagefind": "^1.4.0",
     "typescript": "^5.8.3"
   }
 }

@@ -1,91 +1,143 @@
 ---
 /**
- * Giscus comment system — auto theme switching, i18n support.
- * Always shows the comment section; loads Giscus when configured,
+ * Giscus comments — rendered on post and about pages when configured,
  * otherwise shows a placeholder.
  */
 import { siteConfig } from '@/config/site';
-import { getMessages, type Locale } from '@/i18n';
+import {
+  defaultLocale,
+  getMessages,
+  giscusLocales,
+  type Locale,
+} from '@/i18n';
 import { IconMessage } from '@/components/icons';
 
 interface Props {
   locale?: Locale;
 }
 
-const { locale = 'en' } = Astro.props;
+const { locale = defaultLocale } = Astro.props;
 const g = siteConfig.giscus;
 const m = getMessages(locale);
-
-// Giscus currently exposes Chinese locales as zh-CN / zh-TW,
-// so we keep a small compatibility bridge here instead of
-// leaking region tags through the rest of the app.
-const langMap: Record<string, string> = {
-  en: 'en',
-  'zh-hans': 'zh-CN',
-  'zh-hant': 'zh-TW',
-  ko: 'ko',
-  fr: 'fr',
-  de: 'de',
-  it: 'it',
-  es: 'es',
-  ru: 'ru',
-  id: 'id',
-  'pt-br': 'pt',
-};
-const lang = langMap[locale] || 'en';
+const lang = giscusLocales[locale];
 const enabled = g.repo !== '' && g.repoId !== '' && g.categoryId !== '';
+const giscusThemeLight = g.themeLight || 'light';
+const giscusThemeDark = g.themeDark || 'dark';
 ---
 
-<div class="giscus-wrapper mt-10">
+<div
+  class="giscus-wrapper mt-10"
+  data-giscus
+  data-enabled={enabled ? 'true' : 'false'}
+  data-repo={g.repo}
+  data-repo-id={g.repoId}
+  data-category={g.category}
+  data-category-id={g.categoryId}
+  data-mapping={g.mapping}
+  data-strict="0"
+  data-reactions-enabled={g.reactionsEnabled ? '1' : '0'}
+  data-emit-metadata={g.emitMetadata ? '1' : '0'}
+  data-input-position={g.inputPosition}
+  data-lang={lang}
+  data-theme-light={giscusThemeLight}
+  data-theme-dark={giscusThemeDark}
+>
   <p class="text-sm font-semibold mb-4 text-foreground">{m.blog.comments}</p>
 
   {enabled ? (
-    <script
-      is:inline
-      src="https://giscus.app/client.js"
-      data-repo={g.repo}
-      data-repo-id={g.repoId}
-      data-category={g.category}
-      data-category-id={g.categoryId}
-      data-mapping={g.mapping}
-      data-strict="0"
-      data-reactions-enabled={g.reactionsEnabled ? '1' : '0'}
-      data-emit-metadata={g.emitMetadata ? '1' : '0'}
-      data-input-position={g.inputPosition}
-      data-theme="preferred_color_scheme"
-      data-lang={lang}
-      data-loading="lazy"
-      crossorigin="anonymous"
-      async
-    />
+    <div data-giscus-slot></div>
   ) : (
     <div class="rounded border border-dashed border-border py-8 flex flex-col items-center gap-2 text-muted-foreground text-sm">
       <IconMessage className="size-5" />
-      <span>{m.blog.commentsPlaceholder}</span>
+      <p>{m.blog.commentsPlaceholder}</p>
     </div>
   )}
 </div>
 
 <script>
-  function updateGiscusTheme() {
-    const isDark = document.documentElement.classList.contains('dark');
-    const theme = isDark ? 'dark' : 'light';
-    const iframe = document.querySelector<HTMLIFrameElement>('iframe.giscus-frame');
-    if (iframe) {
-      iframe.contentWindow?.postMessage(
-        { giscus: { setConfig: { theme } } },
-        'https://giscus.app'
-      );
-    }
-  }
+  import { bootstrapRootInit } from '@/lib/dom-init';
+  import { THEME_CHANGE_EVENT } from '@/lib/theme';
 
-  const observer = new MutationObserver((mutations) => {
-    for (const mutation of mutations) {
-      if (mutation.attributeName === 'class') {
-        updateGiscusTheme();
+  bootstrapRootInit('giscus', '[data-giscus]', (root, signal) => {
+    if (root.dataset.enabled !== 'true') return;
+
+    const getResolvedMode = () => {
+      const datasetMode = document.documentElement.dataset.mode;
+      if (datasetMode === 'dark' || datasetMode === 'light') {
+        return datasetMode;
       }
-    }
+
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+
+    const getGiscusTheme = (resolvedMode = getResolvedMode()) =>
+      resolvedMode === 'dark'
+        ? root.dataset.themeDark || 'dark'
+        : root.dataset.themeLight || 'light';
+
+    const mountGiscus = () => {
+      if (root.querySelector('iframe.giscus-frame') || root.querySelector('script[data-giscus-script]')) {
+        return;
+      }
+
+      const slot = root.querySelector('[data-giscus-slot]');
+      if (!slot) return;
+
+      const script = document.createElement('script');
+      script.src = 'https://giscus.app/client.js';
+      script.async = true;
+      script.crossOrigin = 'anonymous';
+      script.setAttribute('data-giscus-script', 'true');
+      script.setAttribute('data-loading', 'lazy');
+      script.setAttribute('data-repo', root.dataset.repo || '');
+      script.setAttribute('data-repo-id', root.dataset.repoId || '');
+      script.setAttribute('data-category', root.dataset.category || '');
+      script.setAttribute('data-category-id', root.dataset.categoryId || '');
+      script.setAttribute('data-mapping', root.dataset.mapping || 'pathname');
+      script.setAttribute('data-strict', root.dataset.strict || '0');
+      script.setAttribute('data-reactions-enabled', root.dataset.reactionsEnabled || '1');
+      script.setAttribute('data-emit-metadata', root.dataset.emitMetadata || '0');
+      script.setAttribute('data-input-position', root.dataset.inputPosition || 'top');
+      script.setAttribute('data-lang', root.dataset.lang || 'en');
+      script.setAttribute('data-theme', getGiscusTheme());
+      slot.append(script);
+    };
+
+    const updateGiscusTheme = (resolvedMode = getResolvedMode()) => {
+      const theme = getGiscusTheme(resolvedMode);
+      const iframe = root.querySelector<HTMLIFrameElement>('iframe.giscus-frame');
+      if (iframe) {
+        iframe.contentWindow?.postMessage(
+          { giscus: { setConfig: { theme } } },
+          'https://giscus.app'
+        );
+      }
+    };
+
+    const observer = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'data-mode') {
+          updateGiscusTheme();
+        }
+        if (mutation.type === 'childList' && root.querySelector('iframe.giscus-frame')) {
+          updateGiscusTheme();
+        }
+      }
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-mode'] });
+    observer.observe(root, { childList: true, subtree: true });
+    signal.addEventListener('abort', () => observer.disconnect(), { once: true });
+    window.addEventListener(
+      THEME_CHANGE_EVENT,
+      ((event: Event) => {
+        const resolvedMode = (event as CustomEvent<{ resolvedMode?: 'light' | 'dark' }>).detail?.resolvedMode;
+        updateGiscusTheme(resolvedMode);
+      }) as EventListener,
+      { signal },
+    );
+    document.addEventListener('astro:after-swap', () => updateGiscusTheme(), { signal });
+
+    mountGiscus();
+    updateGiscusTheme();
   });
-  observer.observe(document.documentElement, { attributes: true });
-  document.addEventListener('astro:after-swap', updateGiscusTheme);
 </script>

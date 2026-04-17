@@ -1,0 +1,11 @@
+---
+import RedirectPage from '@/components/pages/RedirectPage.astro';
+import { getGalleryPaginationStaticPaths } from '@/lib/gallery';
+import { createRootStaticPaths } from '@/lib/route-helpers';
+
+export const getStaticPaths = createRootStaticPaths(getGalleryPaginationStaticPaths);
+
+const currentPage = Number(Astro.params.num);
+---
+
+<RedirectPage to={`/photos/page/${currentPage}/`} />

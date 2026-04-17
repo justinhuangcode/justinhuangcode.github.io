@@ -4,6 +4,8 @@
  * Uses CSS variables for theme-aware typography.
  * All values are customizable per theme via --heading-*, --blockquote-*, etc.
  */
+import 'katex/dist/katex.min.css';
+
 interface Props {
   class?: string;
 }
@@ -152,6 +154,74 @@ const { class: className } = Astro.props;
     font-size: inherit;
   }
 
+  .prose-content.prose .expressive-code {
+    margin: 1.6em 0;
+  }
+
+  .prose-content.prose .expressive-code .frame {
+    border-radius: var(--pre-border-radius);
+  }
+
+  .prose-content.prose .expressive-code .copy {
+    opacity: 1;
+  }
+
+  .prose-content.prose .katex {
+    color: var(--foreground);
+  }
+
+  .prose-content.prose .katex-display {
+    margin: 1.5em 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 0.25rem;
+  }
+
+  .prose-content.prose .katex-display > .katex {
+    display: inline-block;
+    min-width: min-content;
+  }
+
+  .prose-content.prose .aither-markmap {
+    margin: 1.75em 0;
+    border: 1px solid var(--border);
+    border-radius: var(--pre-border-radius);
+    background: color-mix(in srgb, var(--pre-bg) 92%, transparent);
+    padding: 1rem;
+    overflow: auto hidden;
+  }
+
+  .prose-content.prose .aither-markmap__svg {
+    display: block;
+    width: 100%;
+    min-height: 22rem;
+  }
+
+  .prose-content.prose .aither-markmap__svg text {
+    fill: var(--foreground);
+    font-family: var(--font-body);
+  }
+
+  .prose-content.prose .aither-markmap__svg circle {
+    fill: var(--color-link);
+  }
+
+  .prose-content.prose .aither-markmap__svg line,
+  .prose-content.prose .aither-markmap__svg path {
+    stroke: color-mix(in srgb, var(--foreground) 55%, transparent);
+  }
+
+  .prose-content.prose svg[id^='mermaid-'] {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin: 1.75em 0;
+    border: 1px solid var(--border);
+    border-radius: var(--pre-border-radius);
+    background: color-mix(in srgb, var(--pre-bg) 92%, transparent);
+    padding: 1rem;
+  }
+
   /* HR */
   .prose-content.prose hr {
     border-color: var(--border);
@@ -190,3 +260,112 @@ const { class: className } = Astro.props;
     word-wrap: break-word;
   }
 </style>
+
+<script>
+  import { bootstrapRootInit } from '@/lib/dom-init';
+  import { THEME_CHANGE_EVENT } from '@/lib/theme';
+
+  const MARKMAP_STYLE_ID = 'aither-markmap-global-style';
+
+  const decodeDiagramSource = (encoded: string) => {
+    try {
+      return atob(encoded);
+    } catch {
+      return '';
+    }
+  };
+
+  const ensureMarkmapStyles = (css: string) => {
+    if (document.getElementById(MARKMAP_STYLE_ID)) return;
+
+    const style = document.createElement('style');
+    style.id = MARKMAP_STYLE_ID;
+    style.textContent = css;
+    document.head.append(style);
+  };
+
+  bootstrapRootInit('prose-markmap', '.prose-content', (root, signal) => {
+    const containers = Array.from(root.querySelectorAll<HTMLElement>('[data-markmap-source]'));
+    if (containers.length === 0) return;
+
+    void (async () => {
+      const [{ Transformer }, { Markmap, globalCSS }] = await Promise.all([
+        import('markmap-lib'),
+        import('markmap-view'),
+      ]);
+
+      if (signal.aborted) return;
+
+      ensureMarkmapStyles(globalCSS);
+
+      const transformer = new Transformer();
+      const instances: Array<{ map: InstanceType<typeof Markmap>; svg: SVGElement }> = [];
+
+      const buildOptions = () => {
+        const styles = getComputedStyle(document.documentElement);
+        const accent = styles.getPropertyValue('--color-link').trim() || '#0a66ff';
+        const foreground = styles.getPropertyValue('--foreground').trim() || '#111111';
+        const line = styles.getPropertyValue('--border').trim() || foreground;
+
+        return {
+          autoFit: true,
+          fitRatio: 0.95,
+          initialExpandLevel: 2,
+          maxWidth: 320,
+          duration: 240,
+          color: () => accent,
+          style: (id: string) => `
+            #${id} .markmap-link { stroke: ${line}; }
+            #${id} .markmap-node > circle { fill: ${accent}; }
+            #${id} .markmap-node > text {
+              fill: ${foreground};
+              font-family: var(--font-body);
+            }
+          `,
+        };
+      };
+
+      const applyTheme = () => {
+        const nextOptions = buildOptions();
+        void Promise.all(
+          instances.map(async ({ map }) => {
+            map.setOptions(nextOptions);
+            await map.fit();
+          }),
+        );
+      };
+
+      for (const container of containers) {
+        const encodedSource = container.dataset.markmapSource;
+        if (!encodedSource) continue;
+
+        const source = decodeDiagramSource(encodedSource);
+        if (!source) continue;
+
+        const svg = container.querySelector<SVGElement>('svg');
+        if (!svg) continue;
+
+        const { root: data } = transformer.transform(source);
+        const map = Markmap.create(svg, buildOptions(), data);
+        instances.push({ map, svg });
+      }
+
+      if (instances.length === 0) return;
+
+      const handleResize = () => {
+        void Promise.all(instances.map(({ map }) => map.fit()));
+      };
+
+      window.addEventListener('resize', handleResize, { passive: true, signal });
+      window.addEventListener(THEME_CHANGE_EVENT, applyTheme, { signal });
+
+      signal.addEventListener(
+        'abort',
+        () => {
+          instances.forEach(({ map }) => map.destroy());
+        },
+        { once: true },
+      );
+    })();
+  });
+</script>

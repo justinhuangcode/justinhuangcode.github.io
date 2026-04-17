@@ -1,0 +1,19 @@
+---
+import PhotosIndexPage from '@/components/pages/PhotosIndexPage.astro';
+import { type Locale } from '@/i18n';
+import { getPaginatedGallery } from '@/lib/gallery';
+import { createLocaleOnlyStaticPaths } from '@/lib/route-helpers';
+
+export const getStaticPaths = createLocaleOnlyStaticPaths;
+
+const { locale } = Astro.props as { locale: Locale };
+const { entries, categories, totalPages } = await getPaginatedGallery(locale, 1);
+---
+
+<PhotosIndexPage
+  locale={locale}
+  entries={entries}
+  categories={categories}
+  currentPage={1}
+  totalPages={totalPages}
+/>

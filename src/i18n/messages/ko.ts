@@ -1,6 +1,8 @@
 export const ko = {
   nav: {
     blog: '블로그',
+    gallery: '사진',
+    directory: '디렉토리',
     about: '소개',
   },
   blog: {
@@ -44,10 +46,32 @@ export const ko = {
     },
     language: '언어',
     builtWith: '제작',
+    copy: '복사',
+    copied: '복사됨',
   },
   about: {
     title: '소개',
     description: 'Justin Huang의 개인 블로그로, AI, 기술, 글쓰기, 삶에 대해 씁니다.',
+  },
+  galleryPage: {
+    name: '사진',
+    subtitle: '차분한 이미지 중심 갤러리',
+    embeddedToolbarName: '일상의 아름다운 순간을 담아냅니다',
+    description: '이 사이트 안에서 조용하게 감상할 수 있도록 설계된 차분한 이미지 중심 갤러리입니다.',
+    aboutHtml: '이 사이트 안에서 조용하게 감상할 수 있도록 설계된 차분한 이미지 중심 갤러리입니다.',
+    bottomToolbarLabel: '하단 도구 막대',
+    categoriesLabel: '분류',
+    allLabel: '전체',
+    fullscreen: '전체 화면으로 보기',
+    exitFullscreen: '전체 화면 종료',
+    aboutLinkLabel: '소개',
+    aboutTitle: '{name} 소개',
+    contactTitle: '연락처',
+    previousLabel: '이전',
+    nextLabel: '다음',
+    emptyTitle: '사진이 없습니다',
+    emptyDescription: '이 갤러리에는 아직 사진이 없습니다.',
+    themeLabel: '사이트',
   },
   forAgents: {
     title: 'AI Access',

@@ -1,0 +1,121 @@
+---
+import type { Locale } from '@/i18n';
+import type { DirectoryGroup } from '@/lib/directory';
+import DirectoryNav from '@/components/directory/DirectoryNav.astro';
+import Layout from '@/layouts/Layout.astro';
+
+interface Props {
+  locale: Locale;
+  pageTitle: string;
+  description: string;
+  backgroundColor: string;
+  directoryHref: string;
+  siteTitle: string;
+  footerThemeAttribution: string;
+  footerThemeUrl: string;
+  footerIcp: string;
+  footerIcp2: string;
+  postchatEnabled: boolean;
+  postchatButtonText: string;
+  postchatButtonHref: string;
+  consoleHref?: string;
+  consoleTitle?: string;
+  groups: DirectoryGroup[];
+}
+
+const {
+  locale,
+  pageTitle,
+  description,
+  backgroundColor,
+  directoryHref,
+  siteTitle,
+  footerThemeAttribution,
+  footerThemeUrl,
+  footerIcp,
+  footerIcp2,
+  postchatEnabled,
+  postchatButtonText,
+  postchatButtonHref,
+  consoleHref,
+  consoleTitle,
+  groups,
+} = Astro.props;
+const heroHref = directoryHref;
+---
+
+<Layout
+  title={pageTitle}
+  description={description}
+  hideFooter={true}
+  hideLocaleBanner={true}
+  hideThemeEffects={true}
+  bodyClass="directory-page"
+  mainClass="directory-main"
+>
+  <Fragment slot="head">
+    <link rel="stylesheet" href="/directory/ui/css/style.css" />
+    <link rel="stylesheet" href="/directory/astro-adapter.css" />
+    <link rel="stylesheet" href="/directory/ui/fonts/remixicon.css" />
+    <script is:inline src="/directory/ui/js/main.js"></script>
+    <script is:inline src="/directory/ui/js/directory.js"></script>
+    <script is:inline src="/directory/ui/js/pjax.min.js"></script>
+  </Fragment>
+
+  <section class="directory-shell" style={`background-color: ${backgroundColor}`}>
+    <div class="directory_site">
+      <DirectoryNav
+        heroHref={heroHref}
+        siteTitle={siteTitle}
+        footerThemeAttribution={footerThemeAttribution}
+        footerThemeUrl={footerThemeUrl}
+        footerIcp={footerIcp}
+        footerIcp2={footerIcp2}
+        postchatEnabled={postchatEnabled}
+        postchatButtonText={postchatButtonText}
+        postchatButtonHref={postchatButtonHref}
+        consoleHref={consoleHref}
+        consoleTitle={consoleTitle}
+        groups={groups}
+      />
+
+      <div id="web_content">
+        <slot />
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style is:global>
+  body.directory-page {
+    overflow: hidden;
+  }
+
+  main.directory-main {
+    display: flex;
+    min-height: 0;
+    overflow: hidden;
+    background: transparent;
+  }
+
+  .directory-shell {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .directory-shell .directory_site {
+    height: 100%;
+    min-height: 0;
+  }
+
+  .directory-shell #web_content {
+    min-height: 0;
+  }
+
+  body.directory-page .site-nav,
+  body.directory-page .site-nav * {
+    box-sizing: border-box;
+    font-family: var(--font-body);
+  }
+ </style>

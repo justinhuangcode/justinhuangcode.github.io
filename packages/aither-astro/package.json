@@ -1,0 +1,118 @@
+{
+  "name": "@aither/astro",
+  "version": "2026.4.8",
+  "description": "Astro integration and shared runtime helpers for Aither sites.",
+  "type": "module",
+  "types": "./integration.d.ts",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "homepage": "https://github.com/justinhuangcode/astro-theme-aither/tree/main/packages/aither-astro",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/justinhuangcode/astro-theme-aither.git",
+    "directory": "packages/aither-astro"
+  },
+  "bugs": {
+    "url": "https://github.com/justinhuangcode/astro-theme-aither/issues"
+  },
+  "keywords": [
+    "astro",
+    "withastro",
+    "astro-integration",
+    "astro-theme",
+    "content-theme",
+    "blog-theme",
+    "aither",
+    "starter"
+  ],
+  "exports": {
+    ".": {
+      "types": "./integration.d.ts",
+      "default": "./integration.mjs"
+    },
+    "./config": {
+      "types": "./config.d.ts",
+      "default": "./config.mjs"
+    },
+    "./constants": {
+      "types": "./constants.d.ts",
+      "default": "./constants.mjs"
+    },
+    "./locale": {
+      "types": "./locale.d.ts",
+      "default": "./locale.mjs"
+    },
+    "./content": {
+      "types": "./content.d.ts",
+      "default": "./content.mjs"
+    },
+    "./markdown": {
+      "types": "./markdown.d.ts",
+      "default": "./markdown.mjs"
+    },
+    "./agent-protocol": {
+      "types": "./agent-protocol.d.ts",
+      "default": "./agent-protocol.mjs"
+    },
+    "./posts": {
+      "types": "./posts.d.ts",
+      "default": "./posts.mjs"
+    },
+    "./site-content": {
+      "types": "./site-content.d.ts",
+      "default": "./site-content.mjs"
+    },
+    "./site": {
+      "types": "./site.d.ts",
+      "default": "./site.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "LICENSE",
+    "README.md",
+    "agent-protocol.mjs",
+    "agent-protocol.d.ts",
+    "config.mjs",
+    "config.d.ts",
+    "content.mjs",
+    "content.d.ts",
+    "constants.mjs",
+    "constants.d.ts",
+    "markdown.mjs",
+    "markdown.d.ts",
+    "locale.mjs",
+    "locale.d.ts",
+    "integration.mjs",
+    "integration.d.ts",
+    "posts.mjs",
+    "posts.d.ts",
+    "site.mjs",
+    "site.d.ts",
+    "site-content.mjs",
+    "site-content.d.ts",
+    "package.json"
+  ],
+  "dependencies": {
+    "@astrojs/mdx": "^5.0.0",
+    "@astrojs/react": "^5.0.0",
+    "@astrojs/sitemap": "^3.7.1",
+    "@expressive-code/plugin-line-numbers": "^0.41.7",
+    "@tailwindcss/vite": "^4.1.8",
+    "astro-expressive-code": "^0.41.7",
+    "playwright": "^1.58.2",
+    "rehype-katex": "^7.0.1",
+    "rehype-mermaid": "^3.0.0",
+    "remark-math": "^6.0.0",
+    "unist-util-visit": "^5.1.0"
+  },
+  "peerDependencies": {
+    "astro": "^6.0.0"
+  },
+  "engines": {
+    "node": "^20.19.1 || >=22.12.0"
+  }
+}

@@ -1,0 +1,1599 @@
+---
+import { siteConfig } from '@/config/site';
+import { formatDate } from '@/lib/formatter';
+import { getMessages, giscusLocales, type Locale } from '@/i18n';
+import type { GalleryEntry } from '@/lib/gallery';
+import Layout from '@/layouts/Layout.astro';
+
+interface Props {
+  locale: Locale;
+  entries: GalleryEntry[];
+  categories: string[];
+  currentPage: number;
+  totalPages: number;
+}
+
+type NoteCard = {
+  id: string;
+  title: string;
+  description: string;
+  body: string;
+  date: string;
+  category: string;
+  tags: string[];
+  cover: string;
+  images: string[];
+  author: string;
+  authorAvatar: string;
+};
+
+const { locale, entries, categories } = Astro.props;
+const m = getMessages(locale);
+const pageTitle = `${m.galleryPage.name} | ${siteConfig.name}`;
+const pageDescription = m.galleryPage.description;
+const heroImage =
+  entries[0]?.data.cover ??
+  entries[0]?.data.images[0] ??
+  siteConfig.photosGallery?.ogImage ??
+  siteConfig.ogImage;
+const authorAvatar = siteConfig.author.avatar || '/author-avatar.svg';
+const giscus = siteConfig.giscus;
+const giscusEnabled = giscus.repo !== '' && giscus.repoId !== '' && giscus.categoryId !== '';
+const giscusLang = giscusLocales[locale];
+
+const isZhHans = locale === 'zh-hans';
+const isZhHant = locale === 'zh-hant';
+
+const ui = isZhHant
+  ? {
+        railItems: [
+          { key: 'discover', label: '發現' },
+          { key: 'studio', label: '直播' },
+        ],
+        recommended: '推薦',
+        likes: '讚',
+        collects: '收藏',
+        share: '分享',
+        commentPlaceholder: '說點什麼...',
+        noteMetaFallback: '影像筆記',
+        moreLikeThis: '更多內容',
+      }
+  : isZhHans
+    ? {
+        railItems: [
+          { key: 'discover', label: '发现' },
+          { key: 'studio', label: '直播' },
+        ],
+        recommended: '推荐',
+        likes: '赞',
+        collects: '收藏',
+        share: '分享',
+        commentPlaceholder: '说点什么...',
+        noteMetaFallback: '影像笔记',
+        moreLikeThis: '更多内容',
+      }
+    : {
+        railItems: [
+          { key: 'discover', label: 'Explore' },
+          { key: 'studio', label: 'Live' },
+        ],
+        recommended: 'Recommended',
+        likes: 'Likes',
+        collects: 'Saves',
+        share: 'Share',
+        commentPlaceholder: 'Write something...',
+        noteMetaFallback: 'Photo note',
+        moreLikeThis: 'More like this',
+      };
+
+function toPlainText(markdown: string | undefined) {
+  if (!markdown) return '';
+  return markdown
+    .replace(/!\[[^\]]*\]\([^)]+\)/g, ' ')
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replace(/[`*_>#-]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function getEntryCover(entry: GalleryEntry) {
+  return entry.data.cover ?? entry.data.images[0];
+}
+
+function getEntryImages(entry: GalleryEntry) {
+  return entry.data.images.length > 0 ? entry.data.images : [getEntryCover(entry)];
+}
+
+const noteCards: NoteCard[] = entries.map((entry) => {
+  const plainBody = toPlainText(entry.body);
+  const body = plainBody || entry.data.description || ui.noteMetaFallback;
+
+  return {
+    id: entry.id,
+    title: entry.data.title,
+    description: entry.data.description ?? '',
+    body,
+    date: formatDate(entry.data.date),
+    category: entry.data.category ?? '',
+    tags: entry.data.tags ?? [],
+    cover: getEntryCover(entry),
+    images: getEntryImages(entry),
+    author: siteConfig.author.name,
+    authorAvatar,
+  };
+});
+
+const hasNotes = noteCards.length > 0;
+const discoveredChannels = hasNotes
+  ? Array.from(
+      new Set([
+        ui.recommended,
+        ...categories.filter(Boolean),
+        ...noteCards.flatMap((note) => note.tags),
+      ]),
+    )
+  : [ui.recommended];
+
+const noteCardsForClient = noteCards;
+---
+
+<Layout
+  title={pageTitle}
+  description={pageDescription}
+  image={heroImage}
+  enableCrisp={false}
+  hideNavbar={false}
+  hideFooter={true}
+  hideLocaleBanner={true}
+  hideThemeEffects={true}
+  bodyClass="photos-page bg-background text-foreground overflow-x-hidden"
+  mainClass="bg-background"
+>
+  <div class="photos-shell">
+    <section class="photos-explore" data-photos-explore-root>
+      <aside class="photos-rail">
+        <nav class="photos-rail-nav" aria-label={ui.moreLikeThis}>
+          {
+            ui.railItems.map((item, index) => (
+              <button
+                type="button"
+                class:list={['photos-rail-item', index === 0 && 'is-active']}
+              >
+                <span class="photos-rail-icon" aria-hidden="true">
+                  {
+                    item.key === 'discover' ? (
+                      <svg viewBox="0 0 24 24" width="24" height="24" fill="none">
+                        <path
+                          fill="currentColor"
+                          d="M20.768 7.934a4 4 0 0 0-1.825-2.153l-5-2.778-.055-.03a4 4 0 0 0-3.83.03l-5 2.778A4 4 0 0 0 3 9.278v7.646q0 .1.005.2A4 4 0 0 0 7 20.924h10q.1 0 .2-.005a4 4 0 0 0 3.8-3.995V9.243a4 4 0 0 0-.232-1.309m-9.776-3.452a2 2 0 0 1 2.016 0l5.2 3.033a2 2 0 0 1 .992 1.728v7.881a2 2 0 0 1-2 2H6.8a2 2 0 0 1-2-2V9.243a2 2 0 0 1 .992-1.728z"
+                        />
+                        <path
+                          fill="currentColor"
+                          d="m9.703 14.863-.001-.002zl.047.045a1.7 1.7 0 0 0 .33.222c.33.176.934.394 1.92.394s1.59-.218 1.92-.394a1.7 1.7 0 0 0 .377-.268.9.9 0 0 1 1.423 1.102l-.035.044-.056.065q-.067.076-.183.18a3.5 3.5 0 0 1-.679.465c-.606.324-1.503.606-2.767.606s-2.16-.282-2.767-.606c-.301-.16-.523-.327-.679-.465a2.5 2.5 0 0 1-.24-.245l-.034-.044a.9.9 0 0 1 1.423-1.101m.016.02-.002-.003-.003-.003-.004-.006-.007-.008z"
+                        />
+                      </svg>
+                    ) : item.key === 'studio' ? (
+                      <svg viewBox="0 0 24 24" width="24" height="24" fill="none">
+                        <path
+                          fill="currentColor"
+                          d="M10.166 3.5h-.133c-1.734 0-3.128 0-4.223.147-1.134.153-2.082.478-2.833 1.23-.752.751-1.077 1.699-1.23 2.833C1.6 8.805 1.6 10.198 1.6 11.933v.133c0 1.735 0 3.128.147 4.223.153 1.134.478 2.082 1.23 2.834.751.751 1.699 1.077 2.833 1.23 1.095.146 2.489.146 4.224.146h.132c1.735 0 3.128 0 4.223-.147 1.135-.152 2.082-.478 2.834-1.23.672-.671 1.005-1.503 1.177-2.49q.46.245.86.395c.607.223 1.3.33 1.964-.049.727-.413.973-1.147 1.076-1.842.1-.674.1-1.562.1-2.612v-1.049c0-1.05 0-1.938-.1-2.611-.103-.696-.35-1.43-1.076-1.843-.664-.378-1.357-.272-1.964-.048a7 7 0 0 0-.86.394c-.172-.987-.505-1.819-1.177-2.49-.752-.752-1.7-1.077-2.834-1.23-1.095-.147-2.488-.147-4.223-.147M4.249 6.15c.362-.362.866-.593 1.801-.719.961-.13 2.233-.131 4.05-.131s3.088.002 4.05.131c.934.126 1.439.357 1.8.718.47.47.714 1.174.802 2.729l.083 1.477 1.274-.753c.821-.486 1.366-.79 1.774-.94.194-.072.31-.09.373-.091.049-.001.065.007.08.015.012.008.03.018.06.075.038.075.086.214.124.467.078.525.08 1.278.08 2.42v.903c0 1.142-.002 1.895-.08 2.42-.038.254-.085.393-.124.467-.03.057-.048.068-.061.075-.014.008-.03.016-.079.015a1.2 1.2 0 0 1-.373-.09c-.408-.15-.953-.454-1.774-.94l-1.274-.754-.083 1.477c-.088 1.555-.333 2.26-.802 2.729-.361.361-.866.592-1.8.718-.962.13-2.234.131-4.05.131-1.817 0-3.089-.002-4.05-.13-.935-.127-1.44-.358-1.8-.72-.362-.36-.593-.865-.719-1.8-.129-.96-.13-2.233-.13-4.05s.001-3.088.13-4.049c.126-.935.357-1.44.718-1.8M11.7 9.123c.636.37 1.177.685 1.574.98.404.298.809.679.974 1.237.127.43.127.888 0 1.318-.165.557-.57.938-.974 1.237-.397.294-.938.609-1.574.98l-.089.05c-.643.376-1.19.694-1.645.896-.463.206-.999.371-1.569.236a2.32 2.32 0 0 1-1.148-.66c-.404-.425-.53-.97-.586-1.474-.054-.496-.054-1.128-.054-1.873v-.103c0-.744 0-1.377.054-1.872.056-.504.182-1.05.586-1.474.31-.327.71-.557 1.148-.66.57-.136 1.106.03 1.569.235.455.202 1.002.52 1.645.895zm-2.464.698c-.305-.135-.41-.13-.423-.13a.53.53 0 0 0-.26.15c-.008.011-.064.1-.1.43-.043.385-.044.918-.044 1.728s.001 1.342.044 1.727c.036.33.092.419.1.43.07.074.16.126.26.15.014.001.118.005.423-.13.353-.157.814-.424 1.514-.832.692-.403 1.146-.668 1.454-.896.287-.212.319-.302.318-.302v.001a.53.53 0 0 0 0-.297c.004.015-.009-.072-.318-.3-.308-.228-.762-.494-1.454-.897-.7-.408-1.16-.675-1.514-.832"
+                        />
+                      </svg>
+                    ) : (
+                      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="8" r="4"></circle>
+                        <path d="M4 20a8 8 0 0 1 16 0"></path>
+                      </svg>
+                    )
+                  }
+                </span>
+                <span class="photos-rail-text">{item.label}</span>
+              </button>
+            ))
+          }
+        </nav>
+
+      </aside>
+
+      <div class="photos-workspace">
+      <main class="photos-feed-page">
+        <div class="photos-channel-strip" role="tablist" aria-label={ui.moreLikeThis}>
+          {
+            discoveredChannels.map((channel, index) => (
+              <button
+                type="button"
+                role="tab"
+                class:list={['photos-channel', index === 0 && 'is-active']}
+                data-photos-channel={channel}
+                aria-selected={index === 0 ? 'true' : 'false'}
+              >
+                {channel}
+              </button>
+            ))
+          }
+        </div>
+
+        {
+          hasNotes ? (
+            <section class="photos-feed" role="list" data-photos-feed>
+              {
+                noteCards.map((note, index) => {
+                  const filterTokens = [ui.recommended, note.category, ...note.tags].filter(Boolean).join('||');
+                  return (
+                    <article
+                      class="photos-note-card"
+                      role="listitem"
+                      data-photos-note-card
+                      data-photos-note-index={String(index)}
+                      data-photos-filters={filterTokens}
+                    >
+                      <button type="button" class="photos-note-trigger" data-photos-note-open={String(index)}>
+                        <div class="photos-note-cover">
+                          <img src={note.cover} alt={note.title} loading={index === 0 ? 'eager' : 'lazy'} decoding="async" />
+                        </div>
+                        <div class="photos-note-copy">
+                          <h2>{note.title}</h2>
+                          <div class="photos-note-meta">
+                            <div class="photos-note-author">
+                              <img src={note.authorAvatar} alt={note.author} />
+                              <span>{note.author}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </button>
+                    </article>
+                  );
+                })
+              }
+            </section>
+          ) : (
+            <section class="photos-feed-empty" aria-live="polite">
+              <h2>{m.galleryPage.emptyTitle}</h2>
+              <p>{m.galleryPage.emptyDescription}</p>
+            </section>
+          )
+        }
+      </main>
+      </div>
+
+      <div class="photos-floating-actions" aria-hidden="true">
+        <button type="button">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 5v14"></path>
+            <path d="M5 12h14"></path>
+          </svg>
+        </button>
+        <button type="button">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="m12 19 7-7-7-7"></path>
+            <path d="M5 12h14"></path>
+          </svg>
+        </button>
+      </div>
+    </section>
+
+    {
+      hasNotes && (
+        <section class="photos-note-modal" data-photos-note-modal hidden>
+          <button type="button" class="photos-note-close-circle" data-photos-note-close aria-label="Close">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 6 6 18"></path>
+              <path d="m6 6 12 12"></path>
+            </svg>
+          </button>
+
+          <div class="photos-note-dialog" data-photos-note-dialog>
+            <div class="photos-note-media">
+              <div class="photos-note-media-backdrop" data-photos-note-media-backdrop></div>
+              <img class="photos-note-media-image" data-photos-note-image alt="" />
+              <div class="photos-note-dots" data-photos-note-dots hidden></div>
+            </div>
+
+            <aside class="photos-note-panel">
+              <header class="photos-note-panel-header">
+                <div class="photos-note-panel-author">
+                  <img data-photos-note-author-avatar src={authorAvatar} alt={siteConfig.author.name} />
+                  <div>
+                    <strong data-photos-note-author>{siteConfig.author.name}</strong>
+                    <span data-photos-note-author-meta hidden>{ui.noteMetaFallback}</span>
+                  </div>
+                </div>
+              </header>
+
+              <div class="photos-note-panel-scroll">
+                <section class="photos-note-content">
+                  <h2 data-photos-note-title></h2>
+                  <p class="photos-note-body" data-photos-note-body></p>
+                  <p class="photos-note-hashtags" data-photos-note-hashtags hidden></p>
+                  <div class="photos-note-date-row">
+                    <p class="photos-note-date" data-photos-note-date></p>
+                    <button type="button" class="photos-note-more" aria-label="More">
+                      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                        <circle cx="5" cy="12" r="1.7"></circle>
+                        <circle cx="12" cy="12" r="1.7"></circle>
+                        <circle cx="19" cy="12" r="1.7"></circle>
+                      </svg>
+                    </button>
+                  </div>
+                </section>
+
+                <div class="photos-note-divider" aria-hidden="true"></div>
+
+                <section class="photos-note-comments">
+                  <p class="photos-note-comments-summary">{m.blog.comments}</p>
+                  <div
+                    class="photos-note-giscus"
+                    data-photos-note-giscus
+                    data-enabled={giscusEnabled ? 'true' : 'false'}
+                    data-repo={giscus.repo}
+                    data-repo-id={giscus.repoId}
+                    data-category={giscus.category}
+                    data-category-id={giscus.categoryId}
+                    data-lang={giscusLang}
+                    data-theme-light={giscus.themeLight || 'light'}
+                    data-theme-dark={giscus.themeDark || 'dark'}
+                    data-input-position={giscus.inputPosition}
+                    data-reactions-enabled={giscus.reactionsEnabled ? '1' : '0'}
+                    data-emit-metadata={giscus.emitMetadata ? '1' : '0'}
+                  >
+                    {
+                      !giscusEnabled && (
+                        <div class="photos-note-giscus-placeholder">{m.blog.commentsPlaceholder}</div>
+                      )
+                    }
+                  </div>
+                </section>
+              </div>
+            </aside>
+          </div>
+        </section>
+      )
+    }
+  </div>
+
+  <script
+    is:inline
+    define:vars={{
+      notes: noteCardsForClient,
+      recommendedChannel: ui.recommended,
+      giscusEnabled,
+      giscusRepo: giscus.repo,
+      giscusRepoId: giscus.repoId,
+      giscusCategory: giscus.category,
+      giscusCategoryId: giscus.categoryId,
+      giscusLang,
+      giscusThemeDark: giscus.themeDark || 'dark',
+      giscusInputPosition: giscus.inputPosition,
+      giscusReactionsEnabled: giscus.reactionsEnabled ? '1' : '0',
+      giscusEmitMetadata: giscus.emitMetadata ? '1' : '0',
+      giscusPlaceholder: m.blog.commentsPlaceholder,
+    }}
+  >
+    const noteCards = Array.from(document.querySelectorAll('[data-photos-note-card]'));
+    const channelButtons = Array.from(document.querySelectorAll('[data-photos-channel]'));
+    const openButtons = Array.from(document.querySelectorAll('[data-photos-note-open]'));
+    const feed = document.querySelector('[data-photos-feed]');
+    const modal = document.querySelector('[data-photos-note-modal]');
+    const closeButton = document.querySelector('[data-photos-note-close]');
+    const dialog = document.querySelector('[data-photos-note-dialog]');
+    const mediaPane = dialog?.querySelector('.photos-note-media');
+    const mediaImage = document.querySelector('[data-photos-note-image]');
+    const mediaBackdrop = document.querySelector('[data-photos-note-media-backdrop]');
+    const titleNode = document.querySelector('[data-photos-note-title]');
+    const bodyNode = document.querySelector('[data-photos-note-body]');
+    const hashtagsNode = document.querySelector('[data-photos-note-hashtags]');
+    const dateNode = document.querySelector('[data-photos-note-date]');
+    const giscusRoot = document.querySelector('[data-photos-note-giscus]');
+    const authorNode = document.querySelector('[data-photos-note-author]');
+    const authorMetaNode = document.querySelector('[data-photos-note-author-meta]');
+    const authorAvatarNode = document.querySelector('[data-photos-note-author-avatar]');
+    const dotsNode = document.querySelector('[data-photos-note-dots]');
+    const noteQueryParam = 'note';
+    let activeChannel = recommendedChannel;
+    let activeEntryIndex = 0;
+    let activeImageIndex = 0;
+    let feedLayoutFrame = 0;
+    let activeGiscusTerm = '';
+
+    const getOpenNoteIdFromUrl = () => {
+      const url = new URL(window.location.href);
+      return url.searchParams.get(noteQueryParam);
+    };
+
+    const syncUrlForNote = (noteId, { replace = false } = {}) => {
+      const url = new URL(window.location.href);
+      if (noteId) {
+        url.searchParams.set(noteQueryParam, noteId);
+      } else {
+        url.searchParams.delete(noteQueryParam);
+      }
+      const method = replace ? 'replaceState' : 'pushState';
+      window.history[method]({}, '', `${url.pathname}${url.search}${url.hash}`);
+    };
+
+    const setBodyLock = (locked) => {
+      document.body.classList.toggle('photos-modal-open', locked);
+    };
+
+    const getResolvedMode = () => {
+      const datasetMode = document.documentElement.dataset.mode;
+      if (datasetMode === 'dark' || datasetMode === 'light') {
+        return datasetMode;
+      }
+
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+
+    const getGiscusTheme = (resolvedMode = getResolvedMode()) => {
+      if (!(giscusRoot instanceof HTMLElement)) return 'dark';
+      if (resolvedMode === 'dark') {
+        const theme = giscusRoot.dataset.themeDark || 'dark';
+        return theme === 'dark' ? 'transparent_dark' : theme;
+      }
+      return giscusRoot.dataset.themeLight || 'light';
+    };
+
+    const updateGiscusTheme = () => {
+      if (!(giscusRoot instanceof HTMLElement)) return;
+      const iframe = giscusRoot.querySelector('iframe.giscus-frame');
+      if (iframe instanceof HTMLIFrameElement && iframe.src.startsWith('https://giscus.app')) {
+        iframe.contentWindow?.postMessage(
+          { giscus: { setConfig: { theme: getGiscusTheme() } } },
+          'https://giscus.app',
+        );
+      }
+    };
+
+    const resetModalSizing = () => {
+      if (!(modal instanceof HTMLElement)) return;
+      modal.style.removeProperty('--photos-note-media-current-width');
+      modal.style.removeProperty('--photos-note-dialog-current-width');
+    };
+
+    const syncModalSizing = () => {
+      if (!(modal instanceof HTMLElement) || !(dialog instanceof HTMLElement) || !(mediaPane instanceof HTMLElement)) return;
+      if (!(mediaImage instanceof HTMLImageElement) || modal.hidden) return;
+      if (window.innerWidth <= 959) {
+        resetModalSizing();
+        return;
+      }
+
+      requestAnimationFrame(() => {
+        if (!(mediaImage instanceof HTMLImageElement) || mediaImage.naturalWidth === 0 || mediaImage.naturalHeight === 0) {
+          resetModalSizing();
+          return;
+        }
+
+        const dialogRect = dialog.getBoundingClientRect();
+        const panelRect = dialog.querySelector('.photos-note-panel')?.getBoundingClientRect();
+        const imageRect = mediaImage.getBoundingClientRect();
+        const panelWidth = panelRect?.width ?? 0;
+        const measuredImageWidth = Math.ceil(imageRect.width);
+        if (!measuredImageWidth || !panelWidth) {
+          resetModalSizing();
+          return;
+        }
+
+        const maxDialogWidth = Math.ceil(dialogRect.width);
+        const desiredDialogWidth = Math.min(maxDialogWidth, measuredImageWidth + Math.ceil(panelWidth));
+        modal.style.setProperty('--photos-note-media-current-width', `${measuredImageWidth}px`);
+        modal.style.setProperty('--photos-note-dialog-current-width', `${desiredDialogWidth}px`);
+      });
+    };
+
+    const mountGiscus = () => {
+      if (!(giscusRoot instanceof HTMLElement)) return;
+
+      if (!giscusEnabled) {
+        giscusRoot.innerHTML = `<div class="photos-note-giscus-placeholder">${giscusPlaceholder}</div>`;
+        return;
+      }
+
+      const note = notes[activeEntryIndex];
+      if (!note) return;
+
+      const term = `photo:${note.id}`;
+      if (activeGiscusTerm === term && giscusRoot.querySelector('iframe.giscus-frame')) {
+        return;
+      }
+
+      activeGiscusTerm = term;
+      giscusRoot.innerHTML = '';
+
+      const script = document.createElement('script');
+      script.src = 'https://giscus.app/client.js';
+      script.async = true;
+      script.crossOrigin = 'anonymous';
+      script.setAttribute('data-loading', 'lazy');
+      script.setAttribute('data-repo', giscusRepo);
+      script.setAttribute('data-repo-id', giscusRepoId);
+      script.setAttribute('data-category', giscusCategory);
+      script.setAttribute('data-category-id', giscusCategoryId);
+      script.setAttribute('data-mapping', 'specific');
+      script.setAttribute('data-term', term);
+      script.setAttribute('data-strict', '0');
+      script.setAttribute('data-reactions-enabled', giscusReactionsEnabled);
+      script.setAttribute('data-emit-metadata', giscusEmitMetadata);
+      script.setAttribute('data-input-position', giscusInputPosition);
+      script.setAttribute('data-lang', giscusLang);
+      script.setAttribute('data-theme', getGiscusTheme());
+      giscusRoot.append(script);
+    };
+
+    const themeObserver = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'data-mode') {
+          updateGiscusTheme();
+        }
+      }
+    });
+    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-mode'] });
+
+    const getFeedLayoutInfo = () => {
+      const width = window.innerWidth;
+      if (width >= 1424) {
+        const gap = 32;
+        const boundedWidth = Math.min(width, 1728);
+        const columnWidth = (boundedWidth - 7 * gap) / 6;
+        return { columns: 5, gapH: gap, gapV: 16, columnWidth };
+      }
+      if (width >= 1192) {
+        const gap = 24;
+        const columnWidth = (width - 6 * gap) / 5;
+        return { columns: 4, gapH: gap, gapV: 12, columnWidth };
+      }
+      if (width >= 960) {
+        const gap = 24;
+        const columnWidth = (width - 5 * gap) / 4;
+        return { columns: 3, gapH: gap, gapV: 12, columnWidth };
+      }
+      if (width >= 696) {
+        const gap = 24;
+        const columnWidth = (width - 4 * gap) / 3;
+        return { columns: 3, gapH: gap, gapV: 12, columnWidth };
+      }
+      const gap = 12;
+      return {
+        columns: 2,
+        gapH: gap,
+        gapV: 6,
+        columnWidth: Math.max(142, (width - 3 * gap) / 2),
+      };
+    };
+
+    const layoutFeed = () => {
+      if (!(feed instanceof HTMLElement)) return;
+      const visibleCards = noteCards.filter((card) => !card.hasAttribute('hidden'));
+      const layout = getFeedLayoutInfo();
+      const feedWidth = layout.columns * layout.columnWidth + (layout.columns - 1) * layout.gapH;
+
+      feed.style.width = `${feedWidth}px`;
+      feed.style.setProperty('--photos-feed-layout-gap', `${layout.gapH}px`);
+      feed.style.setProperty('--photos-feed-layout-width', `${layout.columnWidth}px`);
+
+      if (visibleCards.length === 0) {
+        feed.classList.remove('is-static');
+        feed.style.height = '0px';
+        return;
+      }
+
+      visibleCards.forEach((card) => {
+        card.style.width = `${layout.columnWidth}px`;
+      });
+
+      if (visibleCards.length <= layout.columns) {
+        feed.classList.add('is-static');
+        feed.style.height = 'auto';
+        visibleCards.forEach((card) => {
+          card.style.transform = 'none';
+        });
+        return;
+      }
+
+      feed.classList.remove('is-static');
+      const columnHeights = Array(layout.columns).fill(0);
+
+      visibleCards.forEach((card) => {
+        const minHeight = Math.min(...columnHeights);
+        const columnIndex = columnHeights.indexOf(minHeight);
+        const x = columnIndex * (layout.columnWidth + layout.gapH);
+        const y = columnHeights[columnIndex];
+        card.style.transform = `translate(${x}px, ${y}px)`;
+        columnHeights[columnIndex] = y + card.offsetHeight + layout.gapV;
+      });
+
+      feed.style.height = `${Math.max(...columnHeights) - layout.gapV}px`;
+    };
+
+    const scheduleFeedLayout = () => {
+      if (feedLayoutFrame) cancelAnimationFrame(feedLayoutFrame);
+      feedLayoutFrame = requestAnimationFrame(() => {
+        feedLayoutFrame = 0;
+        layoutFeed();
+      });
+    };
+
+    const filterFeed = () => {
+      noteCards.forEach((card) => {
+        const filters = (card.getAttribute('data-photos-filters') || '').split('||').filter(Boolean);
+        const visible = activeChannel === recommendedChannel || filters.includes(activeChannel);
+        card.toggleAttribute('hidden', !visible);
+      });
+
+      channelButtons.forEach((button) => {
+        const isActive = button.getAttribute('data-photos-channel') === activeChannel;
+        button.classList.toggle('is-active', isActive);
+        button.setAttribute('aria-selected', isActive ? 'true' : 'false');
+      });
+
+      scheduleFeedLayout();
+    };
+
+    const renderDots = (images) => {
+      if (!(dotsNode instanceof HTMLElement)) return;
+      if (images.length <= 1) {
+        dotsNode.hidden = true;
+        dotsNode.innerHTML = '';
+        return;
+      }
+      dotsNode.hidden = false;
+      dotsNode.innerHTML = images
+        .map(
+          (_, index) =>
+            `<button type="button" class="photos-note-dot${index === activeImageIndex ? ' is-active' : ''}" data-photos-note-dot="${index}" aria-label="Image ${index + 1}"></button>`,
+        )
+        .join('');
+    };
+
+    const renderModal = () => {
+      const note = notes[activeEntryIndex];
+      if (!note || !(mediaImage instanceof HTMLImageElement)) return;
+
+      const src = note.images[activeImageIndex] || note.cover;
+      resetModalSizing();
+      mediaImage.src = src;
+      mediaImage.alt = note.title;
+      if (mediaBackdrop instanceof HTMLElement) {
+        mediaBackdrop.style.backgroundImage = `url("${src}")`;
+      }
+
+      if (titleNode instanceof HTMLElement) titleNode.textContent = note.title;
+      if (bodyNode instanceof HTMLElement) bodyNode.textContent = note.description || note.body;
+      if (authorNode instanceof HTMLElement) authorNode.textContent = note.author;
+      if (authorMetaNode instanceof HTMLElement) {
+        authorMetaNode.textContent = '';
+        authorMetaNode.hidden = true;
+      }
+      if (authorAvatarNode instanceof HTMLImageElement) {
+        authorAvatarNode.src = note.authorAvatar;
+        authorAvatarNode.alt = note.author;
+      }
+      if (dateNode instanceof HTMLElement) {
+        dateNode.textContent = [note.date, note.category].filter(Boolean).join(' · ');
+      }
+      if (hashtagsNode instanceof HTMLElement) {
+        const hashtagText = note.tags.length > 0 ? note.tags.map((tag) => `#${tag}`).join(' ') : '';
+        hashtagsNode.hidden = !hashtagText;
+        hashtagsNode.textContent = hashtagText;
+      }
+
+      mountGiscus();
+      renderDots(note.images);
+      if (mediaImage.complete) {
+        syncModalSizing();
+      }
+    };
+
+    const openModal = (entryIndex, imageIndex = 0, { updateUrl = true, replaceUrl = false } = {}) => {
+      if (!(modal instanceof HTMLElement)) return;
+      activeEntryIndex = entryIndex;
+      activeImageIndex = imageIndex;
+      renderModal();
+      modal.hidden = false;
+      requestAnimationFrame(() => {
+        modal.classList.add('is-open');
+        syncModalSizing();
+      });
+      setBodyLock(true);
+      if (updateUrl) {
+        syncUrlForNote(notes[entryIndex]?.id, { replace: replaceUrl });
+      }
+    };
+
+    const closeModal = ({ updateUrl = true, replaceUrl = false } = {}) => {
+      if (!(modal instanceof HTMLElement)) return;
+      modal.classList.remove('is-open');
+      modal.hidden = true;
+      setBodyLock(false);
+      if (updateUrl) {
+        syncUrlForNote(null, { replace: replaceUrl });
+      }
+    };
+
+    const stepModalImage = (direction) => {
+      const note = notes[activeEntryIndex];
+      if (!note || note.images.length <= 1) return;
+      activeImageIndex = (activeImageIndex + direction + note.images.length) % note.images.length;
+      renderModal();
+    };
+
+    channelButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const channel = button.getAttribute('data-photos-channel');
+        if (!channel) return;
+        activeChannel = channel;
+        filterFeed();
+      });
+    });
+
+    openButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const index = Number(button.getAttribute('data-photos-note-open') || '0');
+        openModal(index);
+      });
+    });
+
+    closeButton?.addEventListener('click', () => closeModal());
+    modal?.addEventListener('click', (event) => {
+      if (event.target === modal) closeModal();
+    });
+    dotsNode?.addEventListener('click', (event) => {
+      const dot = event.target.closest('[data-photos-note-dot]');
+      if (!(dot instanceof HTMLElement)) return;
+      const index = Number(dot.dataset.photosNoteDot || '0');
+      if (Number.isNaN(index)) return;
+      activeImageIndex = index;
+      renderModal();
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (!(modal instanceof HTMLElement) || modal.hidden) return;
+      if (event.key === 'Escape') closeModal();
+      if (event.key === 'ArrowLeft') stepModalImage(-1);
+      if (event.key === 'ArrowRight') stepModalImage(1);
+    });
+
+    window.addEventListener('popstate', () => {
+      const noteId = getOpenNoteIdFromUrl();
+      if (!noteId) {
+        closeModal({ updateUrl: false });
+        return;
+      }
+      const index = notes.findIndex((note) => note.id === noteId);
+      if (index >= 0) {
+        openModal(index, 0, { updateUrl: false });
+      }
+    });
+
+    mediaImage?.addEventListener('load', syncModalSizing);
+
+    window.addEventListener('resize', () => {
+      scheduleFeedLayout();
+      syncModalSizing();
+    });
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateGiscusTheme);
+
+    noteCards.forEach((card) => {
+      const image = card.querySelector('img');
+      if (image instanceof HTMLImageElement) {
+        if (image.complete) {
+          scheduleFeedLayout();
+        } else {
+          image.addEventListener('load', scheduleFeedLayout, { once: true });
+        }
+      }
+    });
+
+    filterFeed();
+
+    if (notes.length === 0) {
+      window.addEventListener('beforeunload', () => themeObserver.disconnect(), { once: true });
+      return;
+    }
+
+    const initialNoteId = getOpenNoteIdFromUrl();
+    if (initialNoteId) {
+      const initialIndex = notes.findIndex((note) => note.id === initialNoteId);
+      if (initialIndex >= 0) {
+        openModal(initialIndex, 0, { updateUrl: false });
+      }
+    }
+
+    scheduleFeedLayout();
+
+    window.addEventListener('beforeunload', () => themeObserver.disconnect(), { once: true });
+  </script>
+</Layout>
+
+<style>
+  :global(body.photos-modal-open) {
+    overflow: hidden;
+  }
+
+  .photos-shell {
+    --photos-bg: #f5f5f7;
+    --photos-surface: #ffffff;
+    --photos-surface-2: #f2f2f7;
+    --photos-border: rgba(15, 23, 42, 0.08);
+    --photos-text: rgba(15, 23, 42, 0.96);
+    --photos-subtle: rgba(15, 23, 42, 0.62);
+    --photos-pill: rgba(15, 23, 42, 0.08);
+    --photos-accent: #ff2442;
+    --photos-overlay: rgba(9, 12, 21, 0.24);
+    --photos-close-bg: rgba(255, 255, 255, 0.76);
+    --photos-close-bg-hover: rgba(255, 255, 255, 0.92);
+    --photos-close-color: rgba(15, 23, 42, 0.92);
+    --photos-dot: rgba(15, 23, 42, 0.28);
+    --photos-dot-active: rgba(15, 23, 42, 0.9);
+    --photos-rail-width: 164px;
+    --photos-gap-v: 16px;
+    --photos-gap-h: 32px;
+    --feeds-columns: 5;
+    --photos-feed-width: calc(1728px - 96px - ((1728px - 7 * 32px) / 6));
+    --photos-page-side: 32px;
+    min-height: 100vh;
+    background: var(--photos-bg);
+    color: var(--photos-text);
+  }
+
+  :global(html.dark) .photos-shell,
+  :global(html[data-mode='dark']) .photos-shell {
+    --photos-bg: #070707;
+    --photos-surface: #111111;
+    --photos-surface-2: #1a1a1a;
+    --photos-border: rgba(255, 255, 255, 0.08);
+    --photos-text: rgba(255, 255, 255, 0.96);
+    --photos-subtle: rgba(255, 255, 255, 0.62);
+    --photos-pill: rgba(255, 255, 255, 0.08);
+    --photos-overlay: rgba(0, 0, 0, 0.66);
+    --photos-close-bg: rgba(49, 49, 49, 0.72);
+    --photos-close-bg-hover: rgba(64, 64, 64, 0.88);
+    --photos-close-color: rgba(255, 255, 255, 0.92);
+    --photos-dot: rgba(255, 255, 255, 0.4);
+    --photos-dot-active: #ffffff;
+  }
+
+  .photos-explore {
+    min-height: 100vh;
+  }
+
+  .photos-rail {
+    position: fixed;
+    inset: 58px auto 0 0;
+    width: var(--photos-rail-width);
+    padding: 32px 16px 24px;
+    display: flex;
+    flex-direction: column;
+    background: var(--photos-bg);
+    z-index: 30;
+  }
+
+  .photos-rail-nav {
+    display: grid;
+    gap: 8px;
+  }
+
+  .photos-rail-item,
+  .photos-rail-more {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-height: 48px;
+    padding: 0 16px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--photos-subtle);
+    cursor: pointer;
+    text-align: left;
+    font: inherit;
+  }
+
+  .photos-rail-item.is-active,
+  .photos-rail-item:hover,
+  .photos-rail-more:hover {
+    background: var(--photos-pill);
+    color: var(--photos-text);
+  }
+
+  .photos-rail-text {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .photos-workspace {
+    margin-left: var(--photos-rail-width);
+    min-height: 100vh;
+  }
+
+  .photos-feed-page {
+    padding: 0 var(--photos-page-side) 40px;
+  }
+
+  .photos-channel-strip {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0 0 24px;
+    width: min(var(--photos-feed-width), 100%);
+    height: 72px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .photos-channel-strip::-webkit-scrollbar {
+    display: none;
+  }
+
+  .photos-channel {
+    border: 0;
+    background: transparent;
+    color: var(--photos-subtle);
+    padding: 0 16px;
+    height: 40px;
+    border-radius: 999px;
+    font: inherit;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .photos-channel:hover,
+  .photos-channel.is-active {
+    background: var(--photos-pill);
+    color: var(--photos-text);
+  }
+
+  .photos-channel.is-active {
+    font-weight: 600;
+  }
+
+  .photos-feed {
+    width: min(var(--photos-feed-width), 100%);
+    margin: 0;
+    position: relative;
+    min-height: 0;
+  }
+
+  .photos-feed-empty {
+    width: min(var(--photos-feed-width), 100%);
+    margin: 8px 0 0;
+    padding: 28px 24px;
+    border: 1px solid var(--photos-border);
+    border-radius: 24px;
+    background: color-mix(in srgb, var(--photos-surface) 92%, transparent);
+    box-shadow: 0 16px 48px color-mix(in srgb, var(--photos-text) 6%, transparent);
+  }
+
+  .photos-feed-empty h2 {
+    margin: 0 0 10px;
+    font-size: 24px;
+    line-height: 1.2;
+    font-weight: 700;
+  }
+
+  .photos-feed-empty p {
+    margin: 0;
+    color: var(--photos-subtle);
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  .photos-note-card {
+    position: absolute;
+    left: 0;
+    top: 0;
+    will-change: transform;
+  }
+
+  .photos-feed.is-static {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: var(--photos-feed-layout-gap, var(--photos-gap-h));
+    flex-wrap: nowrap;
+  }
+
+  .photos-feed.is-static .photos-note-card {
+    position: relative;
+    transform: none !important;
+  }
+
+  .photos-note-trigger {
+    display: block;
+    width: 100%;
+    border: 0;
+    background: transparent;
+    padding: 0;
+    color: inherit;
+    cursor: pointer;
+    text-align: left;
+  }
+
+  .photos-note-cover {
+    position: relative;
+    overflow: hidden;
+    border-radius: 16px;
+    background: var(--photos-surface-2);
+    outline: 1px solid var(--photos-border);
+    outline-offset: -1px;
+  }
+
+  .photos-note-cover img {
+    display: block;
+    width: 100%;
+    height: auto;
+    transition: transform 240ms ease;
+  }
+
+  .photos-note-trigger:hover .photos-note-cover img {
+    transform: scale(1.02);
+  }
+
+  .photos-note-copy {
+    padding: 12px 2px 0;
+  }
+
+  .photos-note-copy h2 {
+    margin: 0 0 8px;
+    font-size: 14px;
+    line-height: 1.4;
+    font-weight: 500;
+    color: var(--photos-text);
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+  }
+
+  .photos-note-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 20px;
+    color: var(--photos-subtle);
+    font-size: 12px;
+  }
+
+  .photos-note-author {
+    display: inline-flex;
+    align-items: center;
+    min-width: 0;
+    gap: 8px;
+  }
+
+  .photos-note-author img {
+    width: 20px;
+    height: 20px;
+    border-radius: 999px;
+    border: 1px solid var(--photos-border);
+    object-fit: cover;
+    flex: 0 0 auto;
+  }
+
+  .photos-note-author span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .photos-note-like {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    flex: 0 0 auto;
+  }
+
+  .photos-floating-actions {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 35;
+  }
+
+  .photos-floating-actions button {
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    border: 0;
+    background: var(--photos-pill);
+    color: var(--photos-text);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+  }
+
+  :global(body.photos-modal-open) .photos-floating-actions {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .photos-note-modal {
+    --photos-note-panel-width: 488px;
+    --photos-note-max-width: 1216px;
+    --photos-note-media-width: calc(var(--photos-note-max-width) - var(--photos-note-panel-width));
+    --photos-note-media-current-width: var(--photos-note-media-width);
+    --photos-note-dialog-current-width: min(calc(100vw - 64px), var(--photos-note-max-width));
+    position: fixed;
+    inset: 0;
+    z-index: 120;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    overflow: auto;
+    background: var(--photos-overlay);
+    backdrop-filter: blur(18px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 180ms ease;
+  }
+
+  .photos-note-modal.is-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .photos-note-close-circle {
+    position: fixed;
+    left: 32px;
+    top: 32px;
+    z-index: 3;
+    width: 40px;
+    height: 40px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--photos-close-bg);
+    backdrop-filter: saturate(140%) blur(14px);
+    color: var(--photos-close-color);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    transition: background-color 180ms ease, color 180ms ease;
+  }
+
+  .photos-note-close-circle:hover {
+    background: var(--photos-close-bg-hover);
+    color: var(--photos-text);
+  }
+
+  .photos-note-dialog {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    justify-content: flex-start;
+    width: var(--photos-note-dialog-current-width);
+    height: calc(100vh - 64px);
+    border-radius: 20px;
+    overflow: hidden;
+    background: var(--photos-surface);
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.32), 0 6px 24px rgba(0, 0, 0, 0.16);
+    transform: translateY(5px);
+    transition: transform 200ms ease, height 600ms ease, width 240ms ease;
+  }
+
+  .photos-note-modal.is-open .photos-note-dialog {
+    transform: translateY(0);
+  }
+
+  .photos-note-media {
+    position: relative;
+    flex: 0 0 var(--photos-note-media-current-width);
+    width: var(--photos-note-media-current-width);
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    min-width: 0;
+    border-radius: 20px 0 0 20px;
+    overflow: hidden;
+  }
+
+  .photos-note-media-backdrop {
+    display: none;
+  }
+
+  .photos-note-media-image {
+    position: relative;
+    z-index: 1;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    background: transparent;
+  }
+
+  .photos-note-media-nav {
+    display: none;
+  }
+
+  .photos-note-media-nav.is-prev {
+    left: 16px;
+  }
+
+  .photos-note-media-nav.is-next {
+    right: 16px;
+  }
+
+  .photos-note-dots {
+    position: absolute;
+    z-index: 2;
+    left: 50%;
+    bottom: 20px;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--photos-surface) 82%, transparent);
+    backdrop-filter: saturate(150%) blur(10px);
+  }
+
+  .photos-note-dots button {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    border: 0;
+    background: var(--photos-dot);
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .photos-note-dots button.is-active {
+    width: 18px;
+    background: var(--photos-dot-active);
+  }
+
+  .photos-note-panel {
+    flex: 0 0 var(--photos-note-panel-width);
+    width: var(--photos-note-panel-width);
+    min-width: 0;
+    min-height: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: var(--photos-surface);
+    border-radius: 0 20px 20px 0;
+    border-left: 1px solid var(--photos-border);
+  }
+
+  .photos-note-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 24px 16px;
+    min-height: 80px;
+  }
+
+  .photos-note-panel-author {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .photos-note-panel-author img {
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    object-fit: cover;
+  }
+
+  .photos-note-panel-author strong,
+  .photos-note-panel-author span {
+    display: block;
+  }
+
+  .photos-note-panel-author span[hidden] {
+    display: none;
+  }
+
+  .photos-note-panel-author strong {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.25;
+  }
+
+  .photos-note-panel-author span {
+    margin-top: 2px;
+    color: var(--photos-subtle);
+    font-size: 13px;
+    line-height: 1.2;
+  }
+
+  .photos-note-panel-scroll {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+  }
+
+  .photos-note-panel-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .photos-note-content,
+  .photos-note-comments {
+    padding-inline: 24px;
+  }
+
+  .photos-note-content {
+    padding-top: 0;
+    padding-bottom: 20px;
+  }
+
+  .photos-note-content h2 {
+    margin: 0 0 12px;
+    font-size: 24px;
+    line-height: 1.25;
+    font-weight: 600;
+    letter-spacing: normal;
+  }
+
+  .photos-note-body,
+  .photos-note-hashtags,
+  .photos-note-date {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  .photos-note-body {
+    color: color-mix(in srgb, var(--photos-text) 92%, transparent);
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+  }
+
+  .photos-note-hashtags {
+    margin-top: 10px;
+    color: color-mix(in srgb, var(--photos-text) 86%, transparent);
+  }
+
+  .photos-note-date-row {
+    margin-top: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .photos-note-date {
+    margin-top: 0;
+    color: var(--photos-subtle);
+    font-size: 14px;
+    line-height: 1.2;
+  }
+
+  .photos-note-more {
+    flex: 0 0 auto;
+    width: 20px;
+    height: 20px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--photos-subtle);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+  }
+
+  .photos-note-more:hover {
+    background: var(--photos-pill);
+    color: color-mix(in srgb, var(--photos-text) 92%, transparent);
+  }
+
+  .photos-note-divider {
+    margin: 0 24px;
+    height: 1px;
+    background: var(--photos-border);
+  }
+
+  .photos-note-comments {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    padding-top: 20px;
+    padding-bottom: 0;
+  }
+
+  .photos-note-comments-summary {
+    margin: 0 0 16px;
+    font-size: 16px;
+    line-height: 1.4;
+    font-weight: 600;
+    color: color-mix(in srgb, var(--photos-text) 92%, transparent);
+  }
+
+  .photos-note-giscus {
+    flex: 0 0 auto;
+    display: block;
+    margin-top: auto;
+  }
+
+  .photos-note-giscus-placeholder {
+    border: 1px dashed color-mix(in srgb, var(--photos-text) 14%, transparent);
+    border-radius: 16px;
+    padding: 20px 18px;
+    color: var(--photos-subtle);
+    font-size: 14px;
+    line-height: 1.5;
+    background: color-mix(in srgb, var(--photos-text) 3%, transparent);
+  }
+
+  .photos-note-giscus :global(.giscus),
+  .photos-note-giscus :global(.giscus-frame) {
+    width: 100% !important;
+    display: block;
+  }
+
+  @media (max-width: 1727px) {
+    .photos-shell .photos-note-modal {
+      --photos-note-panel-width: 468px;
+      --photos-note-max-width: calc(100vw - 64px);
+      --photos-note-media-width: calc(var(--photos-note-max-width) - var(--photos-note-panel-width));
+      --photos-note-media-current-width: var(--photos-note-media-width);
+      --photos-note-dialog-current-width: min(calc(100vw - 64px), var(--photos-note-max-width));
+    }
+  }
+
+  @media (max-width: 1423px) {
+    .photos-shell {
+      --feeds-columns: 4;
+      --photos-gap-v: 12px;
+      --photos-gap-h: 24px;
+      --photos-feed-width: calc(100vw - 72px - ((100vw - 6 * 24px) / 5));
+      --photos-page-side: 24px;
+    }
+
+    .photos-shell .photos-note-modal {
+      padding: 24px;
+      --photos-note-panel-width: 408px;
+      --photos-note-max-width: calc(100vw - 48px);
+      --photos-note-media-width: calc(var(--photos-note-max-width) - var(--photos-note-panel-width));
+      --photos-note-media-current-width: var(--photos-note-media-width);
+      --photos-note-dialog-current-width: min(calc(100vw - 48px), var(--photos-note-max-width));
+    }
+
+    .photos-note-dialog {
+      width: var(--photos-note-dialog-current-width);
+      height: calc(100vh - 48px);
+    }
+  }
+
+  @media (max-width: 1191px) {
+    .photos-shell {
+      --feeds-columns: 3;
+      --photos-feed-width: calc(100vw - 72px - ((100vw - 5 * 24px) / 4));
+    }
+
+    .photos-shell .photos-note-modal {
+      padding: 24px;
+      --photos-note-panel-width: 360px;
+      --photos-note-max-width: calc(100vw - 48px);
+      --photos-note-media-width: calc(var(--photos-note-max-width) - var(--photos-note-panel-width));
+      --photos-note-media-current-width: var(--photos-note-media-width);
+      --photos-note-dialog-current-width: min(calc(100vw - 48px), var(--photos-note-max-width));
+    }
+
+    .photos-note-dialog {
+      width: var(--photos-note-dialog-current-width);
+      height: calc(100vh - 48px);
+    }
+
+    .photos-note-content h2 {
+      font-size: 18px;
+    }
+
+    .photos-note-panel-header {
+      padding: 20px;
+      min-height: 76px;
+    }
+
+    .photos-note-content,
+    .photos-note-comments {
+      padding-inline: 20px;
+    }
+
+    .photos-note-divider {
+      margin-inline: 20px;
+    }
+
+  }
+
+  @media (max-width: 959px) {
+    .photos-shell {
+      --feeds-columns: 3;
+      --photos-rail-width: 0px;
+      --photos-feed-width: calc(100vw - 24px);
+      --photos-page-side: 16px;
+    }
+
+    .photos-rail {
+      display: none;
+    }
+
+    .photos-workspace {
+      margin-left: 0;
+    }
+
+    .photos-feed-page {
+      padding: 20px 16px 32px;
+    }
+
+    .photos-note-close-circle {
+      display: none;
+    }
+
+    .photos-shell .photos-note-modal {
+      padding: 16px;
+    }
+
+    .photos-note-dialog {
+      width: calc(100vw - 32px);
+      height: calc(100vh - 32px);
+      flex-direction: column;
+    }
+
+    .photos-note-panel {
+      width: 100%;
+      flex-basis: 360px;
+      min-height: 0;
+    }
+  }
+
+  @media (max-width: 695px) {
+    .photos-shell {
+      --feeds-columns: 2;
+      --photos-gap-v: 6px;
+      --photos-gap-h: 12px;
+      --photos-feed-width: calc(100vw - 24px);
+      --photos-page-side: 12px;
+    }
+
+    .photos-note-dialog {
+      width: 100vw;
+      height: 100vh;
+      border-radius: 0;
+    }
+
+    .photos-note-media {
+      border-radius: 0;
+    }
+
+    .photos-note-panel {
+      border-radius: 0;
+    }
+
+    .photos-note-content,
+    .photos-note-comments {
+      padding-inline: 16px;
+    }
+
+    .photos-note-divider {
+      margin-inline: 16px;
+    }
+
+    .photos-note-panel-header {
+      padding: 16px;
+      min-height: 72px;
+    }
+
+    .photos-floating-actions {
+      display: none;
+    }
+  }
+</style>
