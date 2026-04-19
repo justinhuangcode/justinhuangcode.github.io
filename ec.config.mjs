@@ -1,8 +1,9 @@
 import { pluginLineNumbers } from '@expressive-code/plugin-line-numbers';
 import { defineEcConfig } from 'astro-expressive-code';
+import { pluginAitherCodeLanguage } from '@aither/astro/expressive-code-aither';
 
 export default defineEcConfig({
-  plugins: [pluginLineNumbers()],
+  plugins: [pluginLineNumbers(), pluginAitherCodeLanguage()],
   defaultProps: {
     showLineNumbers: true,
     overridesByLang: {

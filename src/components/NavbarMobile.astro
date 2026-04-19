@@ -17,6 +17,7 @@ import type { ColorMode, ThemeStyle } from '@/lib/theme';
 interface NavLink {
   title: string;
   href: string;
+  isActive?: boolean;
 }
 
 interface ModeLabels {
@@ -129,16 +130,13 @@ const {
         <ul class="w-full space-y-1.5 pb-5">
           {
             navLinks.map((item) => {
-              const isActive =
-                currentPath === item.href ||
-                (item.href !== '/' && currentPath.startsWith(item.href));
               return (
                 <li class="py-1.5">
                   <a
                     href={item.href}
                     class:list={[
                       'flex min-h-[44px] w-full items-center rounded-md px-3 py-3 text-base text-muted-foreground transition-colors duration-150 hover:text-foreground',
-                      isActive ? 'font-semibold text-primary' : '',
+                      item.isActive ? 'font-semibold text-primary' : '',
                     ]}
                     data-mobile-close
                   >

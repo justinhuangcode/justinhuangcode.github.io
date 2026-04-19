@@ -10,9 +10,16 @@ import {
   translateNav,
   type Locale,
 } from '@/i18n';
+import { isActiveNavPath } from '@/lib/navigation';
 
 interface Props {
   locale: Locale;
+}
+
+interface ResolvedNavLink {
+  title: string;
+  href: string;
+  isActive: boolean;
 }
 
 const { locale } = Astro.props;
@@ -35,6 +42,17 @@ const allNavItems = [
   ...sectionNavItems,
   ...trailingNavItems,
 ];
+const resolvedNavLinks: ResolvedNavLink[] = allNavItems.map((item) => {
+  const href = getLocalizedPath(item.href, locale);
+
+  return {
+    title: translateNav(item.labelKey, locale),
+    href,
+    isActive: isActiveNavPath(currentPath, href, {
+      descendants: item.href === '/' ? ['posts', 'page'] : [],
+    }),
+  };
+});
 ---
 
 <header
@@ -56,24 +74,20 @@ const allNavItems = [
       <div class="flex items-center">
         <ul class="flex list-none">
           {
-            allNavItems.map((item) => {
-              const href = getLocalizedPath(item.href, locale);
-              const cleanCurrent = currentPath.replace(/\/$/, '') || '/';
-              const cleanHref = href.replace(/\/$/, '') || '/';
-              const isActive = cleanCurrent === cleanHref;
+            resolvedNavLinks.map((item) => {
               return (
                 <li>
                   <a
-                    href={href}
+                    href={item.href}
                     class:list={[
                       'nav-item block text-[15px] leading-5 px-[14px] py-[19px] hover:text-[var(--color-text)] hover:no-underline',
-                      isActive
+                      item.isActive
                         ? 'nav-link-active font-semibold text-[var(--color-nav-text-active)]'
                         : 'text-[var(--color-nav-text)]',
                     ]}
-                    data-text={translateNav(item.labelKey, locale)}
+                    data-text={item.title}
                   >
-                    <span class="col-start-1 row-start-1">{translateNav(item.labelKey, locale)}</span>
+                    <span class="col-start-1 row-start-1">{item.title}</span>
                   </a>
                 </li>
               );
@@ -100,7 +114,7 @@ const allNavItems = [
       locale={locale}
       currentPath={currentPath}
       siteName={siteConfig.name}
-      navLinks={allNavItems.map((item) => ({ title: translateNav(item.labelKey, locale), href: getLocalizedPath(item.href, locale) }))}
+      navLinks={resolvedNavLinks}
       languageLabel={m.common.language}
       modeLabels={m.common.mode}
       themeLabels={themeLabels}
