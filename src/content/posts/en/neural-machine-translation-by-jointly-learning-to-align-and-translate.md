@@ -59,7 +59,7 @@ This context vector is the key information the decoder extracts from the source 
 
 In Python (using PyTorch):
 
-```python
+```python showLanguage
 import torch
 from torch import nn
 
@@ -87,7 +87,7 @@ A unidirectional RNN reads the sentence left to right, outputting a summary vect
 
 The paper solves this with a bidirectional RNN (BiRNN). One RNN reads left to right, another reads right to left, and then the hidden states from both directions are concatenated. This way, each position's hidden state contains context from both the left and the right.
 
-```python
+```python showLanguage
 import torch
 from torch import nn
 
@@ -119,7 +119,7 @@ Putting the encoder and attention mechanism together, the decoder's workflow bec
    - Produces a context vector via weighted sum
    - Combines the context vector, the previously generated word, and the current state to predict the next word
 
-```python
+```python showLanguage
 import torch
 from torch import nn
 

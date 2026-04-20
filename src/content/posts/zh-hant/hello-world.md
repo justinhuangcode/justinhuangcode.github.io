@@ -49,7 +49,7 @@ src/
 
 在 `src/content/posts/zh-hant/` 下建立 `.md` 檔案：
 
-```markdown
+```markdown showLanguage
 ---
 title: 我的第一篇文章
 date: "2026-01-15T16:27:43+08:00"

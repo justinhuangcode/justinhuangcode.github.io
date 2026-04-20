@@ -155,7 +155,7 @@ On top of these four core tools, there are 55 built-in Skills and the ClawHub sk
 
 A single Gateway can run several Agents simultaneously, each doing its own thing. The routing rules look like this:
 
-```json
+```json showLanguage
 {
   "bindings": [
     { "agentId": "home", "match": { "channel": "whatsapp", "accountId": "personal" } },

@@ -63,7 +63,7 @@ $$
 
 關鍵洞察：這些是冪律，不是對數曲線。對數曲線很快就會趨平：輸入翻倍，輸出幾乎不動。冪律則大方得多：至少在論文測量到的區間內，性能沒有出現明顯「撞牆」，而是持續沿著冪律改善。論文也提醒了：這個趨勢不可能無限延伸到零損失，最終一定會變平：但在觀測範圍內，趨勢乾淨俐落。
 
-```python
+```python showLanguage
 def power_law_loss(x: float, x_c: float, alpha: float) -> float:
     return (x_c / x) ** alpha
 
@@ -90,7 +90,7 @@ def scaling_law_examples() -> dict[str, float]:
 
 一個只有 2 層但隱藏維度巨大的 Transformer？和一個 40 層但隱藏維度很小的 Transformer 損失差不多：前提是非嵌入參數預算接近。
 
-```python
+```python showLanguage
 from dataclasses import dataclass
 
 
@@ -129,7 +129,7 @@ $$
 
 白話翻譯：模型越大，需要的資料就越多：但增長是次線性的。大 10 倍的模型只需要約 10^0.74 ≈ 5.5 倍的資料。更大的模型樣本效率更高：它們能從每個訓練詞元中提取更多資訊。
 
-```python
+```python showLanguage
 def loss_nd(n_params: float, n_tokens: float) -> float:
     n_c = 8.8e13
     d_c = 5.4e13
@@ -167,7 +167,7 @@ $$
 
 違反直覺的地方在於：**你應該訓練非常大的模型，然後在遠未收斂之前就停下來。** 大多數人的本能是把一個小模型徹底訓練到收斂。縮放定律說的恰好相反：在相同的算力預算下，一個部分訓練的大模型優於一個完全訓練的小模型。
 
-```python
+```python showLanguage
 from dataclasses import dataclass
 
 
@@ -205,7 +205,7 @@ $$
 
 低於臨界批次大小時，批次翻倍大致能讓訓練時間減半（完美的平行化）。高於臨界批次大小時，批次翻倍幾乎沒有幫助：只是在浪費算力。
 
-```python
+```python showLanguage
 def critical_batch_size(loss: float, b_star: float, l_star: float) -> float:
     return b_star * (l_star / loss) ** 4.8
 ```

@@ -66,7 +66,7 @@ $$
 
 Python(PyTorch 기반)으로 구현하면:
 
-```python
+```python showLanguage
 import math
 import torch
 
@@ -106,7 +106,7 @@ $$
 - **Concat**: 8개의 결과를 모두 끝에서 끝으로 이어 붙여 하나의 긴 벡터를 만든다
 - **W^O**: 이어 붙인 긴 벡터를 원래 차원으로 다시 투영하는 선형 변환("행렬을 곱한다"고 생각하면 된다). 마치 관리자가 8명의 조사관으로부터 보고를 듣고 하나의 종합 결론을 내리는 것과 같다
 
-```python
+```python showLanguage
 import math
 import torch
 from torch import nn
@@ -174,7 +174,7 @@ $$
 
 최종 결과: 각 위치가 고유한 숫자 지문을 받고, 모델은 이 지문을 사용해 단어 순서를 구분한다.
 
-```python
+```python showLanguage
 import math
 import torch
 
@@ -209,7 +209,7 @@ Transformer의 전체 아키텍처는 두 부분으로 나뉜다.
 
 둘째, **masking**: 3번째 단어를 생성할 때, 모델은 처음 2개 단어만 볼 수 있다. 4번째 위치 이후는 차단된다(attention 점수를 음의 무한대로 설정하면 softmax 이후 0이 된다). 논리는 간단하다: 글을 쓸 때 다음 단어는 아직 쓰지 않았으므로 미리 볼 수 없다.
 
-```python
+```python showLanguage
 from typing import Optional
 
 import torch

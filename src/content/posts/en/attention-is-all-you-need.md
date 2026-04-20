@@ -56,7 +56,7 @@ Do not panic at the formula. Let's break it down step by step:
 
 In Python (using PyTorch):
 
-```python
+```python showLanguage
 import math
 import torch
 
@@ -96,7 +96,7 @@ Breaking it down:
 - **Concat**: concatenate all 8 results end-to-end into one long vector
 - **W^O**: a linear transformation (think "multiply by a matrix") that projects the concatenated long vector back to the original dimension. Like a manager listening to reports from 8 investigators and producing one consolidated conclusion
 
-```python
+```python showLanguage
 import math
 import torch
 from torch import nn
@@ -164,7 +164,7 @@ The formula looks intimidating, but the core idea is intuitive:
 
 The end result: each position gets a unique numerical fingerprint, and the model uses this fingerprint to distinguish word order.
 
-```python
+```python showLanguage
 import math
 import torch
 
@@ -199,7 +199,7 @@ First, **cross-attention**: as the decoder generates each word, it looks back at
 
 Second, **masking**: when generating the 3rd word, the model is only allowed to see the first 2 words. The 4th position and beyond are blocked (attention scores set to negative infinity, which becomes zero after softmax). The logic is simple: when you are writing an essay, the next word has not been written yet -- you cannot peek ahead.
 
-```python
+```python showLanguage
 from typing import Optional
 
 import torch

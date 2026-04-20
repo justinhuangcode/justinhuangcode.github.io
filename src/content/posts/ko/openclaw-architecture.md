@@ -155,7 +155,7 @@ OpenClaw에서 가장 "반항적인" 설계 선택입니다.
 
 하나의 Gateway에서 여러 Agent를 동시에 실행할 수 있으며, 각각 독립적으로 작동합니다. 라우팅 규칙은 이렇게 생겼습니다:
 
-```json
+```json showLanguage
 {
   "bindings": [
     { "agentId": "home", "match": { "channel": "whatsapp", "accountId": "personal" } },

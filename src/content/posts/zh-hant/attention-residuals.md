@@ -110,7 +110,7 @@ $$
 
 用 Python（基於 PyTorch）寫出來，大概就是這樣：
 
-```python
+```python showLanguage
 import torch
 from torch import nn
 

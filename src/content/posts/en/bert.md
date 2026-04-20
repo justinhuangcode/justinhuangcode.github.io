@@ -37,7 +37,7 @@ After masking, the model must use both left and right context to make prediction
 
 But replacing all selected tokens with \[MASK\] introduces a problem: \[MASK\] never appears during fine-tuning, creating a mismatch between pre-training and fine-tuning. The paper's solution: of the selected 15% of tokens, 80% are replaced with \[MASK\], 10% are replaced with a random token, and 10% are left unchanged. This way, the model cannot simply rely on "I see \[MASK\] so I need to predict" — it must maintain understanding at every position.
 
-```python
+```python showLanguage
 import random
 from typing import Optional, Sequence
 
@@ -76,7 +76,7 @@ The paper added a second pre-training task: **Next Sentence Prediction (NSP)**. 
 
 The task design is simple, but the paper's ablation study (removing one component at a time to observe the effect) showed that removing NSP noticeably hurt performance on question answering and natural language inference tasks; however, later work (such as RoBERTa) reached different conclusions about the necessity of NSP.
 
-```python
+```python showLanguage
 from dataclasses import dataclass
 
 
@@ -108,7 +108,7 @@ The input representation is the sum of three components:
 
 Every input sequence begins with a special \[CLS\] token, whose final-layer hidden state is used for sentence-level classification (e.g., NSP, sentiment analysis). Two sentences are separated by \[SEP\].
 
-```python
+```python showLanguage
 import torch
 from torch import nn
 

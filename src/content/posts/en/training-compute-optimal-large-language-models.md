@@ -47,7 +47,7 @@ $$
 N_{\mathrm{opt}} \propto C^a, \quad D_{\mathrm{opt}} \propto C^b, \quad a \approx 0.50, \quad b \approx 0.50
 $$
 
-```python
+```python showLanguage
 def optimal_scaling(compute: float) -> tuple[float, float]:
     a = 0.50
     b = 0.50
@@ -66,7 +66,7 @@ Kaplan et al. used a fixed learning rate schedule that did not adjust for traini
 
 Hoffmann's team adjusted the learning rate schedule for each training run, ensuring each configuration got a fair shot. When you do this, training longer on more data turns out to be much more valuable than Kaplan's numbers suggested.
 
-```python
+```python showLanguage
 from dataclasses import dataclass
 from typing import Literal
 
@@ -96,7 +96,7 @@ Where the fitted constants are:
 
 The structure of this equation is worth studying. Loss has three components: a floor you can never get below (E), a penalty for having too few parameters (A/N^α), and a penalty for having too little data (B/D^β). The model-size penalty and data penalty are additive — they compete for your attention and your compute budget.
 
-```python
+```python showLanguage
 def estimated_loss(n_params: float, n_tokens: float) -> float:
     e = 1.69
     a = 406.4
@@ -132,7 +132,7 @@ The paper's Table 1 lists the actual parameter counts and training tokens for se
 
 Every single model was trained on roughly 300 billion tokens. But according to Chinchilla's analysis, GPT-3 should have been trained on 3.7 trillion tokens — more than 12 times what it actually saw. Gopher should have seen nearly 6 trillion. MT-NLG, the largest of the bunch at 530 billion parameters, should have been trained on 11 trillion tokens — 40 times its actual training data.
 
-```python
+```python showLanguage
 from dataclasses import dataclass
 
 
@@ -166,7 +166,7 @@ The result was decisive. Chinchilla outperformed Gopher on nearly every benchmar
 - **Common sense** (HellaSwag): Chinchilla 80.8% vs. Gopher 79.2%
 - **BIG-bench**: Chinchilla outperformed Gopher on the majority of tasks
 
-```python
+```python showLanguage
 from dataclasses import dataclass
 
 
@@ -199,7 +199,7 @@ The Chinchilla paper had immediate, concrete consequences for the industry.
 
 **The LLaMA moment.** Meta's LLaMA (February 2023) was arguably the most direct application of Chinchilla scaling. LLaMA-13B, trained on 1 trillion tokens, outperformed GPT-3 (175B) on most benchmarks. LLaMA-65B, trained on 1.4 trillion tokens, was competitive with Chinchilla and PaLM-540B. Meta explicitly cited the Chinchilla paper and deliberately trained smaller models on far more data than earlier conventions would have suggested.
 
-```python
+```python showLanguage
 def inference_cost_comparison() -> tuple[float, float]:
     gopher_cost_per_token = 280.0
     chinchilla_cost_per_token = 70.0

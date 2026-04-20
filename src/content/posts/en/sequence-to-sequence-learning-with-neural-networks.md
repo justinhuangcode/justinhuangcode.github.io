@@ -44,7 +44,7 @@ $$
 
 In plain language: given a source sentence x, the probability of generating target sentence y equals the product of the probability of generating each next word at every step. Each step's prediction depends on two things: the vector v compressed by the encoder, and all previously generated words.
 
-```python
+```python showLanguage
 import torch
 from torch import nn
 
@@ -103,7 +103,7 @@ The paper identified three design choices with major impact on performance:
 
 Why does reversal help? The paper's explanation: in normal order, the first word of the source sentence is far from the first word of the target sentence (the entire source sentence sits in between). After reversal, the first few words of the source and target sentences are temporally close, creating more "short-range dependencies" for the gradient (the signal the model uses to adjust its parameters), making optimization easier.
 
-```python
+```python showLanguage
 import torch
 
 

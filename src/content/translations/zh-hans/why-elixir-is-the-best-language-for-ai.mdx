@@ -31,7 +31,7 @@ translator: Justin Huang
 
 不可变性（Immutability）大概是我在所有编程语言中最钟爱的特性，它直接影响着人类和 AI 智能体对代码的理解方式。举个例子，看下面这段面向对象的代码：
 
-```text
+```text showLanguage=false
 manager = project.getManager()
 project.updateVersion()
 ```
@@ -40,14 +40,14 @@ project.updateVersion()
 
 而在以不可变性为首要原则的语言中，比如 Elixir，函数所需的一切必须作为输入传入，函数所改变的一切必须作为输出返回。这意味着，如果上述代码只修改 project，你会这样写：
 
-```text
+```text showLanguage=false
 manager = Project.get_manager(project)
 project = Project.update_version(project)
 ```
 
 如果 `update_version` 需要同时修改 project 和 manager，你可以这样写：
 
-```text
+```text showLanguage=false
 manager = Project.get_manager(project)
 {project, manager} = Project.update_version(project, manager)
 ```
@@ -56,7 +56,7 @@ manager = Project.get_manager(project)
 
 Elixir 将这些理念融为一体的最典型体现，是管道操作符（pipe operator）。它定义了数据经由一系列步骤被依次变换的方式，类似于 Unix 命令的管道机制。以下是直接取自 [Elixir 官网](https://elixir-lang.org/) 的示例：
 
-```text
+```text showLanguage=false
 iex> "Elixir is awesome" |> String.split() |> Enum.frequencies()
 %{"Elixir" => 1, "is" => 1, "awesome" => 1}
 ```
@@ -69,7 +69,7 @@ iex> "Elixir is awesome" |> String.split() |> Enum.frequencies()
 
 首先，Elixir 明确区分了文档（documentation）与代码注释（code comments），因为二者面向不同的受众，服务于不同的目的。以下是一个示例：
 
-```elixir
+```elixir showLanguage
 @doc """
 去除给定字符串首尾的空白字符。
 

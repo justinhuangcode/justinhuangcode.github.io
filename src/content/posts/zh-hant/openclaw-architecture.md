@@ -155,7 +155,7 @@ workspace/
 
 一個 Gateway 可以同時跑好幾個 Agent，各管各的。路由規則長這樣：
 
-```json
+```json showLanguage
 {
   "bindings": [
     { "agentId": "home", "match": { "channel": "whatsapp", "accountId": "personal" } },

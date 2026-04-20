@@ -51,7 +51,7 @@ Each directory has a clear responsibility. Components are small and composable. 
 
 Create a new `.md` file in `src/content/posts/en/` with the following frontmatter:
 
-```markdown
+```markdown showLanguage
 ---
 title: Your Post Title
 date: "2026-01-15T16:27:43+08:00"

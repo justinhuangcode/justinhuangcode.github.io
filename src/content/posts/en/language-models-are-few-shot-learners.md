@@ -39,7 +39,7 @@ GPT-3's evaluation methodology differed from every large model before it. It def
 
 **Zero-Shot**: no examples at all, just a natural language instruction. This is the hardest setting, but also the most practical — if the model truly "understands" the task itself, it should not need any examples.
 
-```python
+```python showLanguage
 from dataclasses import dataclass
 from typing import Union
 
@@ -104,7 +104,7 @@ What is genuinely different is the scale. The paper trained 8 models of varying 
 
 175 billion parameters, 96 layers, 96 attention heads, hidden dimension of 12288. Context window of 2048 tokens. This scale was unprecedented at the time — over 100 times larger than GPT-2's 1.5 billion parameters.
 
-```python
+```python showLanguage
 from dataclasses import dataclass
 
 
@@ -167,7 +167,7 @@ The paper evaluated across more than twenty datasets, covering 9 major task cate
 
 **Synthetic Tasks**: the paper also designed novel tasks specifically to test in-context learning. For example, giving the model a few examples of "made-up words" (defining a nonexistent word and then using it in a sentence), GPT-3 could correctly learn and use the new word. Three-digit addition was nearly 100% accurate in few-shot (two-digit was also near-perfect), but accuracy dropped sharply at four and five digits.
 
-```python
+```python showLanguage
 from typing import Callable, Protocol
 
 

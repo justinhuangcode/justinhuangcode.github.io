@@ -52,7 +52,7 @@ Do not panic at the notation. Let's break it down:
 
 The key insight: these are power laws, not logarithmic curves. A logarithmic curve flattens out quickly — doubling the input barely moves the output. A power law is far more generous: at least within the range the paper measured, performance showed no sign of hitting a wall, improving steadily along the power-law trend. The paper is careful to note that this cannot continue forever — loss will eventually flatten — but within the observed range, the trend held cleanly.
 
-```python
+```python showLanguage
 def power_law_loss(x: float, x_c: float, alpha: float) -> float:
     return (x_c / x) ** alpha
 
@@ -79,7 +79,7 @@ The team tested Transformers with different depths (number of layers), widths (h
 
 A Transformer with 2 layers and a massive hidden dimension? Roughly the same loss as one with 40 layers and a small hidden dimension — given a comparable non-embedding parameter budget.
 
-```python
+```python showLanguage
 from dataclasses import dataclass
 
 
@@ -118,7 +118,7 @@ $$
 
 In plain language: as you make the model bigger, the amount of data you need grows — but sublinearly. A model that is 10 times larger needs only about 10^0.74 ≈ 5.5 times more data. Bigger models are more sample-efficient: they extract more information from each token of training data.
 
-```python
+```python showLanguage
 def loss_nd(n_params: float, n_tokens: float) -> float:
     n_c = 8.8e13
     d_c = 5.4e13
@@ -156,7 +156,7 @@ Translation: if your compute budget grows 10x, you should make the model ~5.4x b
 
 The counterintuitive part: **you should train very large models and stop significantly before convergence.** Most people's instinct is to fully train a smaller model. The scaling laws say the opposite — a partially trained large model outperforms a fully trained small model, given the same compute budget.
 
-```python
+```python showLanguage
 from dataclasses import dataclass
 
 
@@ -194,7 +194,7 @@ As training progresses and loss decreases, the critical batch size grows. Early 
 
 Below the critical batch size, doubling the batch roughly halves training time (perfect parallelism). Above it, doubling the batch barely helps — you are just burning compute.
 
-```python
+```python showLanguage
 def critical_batch_size(loss: float, b_star: float, l_star: float) -> float:
     return b_star * (l_star / loss) ** 4.8
 ```

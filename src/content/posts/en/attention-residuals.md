@@ -110,7 +110,7 @@ This is a small but important choice. Without normalization, layers with larger 
 
 In Python (using PyTorch), one clean implementation looks like this:
 
-```python
+```python showLanguage
 import torch
 from torch import nn
 

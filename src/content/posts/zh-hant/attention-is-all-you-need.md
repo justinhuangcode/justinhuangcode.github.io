@@ -66,7 +66,7 @@ $$
 
 用 Python（基於 PyTorch）寫出來：
 
-```python
+```python showLanguage
 import math
 import torch
 
@@ -106,7 +106,7 @@ $$
 - **Concat**：把 8 份結果首尾相連，拼成一個長向量
 - **W^O**：一次線性變換（可以理解為「乘以一個矩陣」），把拼接後的長向量壓回原來的維度。相當於一個主管聽完 8 個調查員的匯報，輸出一份綜合結論
 
-```python
+```python showLanguage
 import math
 import torch
 from torch import nn
@@ -174,7 +174,7 @@ $$
 
 最終效果：每個位置得到一串獨一無二的數字指紋，模型靠這個指紋區分詞的先後順序。
 
-```python
+```python showLanguage
 import math
 import torch
 
@@ -209,7 +209,7 @@ Transformer 的完整架構分兩半。
 
 第二，**遮罩**（masking）：生成第 3 個詞時，只允許看到前 2 個詞，第 4 個及之後的位置被遮蔽（注意力分數設為負無窮，經過 softmax 後變成零）。道理很簡單：你寫作文的時候，下一個字還沒寫出來，不能偷看。
 
-```python
+```python showLanguage
 from typing import Optional
 
 import torch

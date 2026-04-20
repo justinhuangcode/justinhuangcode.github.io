@@ -108,7 +108,7 @@ $$
 第三，**键前面加了 RMSNorm。**  
 这是个很关键的小设计。因为如果不做归一化，量级大的层会天然在点积里占便宜，你得到的就不是“谁更相关”，而更像“谁声音更大”。报告正文也明确强调了这一点。
 
-```python
+```python showLanguage
 import torch
 from torch import nn
 

@@ -63,7 +63,7 @@ $$
 
 핵심 통찰: 이것들은 멱법칙이지, 대수(logarithmic) 곡선이 아니다. 대수 곡선은 빠르게 평탄해진다 — 입력을 두 배로 늘려도 출력은 거의 움직이지 않는다. 멱법칙은 훨씬 관대하다: 적어도 논문이 측정한 범위 내에서, 성능은 뚜렷한 벽에 부딪히는 징후 없이 멱법칙 추세를 따라 꾸준히 개선되었다. 논문도 이 추세가 영원히 0까지 내려갈 수는 없으며 결국은 평탄해질 것이라고 명시했지만, 관측된 범위 내에서는 추세가 깔끔하게 유지되었다.
 
-```python
+```python showLanguage
 def power_law_loss(x: float, x_c: float, alpha: float) -> float:
     return (x_c / x) ** alpha
 
@@ -90,7 +90,7 @@ def scaling_law_examples() -> dict[str, float]:
 
 레이어 2개에 거대한 히든 차원을 가진 Transformer? 비슷한 비임베딩 파라미터 예산 하에서 레이어 40개에 작은 히든 차원을 가진 것과 대략 같은 손실을 보인다.
 
-```python
+```python showLanguage
 from dataclasses import dataclass
 
 
@@ -129,7 +129,7 @@ $$
 
 쉽게 말하면: 모델을 크게 만들수록 필요한 데이터의 양이 늘어난다 — 하지만 선형 이하로. 10배 큰 모델은 10^0.74 ≈ 5.5배의 데이터만 더 필요하다. 더 큰 모델은 더 샘플 효율적이다: 학습 데이터의 각 토큰에서 더 많은 정보를 추출한다.
 
-```python
+```python showLanguage
 def loss_nd(n_params: float, n_tokens: float) -> float:
     n_c = 8.8e13
     d_c = 5.4e13
@@ -167,7 +167,7 @@ $$
 
 직관에 반하는 부분: **아주 큰 모델을 학습시키고 수렴 훨씬 전에 멈춰야 한다.** 대부분의 사람들의 직감은 작은 모델을 완전히 학습시키는 것이다. 스케일링 법칙은 그 반대를 말한다 — 같은 컴퓨팅 예산에서, 부분적으로 학습된 큰 모델이 완전히 학습된 작은 모델을 이긴다.
 
-```python
+```python showLanguage
 from dataclasses import dataclass
 
 
@@ -205,7 +205,7 @@ $$
 
 임계 배치 크기 이하에서는, 배치를 두 배로 늘리면 학습 시간이 대략 절반으로 줄어든다(완벽한 병렬화). 그 이상에서는, 배치를 두 배로 늘려도 거의 도움이 되지 않는다 — 컴퓨팅을 낭비할 뿐이다.
 
-```python
+```python showLanguage
 def critical_batch_size(loss: float, b_star: float, l_star: float) -> float:
     return b_star * (l_star / loss) ** 4.8
 ```

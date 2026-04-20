@@ -50,7 +50,7 @@ src/
 
 `src/content/posts/`에 다음 프런트매터를 포함하는 새 `.md` 파일을 만드세요:
 
-```markdown
+```markdown showLanguage
 ---
 title: 글 제목
 date: "2026-01-15T16:27:43+08:00"

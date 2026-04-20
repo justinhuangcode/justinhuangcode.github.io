@@ -110,7 +110,7 @@ attention을 처음 접한다면 가장 쉬운 직관은 이렇다:
 
 Python(PyTorch 기반)으로 쓰면 대략 이렇게 된다:
 
-```python
+```python showLanguage
 import torch
 from torch import nn
 

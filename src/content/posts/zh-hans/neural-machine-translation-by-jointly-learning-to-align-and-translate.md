@@ -69,7 +69,7 @@ $$
 
 用 Python（基于 PyTorch）写出来：
 
-```python
+```python showLanguage
 import torch
 from torch import nn
 
@@ -97,7 +97,7 @@ def bahdanau_attention(
 
 论文用了双向 RNN（BiRNN）来解决这个问题。一个 RNN 从左往右读，另一个从右往左读，然后把两个方向的隐藏状态拼起来。这样每个位置的隐藏状态就同时包含了左边和右边的上下文。
 
-```python
+```python showLanguage
 import torch
 from torch import nn
 
@@ -129,7 +129,7 @@ class BidirectionalRNN(nn.Module):
    - 加权求和得到上下文向量
    - 结合上下文向量、上一个生成的词和当前状态，预测下一个词
 
-```python
+```python showLanguage
 import torch
 from torch import nn
 
