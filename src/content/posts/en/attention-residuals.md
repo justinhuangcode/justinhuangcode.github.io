@@ -24,7 +24,7 @@ If you do not have a machine learning background, it helps to build intuition in
 
 ## 1. The One-Sentence Version
 
-This technical report asks a very sharp question:
+This technical report raises a question:
 
 **If the Transformer has already replaced recurrence with attention along the sequence dimension, why is information aggregation along the depth dimension still stuck with fixed addition?**
 
@@ -132,9 +132,9 @@ At first glance, this looks like "put attention on top of residuals." But I thin
 
 **It turns the residual connection from a fixed accumulator into a selective depth retriever.**
 
-## 4. The Best Part of the Report: It Gives Engineering, Not Just an Idea
+## 4. The Report Gives an Idea, and It Gives Engineering
 
-If the report stopped at Full AttnRes, this would still be just a beautiful research idea.
+**In one sentence: the report proposes Full AttnRes and pushes that idea into a trainable, deployable, and clearly costed engineering solution.**
 
 Full AttnRes lets every layer attend to all previous layers. Theoretically, it is easy to understand, and even the raw arithmetic cost is not terrifying, because network depth $L$ is usually much smaller than sequence length $T$. So the authors argue that $O(L^2 d)$ arithmetic alone is not the scariest part.
 
@@ -177,6 +177,8 @@ That is why this reads like a real systems-minded technical report to me. A lot 
 
 ## 5. What Matters Most in the Experiments
 
+**More than any individual score in the main experiments, what matters is that AttnRes shows the same directional signal in scaling behavior, training dynamics, and downstream capability.**
+
 ### 5.1 Scaling Law Results: Not a One-Off Win
 
 The authors first run scaling-law experiments across five model sizes, comparing Baseline, Full AttnRes, and Block AttnRes.
@@ -206,9 +208,7 @@ The main experiment is not a small toy benchmark. It uses a large Kimi Linear co
 
 That matters, because it shows the authors are not just drawing pretty curves on small models. They actually inserted this residual redesign into a large training recipe.
 
-### 5.3 The Most Revealing Figure: Output Magnitudes Stop Running Away
-
-The most striking figure in the report, to me, is not the benchmark table but the training-dynamics plot.
+### 5.3 In the Training Dynamics, Output Magnitudes Stop Running Away
 
 In the baseline, output magnitudes keep rising with depth. The values in the plot are dramatic: the early blocks sit around `0.04`, `0.06`, `0.10`, while later blocks climb to `10.47` and `12.15`. That is PreNorm dilution made visible.
 
@@ -231,6 +231,8 @@ The most interesting part is that gains are larger on tasks like GPQA, Math, and
 Complex reasoning is often not limited by missing information. It is limited by important information getting buried deep inside the network.
 
 ## 6. What the Ablations Tell Us
+
+**The key takeaway from the ablations is not that "denser connections are stronger," but that input-dependent selective aggregation along depth is what is doing the work.**
 
 The ablation section is strong because it does not only show that the method helps. It also tries to show why.
 
@@ -256,7 +258,7 @@ Some of the most interesting takeaways:
 
 That is one reason I like this report. When you read the main text, the ablations, and the systems section together, you can see the real trade-off clearly: the goal is not blindly minimizing loss at any cost. The goal is something strong enough, while still trainable in practice.
 
-## 7. How I Read This Report
+## 7. How to Read This Report
 
 First, the most important thing here is not that the report invents a new module. It is that it elevates residual connections from "optimization stability tool" back into "information routing mechanism."
 
@@ -266,35 +268,27 @@ Once you adopt that lens, many old questions get reframed. Residuals stop lookin
 - are there attention-sink-like effects along depth?
 - were older residual variants already doing something like depth-wise linear attention?
 
-That is exactly where the discussion section becomes unusually interesting. The authors reinterpret a bunch of residual variants through the lens of a `depth mixing matrix`, and go one step further:
+That is exactly where the discussion section becomes interesting. The authors reinterpret a bunch of residual variants through the lens of a `depth mixing matrix`, and go one step further:
 
 **Many existing methods are, in essence, doing linear attention along the depth dimension; AttnRes is doing softmax attention along depth.**
 
-That is a bold framing, but a very productive one. It is basically saying: the Transformer once moved the sequence dimension from recurrence toward softmax attention; AttnRes is trying to push the depth dimension one step further too.
+That is a bold framing, but also an illuminating one. It is basically saying: the Transformer once moved the sequence dimension from recurrence toward softmax attention; AttnRes is trying to push the depth dimension one step further too.
 
 Second, the report feels like an example of "ask the problem correctly first, then make the system workable." It does not obsess over making every local piece maximally fancy. For example, the query is intentionally layer-specific instead of token-dependent. That may not be the absolute strongest choice in terms of raw performance, but it creates room for batching, two-phase computation, and pipeline caching. A deployable technical report is often not about the flashiest local design. It is about what survives under global constraints.
 
-Third, the line I think is most worth remembering from this whole report is really a question:
+Third, this line from the report says it well:
 
 **Why is depth-wise aggregation still fixed while everything else has become adaptive?**
 
-That is exactly the right question to ask.
+It puts the issue nicely.
 
 ## 8. Where the Report Stops
-
-Before praising it too much, it is worth being clear about the boundaries.
 
 First, this is still a **technical report / arXiv preprint**, not a peer-reviewed conference paper. The safest attitude is not "it has proven the future." It is "it has proposed a powerful lens and backed it with an implementation that looks engineering-feasible."
 
 Second, the large-scale results are tied to the Kimi Linear line of architecture: MoE, hybrid KDA/MLA attention, and a Moonlight / DeepSeek-V3-style training recipe. That does not weaken the result, but it does mean we should not automatically extrapolate it to every dense decoder-only Transformer.
 
 Third, the report itself admits that Full AttnRes is stronger, while Block AttnRes is the practical answer under today's hardware constraints. If memory, bandwidth, and interconnect improve further, or if more efficient variants of depth attention appear, today's block design probably will not be the endpoint.
-
-So my view is:
-
-- it is already strong enough to deserve serious reading
-- it is already complete enough to deserve serious reproduction work
-- it is not yet settled enough to justify a final verdict
 
 ## 9. Final Impression
 
