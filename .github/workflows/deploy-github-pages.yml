@@ -38,7 +38,6 @@ jobs:
         run: pnpm validate
         env:
           PUBLIC_GA_ID: ${{ secrets.PUBLIC_GA_ID }}
-          PUBLIC_CRISP_WEBSITE_ID: ${{ secrets.PUBLIC_CRISP_WEBSITE_ID }}
           PUBLIC_GISCUS_REPO: ${{ secrets.PUBLIC_GISCUS_REPO }}
           PUBLIC_GISCUS_REPO_ID: ${{ secrets.PUBLIC_GISCUS_REPO_ID }}
           PUBLIC_GISCUS_CATEGORY: ${{ secrets.PUBLIC_GISCUS_CATEGORY }}

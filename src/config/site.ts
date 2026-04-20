@@ -49,7 +49,7 @@ export const siteConfig = defineAitherSiteConfig({
     googleAnalyticsId: import.meta.env.PUBLIC_GA_ID || '',
   },
   crisp: {
-    websiteId: import.meta.env.PUBLIC_CRISP_WEBSITE_ID || '',
+    websiteId: '',
   },
   wechatShare: {
     enabled: import.meta.env.PUBLIC_WECHAT_SHARE_ENABLED === 'true',
