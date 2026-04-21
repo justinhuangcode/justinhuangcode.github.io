@@ -1,0 +1,115 @@
+---
+import { getRecommendationsUiCopy } from '@/lib/recommendations-ui';
+import type { Locale } from '@/i18n';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const copy = getRecommendationsUiCopy(locale);
+---
+
+<section class="recommendations-shelf-notice" aria-label={copy.shelfTitle}>
+  <p class="recommendations-shelf-eyebrow">{copy.shelfEyebrow}</p>
+  <p class="recommendations-shelf-title">{copy.shelfTitle}</p>
+  <p class="recommendations-shelf-description">
+    {
+      copy.shelfDescriptionUrl && copy.shelfDescriptionLinkLabel ? (
+        <>
+          {copy.shelfDescriptionPrefix && (
+            <span class="recommendations-shelf-description-prefix">
+              {copy.shelfDescriptionPrefix}
+            </span>
+          )}
+          {copy.shelfDescriptionLinkPrefix && (
+            <span class="recommendations-shelf-description-plain">
+              {copy.shelfDescriptionLinkPrefix}
+            </span>
+          )}
+          <a
+            href={copy.shelfDescriptionUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="recommendations-shelf-description-link"
+          >
+            {copy.shelfDescriptionLinkLabel}
+          </a>
+          {copy.shelfDescriptionLinkSuffix && (
+            <span class="recommendations-shelf-description-plain">
+              {copy.shelfDescriptionLinkSuffix}
+            </span>
+          )}
+        </>
+      ) : copy.shelfDescriptionUrl ? (
+        <a
+          href={copy.shelfDescriptionUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="recommendations-shelf-description-link"
+        >
+          {copy.shelfDescription}
+        </a>
+      ) : (
+        copy.shelfDescription
+      )
+    }
+  </p>
+</section>
+
+<style>
+  .recommendations-shelf-notice {
+    margin-bottom: 1.4rem;
+    padding: 1.02rem 1.05rem;
+    border: 1px solid color-mix(in srgb, var(--border) 92%, transparent);
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--background) 97%, white 3%), var(--background));
+  }
+
+  .recommendations-shelf-eyebrow {
+    margin: 0 0 0.42rem;
+    color: color-mix(in srgb, var(--muted-foreground) 86%, transparent);
+    font-family: var(--font-code);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+  }
+
+  .recommendations-shelf-title {
+    margin: 0;
+    color: var(--foreground);
+    font-family: var(--font-serif);
+    font-size: 1.08rem;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+
+  .recommendations-shelf-description {
+    margin: 0.48rem 0 0;
+    color: var(--muted-foreground);
+    font-size: 0.94rem;
+    line-height: 1.72;
+  }
+
+  .recommendations-shelf-description-prefix {
+    margin-right: 0.18rem;
+  }
+
+  .recommendations-shelf-description-plain {
+    color: inherit;
+  }
+
+  .recommendations-shelf-description-link {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px solid color-mix(in srgb, var(--border) 88%, transparent);
+    transition: color 180ms ease, border-color 180ms ease;
+  }
+
+  .recommendations-shelf-description-link:hover,
+  .recommendations-shelf-description-link:focus-visible {
+    color: var(--foreground);
+    border-bottom-color: color-mix(in srgb, var(--foreground) 35%, transparent);
+  }
+</style>

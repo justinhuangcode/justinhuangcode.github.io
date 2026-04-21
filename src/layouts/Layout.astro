@@ -33,6 +33,7 @@ interface Props {
   hideFooter?: boolean;
   hideLocaleBanner?: boolean;
   hideLocaleAlternates?: boolean;
+  localeAlternates?: { hreflang: string; href: string }[];
   hideThemeEffects?: boolean;
   bodyClass?: string;
   mainClass?: string;
@@ -67,6 +68,7 @@ const {
   hideFooter = false,
   hideLocaleBanner = false,
   hideLocaleAlternates = false,
+  localeAlternates,
   hideThemeEffects = false,
   bodyClass = '',
   mainClass = '',
@@ -217,12 +219,18 @@ const pathname = Astro.url.pathname;
 const canonicalUrl = canonicalUrlOverride ?? new URL(pathname, siteConfig.url).href;
 
 const cleanPath = stripLocalePrefix(pathname);
+const defaultAlternateUrls = locales.map((l) => ({
+  hreflang: htmlLangs[l],
+  href: new URL(l === defaultLocale ? cleanPath : `/${l}${cleanPath}`, siteConfig.url).href,
+}));
 const alternateUrls = hideLocaleAlternates
   ? []
-  : locales.map((l) => ({
-      hreflang: htmlLangs[l],
-      href: new URL(l === defaultLocale ? cleanPath : `/${l}${cleanPath}`, siteConfig.url).href,
-    }));
+  : localeAlternates ?? defaultAlternateUrls;
+const xDefaultAlternateUrl = hideLocaleAlternates
+  ? undefined
+  : localeAlternates
+    ? alternateUrls.find(({ hreflang }) => hreflang === htmlLangs[defaultLocale])?.href ?? canonicalUrl
+    : new URL(cleanPath, siteConfig.url).href;
 
 ---
 
@@ -241,8 +249,8 @@ const alternateUrls = hideLocaleAlternates
     {alternateUrls.map(({ hreflang, href }) => (
       <link rel="alternate" hreflang={hreflang} href={href} />
     ))}
-    {!hideLocaleAlternates && (
-      <link rel="alternate" hreflang="x-default" href={new URL(cleanPath, siteConfig.url).href} />
+    {!hideLocaleAlternates && xDefaultAlternateUrl && (
+      <link rel="alternate" hreflang="x-default" href={xDefaultAlternateUrl} />
     )}
     {alternateFormats?.map(({ type, href, title: t }) => (
       <link rel="alternate" type={type} href={href} title={t} />

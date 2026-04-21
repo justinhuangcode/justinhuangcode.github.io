@@ -25,6 +25,7 @@ export interface ContentSection {
   id: CollectionKey;
   labelKey: string;
   contentLocale?: string;
+  fallbackLocale?: string;
 }
 
 export interface SiteNavItem {

@@ -4,12 +4,15 @@ import BlogCard from '@/components/BlogCard.astro';
 import BlogGrid from '@/components/BlogGrid.astro';
 import ContentSectionHeader from '@/components/ContentSectionHeader.astro';
 import Container from '@/components/Container.astro';
+import RecommendationsCard from '@/components/recommendations/RecommendationsCard.astro';
+import RecommendationsShelfNotice from '@/components/recommendations/RecommendationsShelfNotice.astro';
 import TranslationShelfNotice from '@/components/translations/TranslationShelfNotice.astro';
 import { siteConfig, type ContentSection } from '@/config/site';
 import {
   getLocaleBasePath,
   getLocalizedPath,
   getMessages,
+  htmlLangs,
   intlLocales,
   translateNav,
   type Locale,
@@ -19,7 +22,13 @@ import {
   resolveSectionContentLocale,
   sectionHasFixedContentLocale,
 } from '@/lib/content-sections';
-import { getSlug, type LocalizedEntry } from '@/lib/posts';
+import {
+  getLocalizedRecommendationDescription,
+  getLocalizedRecommendationDescriptionLang,
+} from '@/lib/recommendations';
+import { getRecommendationsUiCopy } from '@/lib/recommendations-ui';
+import { getTranslationsUiCopy } from '@/lib/translations-ui';
+import { getEntryLocale, getSlug, type LocalizedEntry } from '@/lib/posts';
 import Layout from '@/layouts/Layout.astro';
 
 interface Props {
@@ -29,7 +38,16 @@ interface Props {
 }
 
 const { locale, section, entries } = Astro.props;
-const title = translateNav(section.labelKey, locale);
+const isRecommendationsSection = section.id === 'recommendations';
+const isTranslationsSection = section.id === 'translations';
+const title = isRecommendationsSection
+  ? getRecommendationsUiCopy(locale).sectionTitle
+  : isTranslationsSection
+    ? getTranslationsUiCopy(locale).sectionTitle
+    : translateNav(section.labelKey, locale);
+const recommendationsUiCopy = isRecommendationsSection
+  ? getRecommendationsUiCopy(locale)
+  : undefined;
 const basePath = getLocaleBasePath(locale);
 const m = getMessages(locale);
 const totalEntriesLabel = m.blog.totalPosts.replace(
@@ -44,6 +62,28 @@ const contentLang = usesFixedContentLocale
 const canonicalUrl = usesFixedContentLocale
   ? new URL(getLocalizedPath(`/${section.id}`, fixedContentLocale), siteConfig.url).toString()
   : undefined;
+const renderedRecommendationEntries = isRecommendationsSection
+  ? entries.map((entry) => {
+      const slug = getSlug(entry.id);
+      const entryLang = htmlLangs[getEntryLocale(entry.id)];
+      const recommendationEntryData = entry.data as typeof entry.data & {
+        sourcePublication?: string;
+      };
+
+      return {
+        entry,
+        slug,
+        entryLang,
+        description: getLocalizedRecommendationDescription(slug, locale, recommendationEntryData.description),
+        descriptionLang: getLocalizedRecommendationDescriptionLang(
+          slug,
+          locale,
+          entryLang,
+        ),
+        sourcePublication: recommendationEntryData.sourcePublication,
+      };
+    })
+  : [];
 ---
 
 <Layout
@@ -56,21 +96,43 @@ const canonicalUrl = usesFixedContentLocale
       <section class="content-index-zone">
         <Container class="px-4">
           <div class="content-index-shell">
-            {section.id === 'translations' && <TranslationShelfNotice locale={locale} />}
+            {isRecommendationsSection && <RecommendationsShelfNotice locale={locale} />}
+            {isTranslationsSection && <TranslationShelfNotice locale={locale} />}
             <ContentSectionHeader title={title} countLabel={totalEntriesLabel} headingAs="h1" />
             <BlogGrid>
               {
-                entries.map((entry) => (
-                  <BlogCard
-                    slug={getSlug(entry.id)}
-                    title={entry.data.title}
-                    date={entry.data.date}
-                    basePath={basePath}
-                    section={section.id}
-                    pinned={entry.data.pinned}
-                    titleLang={contentLang}
-                  />
-                ))
+                isRecommendationsSection
+                  ? renderedRecommendationEntries.map(
+                      ({ entry, slug, entryLang, description, descriptionLang, sourcePublication }) => (
+                    <RecommendationsCard
+                      slug={slug}
+                      title={entry.data.title}
+                      description={description}
+                      descriptionPrefix={recommendationsUiCopy?.detailDescriptionLabel}
+                      date={entry.data.date}
+                      sourcePublication={sourcePublication}
+                      basePath={basePath}
+                      section={section.id}
+                      titleLang={entryLang}
+                      descriptionLang={descriptionLang}
+                    />
+                    ),
+                  )
+                  : entries.map((entry) => {
+                      const entryLang = htmlLangs[getEntryLocale(entry.id)];
+
+                      return (
+                    <BlogCard
+                      slug={getSlug(entry.id)}
+                      title={entry.data.title}
+                      date={entry.data.date}
+                      basePath={basePath}
+                      section={section.id}
+                      pinned={entry.data.pinned}
+                      titleLang={contentLang ?? entryLang}
+                    />
+                      );
+                    })
               }
             </BlogGrid>
           </div>
@@ -95,6 +157,10 @@ const canonicalUrl = usesFixedContentLocale
     max-width: none;
     margin-inline: 0;
     margin-bottom: 1.95rem;
+  }
+
+  .content-index-shell :global(.blog-grid) {
+    border-radius: 0;
   }
 
   @media (min-width: 992px) {

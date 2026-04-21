@@ -5,18 +5,20 @@ interface Props {
   title: string;
   countLabel: string;
   headingAs?: 'h1' | 'h2' | 'h3';
+  countStyle?: 'default' | 'sharp';
 }
 
 const {
   title,
   countLabel,
   headingAs = 'h2',
+  countStyle = 'default',
 } = Astro.props as Props;
 ---
 
 <div class="content-section-header">
   <ContentSectionHeading as={headingAs}>{title}</ContentSectionHeading>
-  <p class="content-section-count" aria-label={countLabel}>{countLabel}</p>
+  <p class:list={['content-section-count', countStyle === 'sharp' && 'content-section-count--sharp']} aria-label={countLabel}>{countLabel}</p>
 </div>
 
 <style>
@@ -51,6 +53,10 @@ const {
     letter-spacing: 0.08em;
     text-transform: uppercase;
     white-space: nowrap;
+  }
+
+  .content-section-count--sharp {
+    border-radius: 0;
   }
 
   @media (max-width: 360px) {

@@ -14,51 +14,40 @@ const copy = getTranslationsUiCopy(locale);
   <p class="translation-shelf-eyebrow">{copy.shelfEyebrow}</p>
   <p class="translation-shelf-title">{copy.shelfTitle}</p>
   <p class="translation-shelf-description">{copy.shelfDescription}</p>
-  <p class="translation-shelf-note">{copy.shelfNote}</p>
 </section>
 
 <style>
   .translation-shelf-notice {
     margin-bottom: 1.4rem;
-    padding: 1rem 1.05rem;
-    border: 1px solid color-mix(in srgb, var(--border) 90%, transparent);
-    border-radius: 1.15rem;
+    padding: 1.02rem 1.05rem;
+    border: 1px solid color-mix(in srgb, var(--border) 92%, transparent);
     background:
-      linear-gradient(180deg, color-mix(in srgb, var(--background) 94%, transparent), var(--background));
+      linear-gradient(180deg, color-mix(in srgb, var(--background) 97%, white 3%), var(--background));
   }
 
   .translation-shelf-eyebrow {
-    margin: 0 0 0.45rem;
-    color: color-mix(in srgb, var(--muted-foreground) 88%, transparent);
-    font-size: 0.72rem;
+    margin: 0 0 0.42rem;
+    color: color-mix(in srgb, var(--muted-foreground) 86%, transparent);
+    font-family: var(--font-code);
+    font-size: 0.7rem;
     font-weight: 700;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.09em;
     text-transform: uppercase;
   }
 
   .translation-shelf-title {
     margin: 0;
     color: var(--foreground);
-    font-size: 0.98rem;
-    font-weight: 700;
-    line-height: 1.45;
+    font-family: var(--font-serif);
+    font-size: 1.08rem;
+    font-weight: 600;
+    line-height: 1.5;
   }
 
-  .translation-shelf-description,
-  .translation-shelf-note {
-    margin: 0.45rem 0 0;
+  .translation-shelf-description {
+    margin: 0.48rem 0 0;
     color: var(--muted-foreground);
-    font-size: 0.93rem;
-    line-height: 1.7;
-  }
-
-  .translation-shelf-note {
-    font-size: 0.85rem;
-  }
-
-  @media (min-width: 768px) {
-    .translation-shelf-notice {
-      padding: 1.15rem 1.2rem;
-    }
+    font-size: 0.94rem;
+    line-height: 1.72;
   }
 </style>

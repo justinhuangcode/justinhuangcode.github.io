@@ -95,20 +95,26 @@ export function getLocaleFromUrl(url: URL): Locale {
   return defaultLocale;
 }
 
+function hasMessageKey<T extends object>(
+  messages: T,
+  key: string,
+): key is Extract<keyof T, string> {
+  return Object.prototype.hasOwnProperty.call(messages, key);
+}
+
 export function translateTag(key: string, locale: string = 'en'): string {
-  const m = getMessages(locale);
-  return m.tags[key] ?? key;
+  const { tags } = getMessages(locale);
+  return hasMessageKey(tags, key) ? tags[key] : key;
 }
 
 export function translateCategory(key: string, locale: string = 'en'): string {
-  const m = getMessages(locale);
-  return m.categories[key] ?? key;
+  const { categories } = getMessages(locale);
+  return hasMessageKey(categories, key) ? categories[key] : key;
 }
 
 export function translateNav(key: string, locale: string = defaultLocale): string {
-  const m = getMessages(locale);
-  const nav = m.nav as Record<string, string>;
-  return nav[key] ?? key;
+  const { nav } = getMessages(locale);
+  return hasMessageKey(nav, key) ? nav[key] : key;
 }
 
 /** Map internal locale to Intl/BCP-47 locale for date formatting etc. */

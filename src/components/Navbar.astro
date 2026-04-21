@@ -49,6 +49,7 @@ const resolvedNavLinks: ResolvedNavLink[] = allNavItems.map((item) => {
     title: translateNav(item.labelKey, locale),
     href,
     isActive: isActiveNavPath(currentPath, href, {
+      matchDescendants: item.href !== '/',
       descendants: item.href === '/' ? ['posts', 'page'] : [],
     }),
   };

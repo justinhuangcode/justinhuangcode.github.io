@@ -1,4 +1,5 @@
 interface ActiveNavPathOptions {
+  matchDescendants?: boolean;
   descendants?: string[];
 }
 
@@ -8,10 +9,19 @@ export function normalizePathname(pathname: string): string {
   return normalized || '/';
 }
 
-function matchesExactOrDescendant(currentPath: string, targetPath: string): boolean {
+function matchesTargetPath(
+  currentPath: string,
+  targetPath: string,
+  matchDescendants: boolean,
+): boolean {
+  if (currentPath === targetPath) {
+    return true;
+  }
+
   return (
-    currentPath === targetPath ||
-    (targetPath !== '/' && currentPath.startsWith(`${targetPath}/`))
+    matchDescendants &&
+    targetPath !== '/' &&
+    currentPath.startsWith(`${targetPath}/`)
   );
 }
 
@@ -22,8 +32,9 @@ export function isActiveNavPath(
 ): boolean {
   const normalizedCurrent = normalizePathname(currentPath);
   const normalizedTarget = normalizePathname(targetPath);
+  const matchDescendants = options.matchDescendants ?? true;
 
-  if (matchesExactOrDescendant(normalizedCurrent, normalizedTarget)) {
+  if (matchesTargetPath(normalizedCurrent, normalizedTarget, matchDescendants)) {
     return true;
   }
 
@@ -33,6 +44,6 @@ export function isActiveNavPath(
         ? `/${descendant}`
         : `${normalizedTarget}/${descendant}`;
 
-    return matchesExactOrDescendant(normalizedCurrent, descendantBase);
+    return matchesTargetPath(normalizedCurrent, descendantBase, true);
   });
 }

@@ -47,4 +47,22 @@ const translations = defineCollection({
     }),
 });
 
-export const collections = { posts, gallery, translations };
+const recommendations = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/recommendations' }),
+  schema: ({ image }) =>
+    createAitherContentSchema({ image }).extend({
+      sourceTitle: z.string().optional(),
+      sourceUrl: z
+        .string()
+        .refine(
+          (value) =>
+            value.startsWith('/') || z.url().safeParse(value).success,
+          'sourceUrl must be an absolute URL or a site-relative path',
+        )
+        .optional(),
+      sourcePublication: z.string().optional(),
+      sourceLanguage: z.string().optional(),
+    }),
+});
+
+export const collections = { posts, gallery, translations, recommendations };

@@ -27,7 +27,7 @@ const m = getMessages(locale);
 const tabBaseId = `home-tab-${locale}`;
 const readerTabLabel = m.forAgents.humanTab;
 const agentTabLabel = m.forAgents.agentTab;
-const postsSectionLabel = m.blog.allPosts;
+const postsSectionLabel = m.blog.latestPosts;
 const totalPostsLabel = m.blog.totalPosts.replace(
   '{count}',
   new Intl.NumberFormat(intlLocales[locale]).format(totalPostCount),

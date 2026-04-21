@@ -40,6 +40,9 @@ interface Props {
   prevLink: ArticleNavigationLink | null;
   nextLink: ArticleNavigationLink | null;
   contentLang?: string;
+  descriptionOverride?: string;
+  descriptionLang?: string;
+  descriptionPrefix?: string;
 }
 
 const {
@@ -50,6 +53,9 @@ const {
   prevLink,
   nextLink,
   contentLang,
+  descriptionOverride,
+  descriptionLang,
+  descriptionPrefix,
 } = Astro.props as Props;
 const m = getMessages(locale);
 const entryBody = entry.body ?? '';
@@ -78,9 +84,10 @@ const entryReadingTime = readingTime(entryBody);
       <slot name="above-description" />
 
       {
-        entry.data.description && (
-          <p lang={contentLang} class="mt-4 text-muted-foreground text-lg leading-relaxed">
-            {entry.data.description}
+        (descriptionOverride ?? entry.data.description) && (
+          <p lang={descriptionLang ?? contentLang} class="mt-4 text-muted-foreground text-lg leading-relaxed">
+            {descriptionPrefix && <span class="text-foreground">【{descriptionPrefix}】</span>}
+            {descriptionOverride ?? entry.data.description}
           </p>
         )
       }

@@ -2,8 +2,13 @@
 import SocialIcon from '@/components/icons/SocialIcon.astro';
 import Container from './Container.astro';
 import BuiltWithButton from './BuiltWithButton.astro';
-import { siteConfig, type FooterSection } from '@/config/site';
-import { getMessages, getLocalizedPath, type Locale } from '@/i18n';
+import { siteConfig, type FooterSection, type SocialLink } from '@/config/site';
+import {
+  getMessages,
+  getLocalizedPath,
+  translateNav,
+  type Locale,
+} from '@/i18n';
 import { isActiveNavPath } from '@/lib/navigation';
 
 interface Props {
@@ -13,7 +18,6 @@ interface Props {
 const { locale } = Astro.props;
 const m = getMessages(locale);
 const currentPath = Astro.url.pathname;
-const navLabels = m.nav as Record<string, string>;
 const footerSections: FooterSection[] = siteConfig.footer.sections;
 
 function resolveInternalHref(href: string): string {
@@ -26,14 +30,21 @@ function resolveSocialHref(href: string): string {
   return resolveInternalHref(href);
 }
 
+function isConfiguredSocialLink(link: SocialLink): boolean {
+  const href = link.href.trim();
+  return href !== '' && href !== '#';
+}
+
 function isActive(href: string): boolean {
   if (href.includes('#') || /^https?:\/\//.test(href)) return false;
   return isActiveNavPath(currentPath, resolveInternalHref(href), {
+    matchDescendants: href !== '/',
     descendants: href === '/' ? ['posts', 'page'] : [],
   });
 }
 
 const footerSectionTitles = [m.footer.navigate, m.footer.subscribe, m.footer.source];
+const socialLinks = siteConfig.social.filter(isConfiguredSocialLink);
 ---
 
 <footer class="site-footer border-t font-body">
@@ -47,21 +58,25 @@ const footerSectionTitles = [m.footer.navigate, m.footer.subscribe, m.footer.sou
         <p class="site-footer-tagline font-body text-muted-foreground text-base py-2 md:pr-12">
           {m.footer.tagline}
         </p>
-        <nav aria-label="Social links" class="flex items-center gap-4 pt-3">
-          {
-            siteConfig.social.map((link) => (
-              <a
-                href={resolveSocialHref(link.href)}
-                target={/^https?:\/\//.test(link.href) ? '_blank' : undefined}
-                rel={/^https?:\/\//.test(link.href) ? 'noreferrer' : undefined}
-                aria-label={link.title}
-                class="site-footer-social-link inline-flex size-8 items-center justify-center rounded-full border border-border text-foreground hover:bg-primary/10 hover:text-primary hover:border-primary/30 transition-all duration-200"
-              >
-                <SocialIcon name={link.icon} class="size-4" />
-              </a>
-            ))
-          }
-        </nav>
+        {
+          socialLinks.length > 0 && (
+            <nav aria-label="Social links" class="flex items-center gap-4 pt-3">
+              {
+                socialLinks.map((link) => (
+                  <a
+                    href={resolveSocialHref(link.href)}
+                    target={/^https?:\/\//.test(link.href) ? '_blank' : undefined}
+                    rel={/^https?:\/\//.test(link.href) ? 'noreferrer' : undefined}
+                    aria-label={link.title}
+                    class="site-footer-social-link inline-flex size-8 items-center justify-center rounded-full border border-border text-foreground hover:bg-primary/10 hover:text-primary hover:border-primary/30 transition-all duration-200"
+                  >
+                    <SocialIcon name={link.icon} class="size-4" />
+                  </a>
+                ))
+              }
+            </nav>
+          )
+        }
       </div>
 
       {
@@ -82,7 +97,7 @@ const footerSectionTitles = [m.footer.navigate, m.footer.subscribe, m.footer.sou
                         : "text-muted-foreground",
                     ]}
                   >
-                    {item.labelKey ? (navLabels[item.labelKey] ?? item.title) : item.title}
+                    {item.labelKey ? translateNav(item.labelKey, locale) : item.title}
                   </a>
                 </li>
               ))}

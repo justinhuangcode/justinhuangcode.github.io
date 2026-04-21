@@ -23,6 +23,13 @@ export function resolveSectionContentLocale(
     : requestedLocale;
 }
 
+export function getSectionFallbackLocale(section: SectionIdentifier): Locale | undefined {
+  const configuredSection = getConfiguredSection(section);
+  return configuredSection?.fallbackLocale
+    ? resolveLocale(configuredSection.fallbackLocale)
+    : undefined;
+}
+
 export function sectionHasFixedContentLocale(section: SectionIdentifier): boolean {
   return Boolean(getConfiguredSection(section)?.contentLocale);
 }

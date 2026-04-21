@@ -123,16 +123,13 @@ const noteCards: NoteCard[] = entries.map((entry) => {
   };
 });
 
-const hasNotes = noteCards.length > 0;
-const discoveredChannels = hasNotes
-  ? Array.from(
-      new Set([
-        ui.recommended,
-        ...categories.filter(Boolean),
-        ...noteCards.flatMap((note) => note.tags),
-      ]),
-    )
-  : [ui.recommended];
+const discoveredChannels = Array.from(
+  new Set([
+    ui.recommended,
+    ...categories.filter(Boolean),
+    ...noteCards.flatMap((note) => note.tags),
+  ]),
+);
 
 const noteCardsForClient = noteCards;
 ---
@@ -144,7 +141,6 @@ const noteCardsForClient = noteCards;
   enableCrisp={false}
   hideNavbar={false}
   hideFooter={true}
-  hideLocaleBanner={true}
   hideThemeEffects={true}
   bodyClass="photos-page bg-background text-foreground overflow-x-hidden"
   mainClass="bg-background"
@@ -213,46 +209,37 @@ const noteCardsForClient = noteCards;
           }
         </div>
 
-        {
-          hasNotes ? (
-            <section class="photos-feed" role="list" data-photos-feed>
-              {
-                noteCards.map((note, index) => {
-                  const filterTokens = [ui.recommended, note.category, ...note.tags].filter(Boolean).join('||');
-                  return (
-                    <article
-                      class="photos-note-card"
-                      role="listitem"
-                      data-photos-note-card
-                      data-photos-note-index={String(index)}
-                      data-photos-filters={filterTokens}
-                    >
-                      <button type="button" class="photos-note-trigger" data-photos-note-open={String(index)}>
-                        <div class="photos-note-cover">
-                          <img src={note.cover} alt={note.title} loading={index === 0 ? 'eager' : 'lazy'} decoding="async" />
+        <section class="photos-feed" role="list" data-photos-feed>
+          {
+            noteCards.map((note, index) => {
+              const filterTokens = [ui.recommended, note.category, ...note.tags].filter(Boolean).join('||');
+              return (
+                <article
+                  class="photos-note-card"
+                  role="listitem"
+                  data-photos-note-card
+                  data-photos-note-index={String(index)}
+                  data-photos-filters={filterTokens}
+                >
+                  <button type="button" class="photos-note-trigger" data-photos-note-open={String(index)}>
+                    <div class="photos-note-cover">
+                      <img src={note.cover} alt={note.title} loading={index === 0 ? 'eager' : 'lazy'} decoding="async" />
+                    </div>
+                    <div class="photos-note-copy">
+                      <h2>{note.title}</h2>
+                      <div class="photos-note-meta">
+                        <div class="photos-note-author">
+                          <img src={note.authorAvatar} alt={note.author} />
+                          <span>{note.author}</span>
                         </div>
-                        <div class="photos-note-copy">
-                          <h2>{note.title}</h2>
-                          <div class="photos-note-meta">
-                            <div class="photos-note-author">
-                              <img src={note.authorAvatar} alt={note.author} />
-                              <span>{note.author}</span>
-                            </div>
-                          </div>
-                        </div>
-                      </button>
-                    </article>
-                  );
-                })
-              }
-            </section>
-          ) : (
-            <section class="photos-feed-empty" aria-live="polite">
-              <h2>{m.galleryPage.emptyTitle}</h2>
-              <p>{m.galleryPage.emptyDescription}</p>
-            </section>
-          )
-        }
+                      </div>
+                    </div>
+                  </button>
+                </article>
+              );
+            })
+          }
+        </section>
       </main>
       </div>
 
@@ -272,83 +259,79 @@ const noteCardsForClient = noteCards;
       </div>
     </section>
 
-    {
-      hasNotes && (
-        <section class="photos-note-modal" data-photos-note-modal hidden>
-          <button type="button" class="photos-note-close-circle" data-photos-note-close aria-label="Close">
-            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M18 6 6 18"></path>
-              <path d="m6 6 12 12"></path>
-            </svg>
-          </button>
+    <section class="photos-note-modal" data-photos-note-modal hidden>
+      <button type="button" class="photos-note-close-circle" data-photos-note-close aria-label="Close">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6 6 18"></path>
+          <path d="m6 6 12 12"></path>
+        </svg>
+      </button>
 
-          <div class="photos-note-dialog" data-photos-note-dialog>
-            <div class="photos-note-media">
-              <div class="photos-note-media-backdrop" data-photos-note-media-backdrop></div>
-              <img class="photos-note-media-image" data-photos-note-image alt="" />
-              <div class="photos-note-dots" data-photos-note-dots hidden></div>
-            </div>
+      <div class="photos-note-dialog" data-photos-note-dialog>
+        <div class="photos-note-media">
+          <div class="photos-note-media-backdrop" data-photos-note-media-backdrop></div>
+          <img class="photos-note-media-image" data-photos-note-image alt="" />
+          <div class="photos-note-dots" data-photos-note-dots hidden></div>
+        </div>
 
-            <aside class="photos-note-panel">
-              <header class="photos-note-panel-header">
-                <div class="photos-note-panel-author">
-                  <img data-photos-note-author-avatar src={authorAvatar} alt={siteConfig.author.name} />
-                  <div>
-                    <strong data-photos-note-author>{siteConfig.author.name}</strong>
-                    <span data-photos-note-author-meta hidden>{ui.noteMetaFallback}</span>
-                  </div>
-                </div>
-              </header>
-
-              <div class="photos-note-panel-scroll">
-                <section class="photos-note-content">
-                  <h2 data-photos-note-title></h2>
-                  <p class="photos-note-body" data-photos-note-body></p>
-                  <p class="photos-note-hashtags" data-photos-note-hashtags hidden></p>
-                  <div class="photos-note-date-row">
-                    <p class="photos-note-date" data-photos-note-date></p>
-                    <button type="button" class="photos-note-more" aria-label="More">
-                      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-                        <circle cx="5" cy="12" r="1.7"></circle>
-                        <circle cx="12" cy="12" r="1.7"></circle>
-                        <circle cx="19" cy="12" r="1.7"></circle>
-                      </svg>
-                    </button>
-                  </div>
-                </section>
-
-                <div class="photos-note-divider" aria-hidden="true"></div>
-
-                <section class="photos-note-comments">
-                  <p class="photos-note-comments-summary">{m.blog.comments}</p>
-                  <div
-                    class="photos-note-giscus"
-                    data-photos-note-giscus
-                    data-enabled={giscusEnabled ? 'true' : 'false'}
-                    data-repo={giscus.repo}
-                    data-repo-id={giscus.repoId}
-                    data-category={giscus.category}
-                    data-category-id={giscus.categoryId}
-                    data-lang={giscusLang}
-                    data-theme-light={giscus.themeLight || 'light'}
-                    data-theme-dark={giscus.themeDark || 'dark'}
-                    data-input-position={giscus.inputPosition}
-                    data-reactions-enabled={giscus.reactionsEnabled ? '1' : '0'}
-                    data-emit-metadata={giscus.emitMetadata ? '1' : '0'}
-                  >
-                    {
-                      !giscusEnabled && (
-                        <div class="photos-note-giscus-placeholder">{m.blog.commentsPlaceholder}</div>
-                      )
-                    }
-                  </div>
-                </section>
+        <aside class="photos-note-panel">
+          <header class="photos-note-panel-header">
+            <div class="photos-note-panel-author">
+              <img data-photos-note-author-avatar src={authorAvatar} alt={siteConfig.author.name} />
+              <div>
+                <strong data-photos-note-author>{siteConfig.author.name}</strong>
+                <span data-photos-note-author-meta hidden>{ui.noteMetaFallback}</span>
               </div>
-            </aside>
+            </div>
+          </header>
+
+          <div class="photos-note-panel-scroll">
+            <section class="photos-note-content">
+              <h2 data-photos-note-title></h2>
+              <p class="photos-note-body" data-photos-note-body></p>
+              <p class="photos-note-hashtags" data-photos-note-hashtags hidden></p>
+              <div class="photos-note-date-row">
+                <p class="photos-note-date" data-photos-note-date></p>
+                <button type="button" class="photos-note-more" aria-label="More">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                    <circle cx="5" cy="12" r="1.7"></circle>
+                    <circle cx="12" cy="12" r="1.7"></circle>
+                    <circle cx="19" cy="12" r="1.7"></circle>
+                  </svg>
+                </button>
+              </div>
+            </section>
+
+            <div class="photos-note-divider" aria-hidden="true"></div>
+
+            <section class="photos-note-comments">
+              <p class="photos-note-comments-summary">{m.blog.comments}</p>
+              <div
+                class="photos-note-giscus"
+                data-photos-note-giscus
+                data-enabled={giscusEnabled ? 'true' : 'false'}
+                data-repo={giscus.repo}
+                data-repo-id={giscus.repoId}
+                data-category={giscus.category}
+                data-category-id={giscus.categoryId}
+                data-lang={giscusLang}
+                data-theme-light={giscus.themeLight || 'light'}
+                data-theme-dark={giscus.themeDark || 'dark'}
+                data-input-position={giscus.inputPosition}
+                data-reactions-enabled={giscus.reactionsEnabled ? '1' : '0'}
+                data-emit-metadata={giscus.emitMetadata ? '1' : '0'}
+              >
+                {
+                  !giscusEnabled && (
+                    <div class="photos-note-giscus-placeholder">{m.blog.commentsPlaceholder}</div>
+                  )
+                }
+              </div>
+            </section>
           </div>
-        </section>
-      )
-    }
+        </aside>
+      </div>
+    </section>
   </div>
 
   <script
@@ -786,11 +769,6 @@ const noteCardsForClient = noteCards;
 
     filterFeed();
 
-    if (notes.length === 0) {
-      window.addEventListener('beforeunload', () => themeObserver.disconnect(), { once: true });
-      return;
-    }
-
     const initialNoteId = getOpenNoteIdFromUrl();
     if (initialNoteId) {
       const initialIndex = notes.findIndex((note) => note.id === initialNoteId);
@@ -954,30 +932,6 @@ const noteCardsForClient = noteCards;
     margin: 0;
     position: relative;
     min-height: 0;
-  }
-
-  .photos-feed-empty {
-    width: min(var(--photos-feed-width), 100%);
-    margin: 8px 0 0;
-    padding: 28px 24px;
-    border: 1px solid var(--photos-border);
-    border-radius: 24px;
-    background: color-mix(in srgb, var(--photos-surface) 92%, transparent);
-    box-shadow: 0 16px 48px color-mix(in srgb, var(--photos-text) 6%, transparent);
-  }
-
-  .photos-feed-empty h2 {
-    margin: 0 0 10px;
-    font-size: 24px;
-    line-height: 1.2;
-    font-weight: 700;
-  }
-
-  .photos-feed-empty p {
-    margin: 0;
-    color: var(--photos-subtle);
-    font-size: 15px;
-    line-height: 1.7;
   }
 
   .photos-note-card {

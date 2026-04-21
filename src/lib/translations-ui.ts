@@ -1,10 +1,10 @@
 import type { Locale } from '@/i18n';
 
 interface TranslationUiCopy {
+  sectionTitle: string;
   shelfEyebrow: string;
   shelfTitle: string;
   shelfDescription: string;
-  shelfNote: string;
   detailEyebrow: string;
   contentLanguageLabel: string;
   contentLanguageValue: string;
@@ -16,11 +16,11 @@ interface TranslationUiCopy {
 }
 
 const enCopy: TranslationUiCopy = {
+  sectionTitle: 'Latest Translations',
   shelfEyebrow: 'Translation shelf',
   shelfTitle: 'Published in Simplified Chinese',
   shelfDescription:
-    'This section keeps the surrounding interface in your selected site language, while every translated piece is edited and published in Simplified Chinese.',
-  shelfNote: 'Switching the site language changes the interface only.',
+    'Every translation in this section is published in Simplified Chinese. Switching the site language changes the interface only, not the translation itself.',
   detailEyebrow: 'Translation context',
   contentLanguageLabel: 'Content language',
   contentLanguageValue: 'Simplified Chinese',
@@ -32,11 +32,11 @@ const enCopy: TranslationUiCopy = {
 };
 
 const zhHansCopy: TranslationUiCopy = {
-  shelfEyebrow: '翻译栏目',
-  shelfTitle: '本栏目固定发布简体中文译文',
+  sectionTitle: '最新翻译',
+  shelfEyebrow: '翻译频道',
+  shelfTitle: '本频道发布简体中文译文',
   shelfDescription:
-    '站点界面会跟随你的语言设置变化，但这里的译文正文统一以简体中文编辑与发布。',
-  shelfNote: '切换站点语言只会改变界面，不会改变译文正文。',
+    '本频道译文正文统一以简体中文发布，切换站点语言只会改变界面，不会改变译文正文。',
   detailEyebrow: '译文信息',
   contentLanguageLabel: '正文语言',
   contentLanguageValue: '简体中文',
@@ -48,11 +48,11 @@ const zhHansCopy: TranslationUiCopy = {
 };
 
 const zhHantCopy: TranslationUiCopy = {
-  shelfEyebrow: '翻譯欄目',
-  shelfTitle: '本欄目固定發布簡體中文譯文',
+  sectionTitle: '最新翻譯',
+  shelfEyebrow: '翻譯頻道',
+  shelfTitle: '本頻道發布簡體中文譯文',
   shelfDescription:
-    '站點介面會跟隨你的語言設定變化，但這裡的譯文正文統一以簡體中文編輯與發布。',
-  shelfNote: '切換站點語言只會改變介面，不會改變譯文正文。',
+    '本頻道譯文正文統一以簡體中文發布，切換站點語言只會改變介面，不會改變譯文正文。',
   detailEyebrow: '譯文資訊',
   contentLanguageLabel: '正文語言',
   contentLanguageValue: '簡體中文',
