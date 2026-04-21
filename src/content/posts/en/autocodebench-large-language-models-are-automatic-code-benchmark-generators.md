@@ -224,4 +224,6 @@ Not because this somehow proves that LLMs are good at Elixir, but because there 
 
 Maybe it is Elixir's concurrency model. Maybe it is the abstraction style. Maybe there is some deeper connection between the way tasks are expressed in Elixir and the way today's large models operate.
 
-If this direction interests you, you can also read my AI-assisted translation of [Why Elixir Is the Best Language for AI](/translations/why-elixir-is-the-best-language-for-ai/).
+OpenAI's recently open-sourced [Symphony](https://github.com/openai/symphony) project also includes an Elixir implementation.
+
+If this direction interests you, you can also read [Why Elixir Is the Best Language for AI](/translations/why-elixir-is-the-best-language-for-ai/).
