@@ -1,6 +1,6 @@
 ---
 title: "Paper Reading: AutoCodeBench: Large Language Models are Automatic Code Benchmark Generators"
-description: "Why the Elixir column stands out in AutoCodeBench, and what it reveals about difficulty equivalence in automatically generated multilingual code benchmarks"
+description: "Why the Elixir column is worth noticing in AutoCodeBench, and how it opens up a discussion of difficulty equivalence in automatically generated multilingual code benchmarks"
 date: "2026-04-19T16:19:00+08:00"
 category: "Paper Reading"
 tags: [paper-reading, autocodebench, elixir, code-generation, benchmark, LLM]
@@ -19,13 +19,17 @@ Across 20 languages, that is the highest column in the row.
 
 ## What This Table Is Actually Saying
 
-Table 4 is not a plain leaderboard. It is a "model × programming language" matrix.
+It helps to look at the original table first:
 
-The rows are models. The columns are programming languages. Each cell means: the Pass@1 of one model on tasks written in one language.
+![AutoCodeBench Table 4 from the paper: Pass@1 across 20 programming languages](/images/posts/autocodebench-table-4.webp)
 
-At the top there is a special row called Current Upper Bound. It does not belong to any one model. Instead, it is the pass rate after taking the union of all tasks solved by any participating model. If any model solved a given problem, that problem counts toward the upper bound. The paper states this explicitly in the table note. ([arXiv][1])
+It is easiest to read Table 4 as a report card. Each row is one model, and each column is one programming language.
 
-Elixir has 198 problems, and its Current Upper Bound is 97.5. Roughly speaking, that means about 193 Elixir tasks were solved by at least one model. In the same row, Kotlin is 89.5, C# is 88.4, Racket is 88.3, and Python is 63.3. ([arXiv][1])
+The number at their intersection means: if you give that language's tasks to that model and look only at its first submitted answer, what fraction of problems pass in one shot. The paper calls this metric Pass@1. You can read the `@1` literally as "one chance."
+
+At the top there is a special row called Current Upper Bound. It does not belong to any one model. Instead, it is the pass rate after taking the union of all tasks solved by any participating model. If any model solved a given problem, that problem counts toward the upper bound. The paper states this explicitly in the table note.
+
+Elixir has 198 problems, and its Current Upper Bound is 97.5. Roughly speaking, that means about 193 Elixir tasks were solved by at least one model. In the same row, Kotlin is 89.5, C# is 88.4, Racket is 88.3, and Python is 63.3.
 
 There is an easy mistake to make here: you cannot directly turn Elixir 97.5 versus Python 63.3 into "Elixir is more suitable for large language models than Python."
 
@@ -43,7 +47,7 @@ Let us first rule out one explanation: maybe this is just an artifact of the Cur
 
 So look at the individual model rows.
 
-For Claude Opus 4 in reasoning mode, Elixir is 80.3, C# is 74.9, and Kotlin is 72.5. For Claude Sonnet 4 in non-reasoning mode, Elixir is 74.2, C# is 72.9, and Kotlin is 72.0. For DeepSeek-R1-0528 in reasoning mode, Python is 38.8 while Elixir is 77.3. ([arXiv][1])
+For Claude Opus 4 in reasoning mode, Elixir is 80.3, C# is 74.9, and Kotlin is 72.5. For Claude Sonnet 4 in non-reasoning mode, Elixir is 74.2, C# is 72.9, and Kotlin is 72.0. For DeepSeek-R1-0528 in reasoning mode, Python is 38.8 while Elixir is 77.3.
 
 Notice what is being compared here. It is not "Claude versus Elixir." Claude is a model, Elixir is a language; they are not even on the same axis.
 
@@ -59,7 +63,7 @@ That makes the question much more interesting.
 
 To understand this pattern, you have to go back to the AutoCodeBench generation pipeline.
 
-The paper proposes an automated pipeline called AutoCodeGen. It starts from real code snippets in Stack-Edu, lets a model evolve them into full standalone solutions, then generates public and private test inputs, runs the solutions and tests inside multilingual sandboxes to obtain real outputs, and finally works backward from the solution and tests to generate the problem statement. ([arXiv][1])
+The paper proposes an automated pipeline called AutoCodeGen. It starts from real code snippets in Stack-Edu, lets a model evolve them into full standalone solutions, then generates public and private test inputs, runs the solutions and tests inside multilingual sandboxes to obtain real outputs, and finally works backward from the solution and tests to generate the problem statement.
 
 The key design choice is this: the test outputs are not invented by the model. They are produced by actually executing code.
 
@@ -67,7 +71,7 @@ That is also why AutoCodeBench is more credible than a setup where a model simpl
 
 Still, the 20 languages are not generated in exactly the same way.
 
-The paper is explicit here. Python, C++, Shell, Java, JavaScript, and Go use the full AutoCodeGen pipeline directly. The other 14 languages could in principle do the same, but because of limited resources and insufficient diversity, the paper uses approximate language translation instead. In Table 3, the translation path for Elixir is Python → Elixir. ([arXiv][1])
+The paper is explicit here. Python, C++, Shell, Java, JavaScript, and Go use the full AutoCodeGen pipeline directly. The other 14 languages could in principle do the same, but because of limited resources and insufficient diversity, the paper uses approximate language translation instead. In Table 3, the translation path for Elixir is Python → Elixir.
 
 That introduces a crucial variable:
 
@@ -81,7 +85,7 @@ The real issue is whether the translated tasks still preserve the same difficult
 
 AutoCodeGen has a difficulty-control mechanism.
 
-For each problem, it samples 10 solutions from DeepSeek-Coder-V2-Lite and validates them in the sandbox. If all 10 pass, the problem is discarded, because the paper treats it as too easy to be useful for evaluation. ([arXiv][1])
+For each problem, it samples 10 solutions from DeepSeek-Coder-V2-Lite and validates them in the sandbox. If all 10 pass, the problem is discarded, because the paper treats it as too easy to be useful for evaluation.
 
 This logic is more reliable for popular languages.
 
@@ -89,9 +93,9 @@ If the filtering model is strong in Python, Java, and C++, then problems it solv
 
 But once you move to a low-resource language like Elixir, the situation gets more complicated.
 
-Section 3.3 of the paper explicitly compares popular languages with low-resource languages. The popular-language set is Python, C++, Java, and C#. The low-resource set is Racket, Shell, Elixir, and TypeScript. The result is that the average Pass@1 gap is smaller in the popular group, ranging from 50.4 to 53.8, while the low-resource group has a much wider range, from 45.3 to 62.0. ([arXiv][1])
+Section 3.3 of the paper explicitly compares popular languages with low-resource languages. The popular-language set is Python, C++, Java, and C#. The low-resource set is Racket, Shell, Elixir, and TypeScript. The result is that the average Pass@1 gap is smaller in the popular group, ranging from 50.4 to 53.8, while the low-resource group has a much wider range, from 45.3 to 62.0.
 
-The paper then offers an important clue: top-tier models perform much better on low-resource languages, possibly because DeepSeek-Coder-V2-Lite is limited in those languages and struggles to filter out easy tasks. ([arXiv][1])
+The paper then offers an important clue: top-tier models perform much better on low-resource languages, possibly because DeepSeek-Coder-V2-Lite is limited in those languages and struggles to filter out easy tasks.
 
 That sentence matters a lot.
 
@@ -115,11 +119,11 @@ Put those together, and it becomes much easier to understand why the Elixir colu
 
 AutoCodeBench also has a smaller version called AutoCodeBench-Lite.
 
-Its construction is interesting. The paper first collects the solving results of all models, then ranks tasks by how many models can solve them. Tasks solved by fewer than two models are discarded first. From the remaining pool, about 1,500 tasks are selected in ascending order of solve count. The idea is to keep tasks that at least some models can solve, but that still preserve discrimination between models. ([arXiv][1])
+Its construction is interesting. The paper first collects the solving results of all models, then ranks tasks by how many models can solve them. Tasks solved by fewer than two models are discarded first. From the remaining pool, about 1,500 tasks are selected in ascending order of solve count. The idea is to keep tasks that at least some models can solve, but that still preserve discrimination between models.
 
 In the full AutoCodeBench, Elixir has 198 tasks.
 
-In the Lite version, Elixir drops to 61. Among the 20 languages, that is one of the smallest counts. Only JavaScript with 57 and PHP with 60 are lower. ([arXiv][1])
+In the Lite version, Elixir drops to 61. Among the 20 languages, that is one of the smallest counts. Only JavaScript with 57 and PHP with 60 are lower.
 
 That number alone does not prove that "Elixir tasks are easy."
 
@@ -139,11 +143,11 @@ It is a claim that when a benchmark is built through automatic generation, appro
 
 Section 4.2 of the paper also discusses model bias.
 
-The overall generation pipeline relies heavily on DeepSeek-family models: DeepSeek-V3-0324 generates code, and DeepSeek-R1-0528 acts as the Critic for quality review. The paper openly acknowledges that this could create a favorable bias toward the DeepSeek family. To counterbalance that, it uses DeepSeek-Coder-V2-Lite during easy-problem filtering, trying to create a kind of push-and-pull equilibrium. ([arXiv][1])
+The overall generation pipeline relies heavily on DeepSeek-family models: DeepSeek-V3-0324 generates code, and DeepSeek-R1-0528 acts as the Critic for quality review. The paper openly acknowledges that this could create a favorable bias toward the DeepSeek family. To counterbalance that, it uses DeepSeek-Coder-V2-Lite during easy-problem filtering, trying to create a kind of push-and-pull equilibrium.
 
 What is more interesting is that the paper's quantitative analysis shows the story is not as simple as "whoever writes the exam benefits from it."
 
-In the stage-by-stage results of Table 7, the Critic filtering stage does improve DeepSeek-R1-0528, but the gains for o3 and Gemini 2.5 Pro are actually larger than the gain for DeepSeek-V3-0324. The paper's final judgment stays measured: the automated pipeline may introduce favorable bias for the DeepSeek family, but the effect appears small. ([arXiv][1])
+In the stage-by-stage results of Table 7, the Critic filtering stage does improve DeepSeek-R1-0528, but the gains for o3 and Gemini 2.5 Pro are actually larger than the gain for DeepSeek-V3-0324. The paper's final judgment stays measured: the automated pipeline may introduce favorable bias for the DeepSeek family, but the effect appears small.
 
 This is not exactly the same problem as Elixir, but both point to the same core idea:
 
@@ -155,13 +159,9 @@ And in the end, those fingerprints quietly enter the leaderboard.
 
 ## What Elixir 97.5 Actually Means
 
-What it does not mean is:
+What it does not mean is that large language models are best at Elixir.
 
-> Large language models are best at Elixir.
-
-And it should not be framed as:
-
-> AutoCodeBench is flawed.
+And it should not be framed as AutoCodeBench being flawed.
 
 The more accurate statement is:
 
@@ -185,7 +185,7 @@ But the Elixir column forces them back to the surface.
 
 The value of AutoCodeBench is not just that it ranks models.
 
-Its more important contribution is that it pushes the production process of benchmarks one step forward: let models generate the tasks, let sandboxes verify outputs, let a Critic review quality, and let repeated sampling filter difficulty. The paper states clearly that AutoCodeBench contains 3,920 tasks and 37,777 test cases across 20 programming languages, with the goal of building a code-generation benchmark that is harder, more practical, and broader in language coverage. ([arXiv][1])
+Its more important contribution is that it pushes the production process of benchmarks one step forward: let models generate the tasks, let sandboxes verify outputs, let a Critic review quality, and let repeated sampling filter difficulty. The paper states clearly that AutoCodeBench contains 3,920 tasks and 37,777 test cases across 20 programming languages, with the goal of building a code-generation benchmark that is harder, more practical, and broader in language coverage.
 
 This path will definitely continue.
 
@@ -201,21 +201,14 @@ Models that filter difficulty are limited by their own language competence.
 
 Sandboxes can verify execution results, but they cannot guarantee that the task feels equally natural and equally fair inside every programming-language ecosystem.
 
-So future code benchmarks should not ask only:
+So future code benchmarks should not ask only which model scored highest. They should also ask:
 
-> Which model scored highest?
+- How were these tasks generated?
+- Which languages are generated natively, and which are translated?
+- Is the difficulty filter equally capable across languages?
+- Which languages received human validation, and which did not?
 
-They should also ask:
-
-> How were these tasks generated?
-
-> Which languages are generated natively, and which are translated?
-
-> Is the difficulty filter equally capable across languages?
-
-> Which languages received human validation, and which did not?
-
-The paper's human validation covers only six languages: Python, C++, Java, JavaScript, Go, and Shell, with an accuracy of 87.6%. Elixir is not part of that human-validation set. That detail also suggests that translation-generated languages still need finer follow-up validation for both quality and difficulty distribution. ([arXiv][1])
+The paper's human validation covers only six languages: Python, C++, Java, JavaScript, Go, and Shell, with an accuracy of 87.6%. Elixir is not part of that human-validation set. That detail also suggests that translation-generated languages still need finer follow-up validation for both quality and difficulty distribution.
 
 ## Final Takeaway
 
@@ -234,5 +227,3 @@ It is better understood as a reminder:
 **You think you are only evaluating the models, but you are also evaluating how the tasks were generated.**
 
 Future code evaluation should assess not only the models, but also the benchmark.
-
-[1]: /papers/2508.09101v1.pdf "AutoCodeBench: Large Language Models are Automatic Code Benchmark Generators"
